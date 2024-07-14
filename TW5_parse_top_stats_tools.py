@@ -2288,91 +2288,89 @@ def collect_stat_data(args, config, log, anonymize=False):
 			#End Collect Relic Skill Data for each player
 
 			#Collect Damage Modifier Data for each player
-			if 'damageModifiersTarget' in player_data:
+			if 'damageModifiers' in player_data:
 				playerNameProf = name+"{{"+profession+"}}"
-				for target in player_data['damageModifiersTarget']:
-					if target:
-						for modifier in target:
-							modID = 'd'+str(modifier['id'])
-							modName = damageModMap[modID]['name']
-							modHitCount = modifier['damageModifiers'][0]['hitCount']
-							modTotalHitCount = modifier['damageModifiers'][0]['totalHitCount']
-							modDamageGain = modifier['damageModifiers'][0]['damageGain']
-							modTotalDamage = modifier['damageModifiers'][0]['totalDamage']
 
-							if playerNameProf not in squadDamageMods:
-								squadDamageMods[playerNameProf] = {}
-								squadDamageMods[playerNameProf]['name'] = name
-								squadDamageMods[playerNameProf]['profession'] = profession
-								squadDamageMods[playerNameProf]['Shared'] = {}
-								squadDamageMods[playerNameProf]['Prof'] = {}
-							if modName not in profModifiers['buffList']: 
-								if modName not in squadDamageMods[playerNameProf]['Shared']:
-									squadDamageMods[playerNameProf]['Shared'][modName]={}
-									squadDamageMods[playerNameProf]['Shared'][modName]['hitCount']=modHitCount
-									squadDamageMods[playerNameProf]['Shared'][modName]['totalHitCount']=modTotalHitCount
-									squadDamageMods[playerNameProf]['Shared'][modName]['damageGain']=modDamageGain
-									squadDamageMods[playerNameProf]['Shared'][modName]['totalDamage']=modTotalDamage
-								else:
-									squadDamageMods[playerNameProf]['Shared'][modName]['hitCount']+=modHitCount
-									squadDamageMods[playerNameProf]['Shared'][modName]['totalHitCount']+=modTotalHitCount
-									squadDamageMods[playerNameProf]['Shared'][modName]['damageGain']+=modDamageGain
-									squadDamageMods[playerNameProf]['Shared'][modName]['totalDamage']+=modTotalDamage
-							else:
-								if modName not in squadDamageMods[playerNameProf]['Prof']:
-									squadDamageMods[playerNameProf]['Prof'][modName]={}
-									squadDamageMods[playerNameProf]['Prof'][modName]['hitCount']=modHitCount
-									squadDamageMods[playerNameProf]['Prof'][modName]['totalHitCount']=modTotalHitCount
-									squadDamageMods[playerNameProf]['Prof'][modName]['damageGain']=modDamageGain
-									squadDamageMods[playerNameProf]['Prof'][modName]['totalDamage']=modTotalDamage
-								else:
-									squadDamageMods[playerNameProf]['Prof'][modName]['hitCount']+=modHitCount
-									squadDamageMods[playerNameProf]['Prof'][modName]['totalHitCount']+=modTotalHitCount
-									squadDamageMods[playerNameProf]['Prof'][modName]['damageGain']+=modDamageGain
-									squadDamageMods[playerNameProf]['Prof'][modName]['totalDamage']+=modTotalDamage
+				for modifier in player_data['damageModifiers']:
+					modID = 'd'+str(modifier['id'])
+					modName = damageModMap[modID]['name']
+					modHitCount = modifier['damageModifiers'][0]['hitCount']
+					modTotalHitCount = modifier['damageModifiers'][0]['totalHitCount']
+					modDamageGain = modifier['damageModifiers'][0]['damageGain']
+					modTotalDamage = modifier['damageModifiers'][0]['totalDamage']
+
+					if playerNameProf not in squadDamageMods:
+						squadDamageMods[playerNameProf] = {}
+						squadDamageMods[playerNameProf]['name'] = name
+						squadDamageMods[playerNameProf]['profession'] = profession
+						squadDamageMods[playerNameProf]['Shared'] = {}
+						squadDamageMods[playerNameProf]['Prof'] = {}
+					if modName not in profModifiers['buffList']: 
+						if modName not in squadDamageMods[playerNameProf]['Shared']:
+							squadDamageMods[playerNameProf]['Shared'][modName]={}
+							squadDamageMods[playerNameProf]['Shared'][modName]['hitCount']=modHitCount
+							squadDamageMods[playerNameProf]['Shared'][modName]['totalHitCount']=modTotalHitCount
+							squadDamageMods[playerNameProf]['Shared'][modName]['damageGain']=modDamageGain
+							squadDamageMods[playerNameProf]['Shared'][modName]['totalDamage']=modTotalDamage
+						else:
+							squadDamageMods[playerNameProf]['Shared'][modName]['hitCount']+=modHitCount
+							squadDamageMods[playerNameProf]['Shared'][modName]['totalHitCount']+=modTotalHitCount
+							squadDamageMods[playerNameProf]['Shared'][modName]['damageGain']+=modDamageGain
+							squadDamageMods[playerNameProf]['Shared'][modName]['totalDamage']+=modTotalDamage
+					else:
+						if modName not in squadDamageMods[playerNameProf]['Prof']:
+							squadDamageMods[playerNameProf]['Prof'][modName]={}
+							squadDamageMods[playerNameProf]['Prof'][modName]['hitCount']=modHitCount
+							squadDamageMods[playerNameProf]['Prof'][modName]['totalHitCount']=modTotalHitCount
+							squadDamageMods[playerNameProf]['Prof'][modName]['damageGain']=modDamageGain
+							squadDamageMods[playerNameProf]['Prof'][modName]['totalDamage']=modTotalDamage
+						else:
+							squadDamageMods[playerNameProf]['Prof'][modName]['hitCount']+=modHitCount
+							squadDamageMods[playerNameProf]['Prof'][modName]['totalHitCount']+=modTotalHitCount
+							squadDamageMods[playerNameProf]['Prof'][modName]['damageGain']+=modDamageGain
+							squadDamageMods[playerNameProf]['Prof'][modName]['totalDamage']+=modTotalDamage
 
 			if 'incomingDamageModifiersTarget' in player_data:
 				playerNameProf = name+"{{"+profession+"}}"
-				for target in player_data['incomingDamageModifiersTarget']:
-					if target:
-						for modifier in target:
-							modID = 'd'+str(modifier['id'])
-							modName = damageModMap[modID]['name']
-							modHitCount = modifier['damageModifiers'][0]['hitCount']
-							modTotalHitCount = modifier['damageModifiers'][0]['totalHitCount']
-							modDamageGain = modifier['damageModifiers'][0]['damageGain']
-							modTotalDamage = modifier['damageModifiers'][0]['totalDamage']
 
-							if playerNameProf not in squadDamageMods:
-								squadDamageMods[playerNameProf] = {}
-								squadDamageMods[playerNameProf]['name'] = name
-								squadDamageMods[playerNameProf]['profession'] = profession
-								squadDamageMods[playerNameProf]['Shared'] = {}
-								squadDamageMods[playerNameProf]['Prof'] = {}
-							if modName not in profModifiers['buffList']:
-								if modName not in squadDamageMods[playerNameProf]['Shared']:
-									squadDamageMods[playerNameProf]['Shared'][modName]={}
-									squadDamageMods[playerNameProf]['Shared'][modName]['hitCount']=modHitCount
-									squadDamageMods[playerNameProf]['Shared'][modName]['totalHitCount']=modTotalHitCount
-									squadDamageMods[playerNameProf]['Shared'][modName]['damageGain']=modDamageGain
-									squadDamageMods[playerNameProf]['Shared'][modName]['totalDamage']=modTotalDamage
-								else:
-									squadDamageMods[playerNameProf]['Shared'][modName]['hitCount']+=modHitCount
-									squadDamageMods[playerNameProf]['Shared'][modName]['totalHitCount']+=modTotalHitCount
-									squadDamageMods[playerNameProf]['Shared'][modName]['damageGain']+=modDamageGain
-									squadDamageMods[playerNameProf]['Shared'][modName]['totalDamage']+=modTotalDamage
-							else:
-								if modName not in squadDamageMods[playerNameProf]['Prof']:
-									squadDamageMods[playerNameProf]['Prof'][modName]={}
-									squadDamageMods[playerNameProf]['Prof'][modName]['hitCount']=modHitCount
-									squadDamageMods[playerNameProf]['Prof'][modName]['totalHitCount']=modTotalHitCount
-									squadDamageMods[playerNameProf]['Prof'][modName]['damageGain']=modDamageGain
-									squadDamageMods[playerNameProf]['Prof'][modName]['totalDamage']=modTotalDamage
-								else:
-									squadDamageMods[playerNameProf]['Prof'][modName]['hitCount']+=modHitCount
-									squadDamageMods[playerNameProf]['Prof'][modName]['totalHitCount']+=modTotalHitCount
-									squadDamageMods[playerNameProf]['Prof'][modName]['damageGain']+=modDamageGain
-									squadDamageMods[playerNameProf]['Prof'][modName]['totalDamage']+=modTotalDamage									
+				for modifier in player_data['incomingDamageModifiers']:
+					modID = 'd'+str(modifier['id'])
+					modName = damageModMap[modID]['name']
+					modHitCount = modifier['damageModifiers'][0]['hitCount']
+					modTotalHitCount = modifier['damageModifiers'][0]['totalHitCount']
+					modDamageGain = modifier['damageModifiers'][0]['damageGain']
+					modTotalDamage = modifier['damageModifiers'][0]['totalDamage']
+
+					if playerNameProf not in squadDamageMods:
+						squadDamageMods[playerNameProf] = {}
+						squadDamageMods[playerNameProf]['name'] = name
+						squadDamageMods[playerNameProf]['profession'] = profession
+						squadDamageMods[playerNameProf]['Shared'] = {}
+						squadDamageMods[playerNameProf]['Prof'] = {}
+					if modName not in profModifiers['buffList']:
+						if modName not in squadDamageMods[playerNameProf]['Shared']:
+							squadDamageMods[playerNameProf]['Shared'][modName]={}
+							squadDamageMods[playerNameProf]['Shared'][modName]['hitCount']=modHitCount
+							squadDamageMods[playerNameProf]['Shared'][modName]['totalHitCount']=modTotalHitCount
+							squadDamageMods[playerNameProf]['Shared'][modName]['damageGain']=modDamageGain
+							squadDamageMods[playerNameProf]['Shared'][modName]['totalDamage']=modTotalDamage
+						else:
+							squadDamageMods[playerNameProf]['Shared'][modName]['hitCount']+=modHitCount
+							squadDamageMods[playerNameProf]['Shared'][modName]['totalHitCount']+=modTotalHitCount
+							squadDamageMods[playerNameProf]['Shared'][modName]['damageGain']+=modDamageGain
+							squadDamageMods[playerNameProf]['Shared'][modName]['totalDamage']+=modTotalDamage
+					else:
+						if modName not in squadDamageMods[playerNameProf]['Prof']:
+							squadDamageMods[playerNameProf]['Prof'][modName]={}
+							squadDamageMods[playerNameProf]['Prof'][modName]['hitCount']=modHitCount
+							squadDamageMods[playerNameProf]['Prof'][modName]['totalHitCount']=modTotalHitCount
+							squadDamageMods[playerNameProf]['Prof'][modName]['damageGain']=modDamageGain
+							squadDamageMods[playerNameProf]['Prof'][modName]['totalDamage']=modTotalDamage
+						else:
+							squadDamageMods[playerNameProf]['Prof'][modName]['hitCount']+=modHitCount
+							squadDamageMods[playerNameProf]['Prof'][modName]['totalHitCount']+=modTotalHitCount
+							squadDamageMods[playerNameProf]['Prof'][modName]['damageGain']+=modDamageGain
+							squadDamageMods[playerNameProf]['Prof'][modName]['totalDamage']+=modTotalDamage
 
 			if 'rotation' in player_data:
 				for rotation_skill in player_data['rotation']:
