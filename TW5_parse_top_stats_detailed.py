@@ -316,7 +316,7 @@ if __name__ == '__main__':
 	#Damage Modifier Data Reveal
 	myprint(output, '<$reveal type="match" state="$:/state/curTab" text="Damage Modifiers">')
 	myprint(output, '\n<<alert dark "Damage Modifiers across all Fights" width:60%>>\n')
-	myprint(output, "\nCounts based on `player[incomingDamageModifiersTarget]` & `player[damageModifiersTarget]`\n\n")	
+	myprint(output, "\nCounts based on `player[incomingDamageModifiers]` & `player[damageModifiers]`\n\n")	
 	myprint(output, '\n---\n')
 	myprint(output, '<div style="overflow-x:auto;">\n\n')
 
