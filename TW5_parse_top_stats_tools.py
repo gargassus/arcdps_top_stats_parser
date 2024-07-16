@@ -4142,6 +4142,7 @@ def get_stats_from_fight_json(fight_json, config, log):
 	commanderMissing = True
 	commanderFound = False
 	inchToPixel = fight_json['combatReplayMetaData']['inchToPixel']
+	pollingRate = fight_json['combatReplayMetaData']['pollingRate']
 	i=0
 	for id in fight_json['players']:
 		if id['hasCommanderTag'] and not id['notInSquad']:
@@ -4193,7 +4194,7 @@ def get_stats_from_fight_json(fight_json, config, log):
 				for downKey, downValue in playerDowns.items():
 					if deathKey == downValue:
 						#process data for downKey
-						positionMark = int(downKey/150)
+						positionMark = int(downKey/pollingRate)
 						positionDown = id['combatReplayData']['positions'][positionMark]
 						x1 = positionDown[0]
 						y1 = positionDown[1]
