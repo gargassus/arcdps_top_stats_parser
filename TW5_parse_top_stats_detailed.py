@@ -2324,7 +2324,7 @@ if __name__ == '__main__':
 				myprint(output, '<$echarts $text={{'+fileDate.strftime("%Y%m%d%H%M")+'_kills_BubbleChartData}} $height="500px" $theme="dark"/>')
 
 			if chart == "Fury/Might/DPS":
-				myprint(output, "\n!!Kills / Downs / DPS\n")
+				myprint(output, "\n!!Fury / Might / DPS\n")
 				myprint(output, ",,Bubble Size based on DPS output,,\n")
 				myprint(output, '<$echarts $text={{'+fileDate.strftime("%Y%m%d%H%M")+'_fury_might_BubbleChartData}} $height="500px" $theme="dark"/>')
 
