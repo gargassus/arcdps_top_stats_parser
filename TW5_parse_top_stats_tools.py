@@ -2711,11 +2711,13 @@ def get_stat_from_player_json(player_json, players_running_healing_addon, stat, 
 		return int(player_json['defenses'][0]['interruptedCount'])
 
 	if stat == 'dmg':
-		if 'dpsTargets' not in player_json:
+		if 'targetDamageDist' not in player_json:
 			return 0
 		sumDamage = 0
-		for target in player_json['dpsTargets']:
-			sumDamage = sumDamage + int(target[0]['damage'])
+		for target in player_json['targetDamageDist']:
+			for skill in target[0]:
+				sumDamage += skill['totalDamage']
+			#sumDamage = sumDamage + int(target[0]['damage'])
 		return int(sumDamage)
 	#Add Shield Damage Tracking
 	if stat == 'shieldDmg':
