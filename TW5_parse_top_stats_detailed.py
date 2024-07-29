@@ -111,7 +111,8 @@ if __name__ == '__main__':
         'againstDownedDamage': "Dmg to Downed",
         'againstDownedCount': "Hits to Downed",
         'downs': "Enemies Downed",
-        'kills': "Enemies Killed"
+        'kills': "Enemies Killed",
+		'dcPct': "Down Contrib PCT of Damage"
     }
 
 	large_items = [
@@ -2145,8 +2146,16 @@ if __name__ == '__main__':
 		durationActive = player.duration_fights_present
 		details = "|"+name+" | {{"+prof+"}} | "+my_value(durationActive)
 		for stat in DmgOverviewTable:
-			curStat = round(player.total_stats[stat], 1)
-			details += "| "+my_value(curStat)
+			if stat == 'dcPct':
+				if player.total_stats['dmg'] == 0:
+					curStat = 0.0
+					details += "| "+my_value(curStat)+"%"
+				else:
+					curStat = round((player.total_stats['downContribution']/player.total_stats['dmg'])*100, 1)
+					details += "| "+my_value(curStat)+"%"
+			else:
+				curStat = round(player.total_stats[stat], 1)
+				details += "| "+my_value(curStat)
 		details += "|"
 		myprint(output, details)
 	myprint(output, "</$reveal>\n")
@@ -2169,8 +2178,16 @@ if __name__ == '__main__':
 		durationActive = player.duration_fights_present
 		details = "|"+name+" | {{"+prof+"}} | "+my_value(durationActive)
 		for stat in DmgOverviewTable:
-			curStat = round(player.average_stats[stat], 3)
-			details += "| "+"{:,.2f}".format(curStat)
+			if stat == 'dcPct':
+				if player.average_stats['dmg'] == 0:
+					curStat = 0.0
+					details += "| "+my_value(curStat)+"%"
+				else:
+					curStat = round((player.average_stats['downContribution']/player.average_stats['dmg'])*100, 1)
+					details += "| "+my_value(curStat)+"%"
+			else:
+				curStat = round(player.average_stats[stat], 3)
+				details += "| "+"{:,.2f}".format(curStat)
 		details += "|"
 		myprint(output, details)
 	myprint(output, "</$reveal>\n")
