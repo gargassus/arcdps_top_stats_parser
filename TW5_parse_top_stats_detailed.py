@@ -125,9 +125,9 @@ if __name__ == '__main__':
 
 	SubMenuTabs = {
 	'General': ['Overview', 'Fight Logs', 'Squad Composition', "Party Composition", 'Fight Review', 'Spike Damage', 'Attendance', 'Support', 'Distance to Tag', 'On Tag Review', 'Skill Casts', 'High Scores', 'Gear Buffs', 'Minions', 'Damage Modifiers', 'Top Skill Dmg'],
-	'Offensive': ['Offensive Stats', 'Damage Overview', 'Player Damage by Skill', 'Down Contribution', 'Enemies Downed', 'Enemies Killed', 'Damage', 'Shield Damage', 'Power Damage', 'Condi Damage', 'Against Downed Damage', 'Against Downed Count', 'Damage All', 'DPSStats', 'Burst Damage', 'Damage with Buffs', 'Control Effects - Out', 'Weapon Swaps'],
+	'Offensive': ['Offensive Stats', 'Damage Overview', 'Player Damage by Skill', 'Down Contribution', 'Enemies Downed', 'Enemies Killed', 'Damage', 'Shield Damage', 'Power Damage', 'Condi Damage', 'Against Downed Damage', 'Against Downed Count', 'Damage All', 'DPSStats', 'Burst Damage', 'Damage with Buffs', 'Control Effects - Out', 'Applied Hard CC', 'Applied Hard CC Duration', 'Weapon Swaps'],
 	'Defensive': ['Defensive Stats', 'Control Effects - In', 'Condition Uptimes'],
-	'Support': ['Healing', 'Barrier', 'Outgoing Healing', 'Condition Cleanses', 'Duration of Conditions Cleansed', 'Boon Strips', 'Duration of Boons Stripped', 'Illusion of Life', 'Resurrect', 'Downed_Healing', 'Stealth', 'Hide in Shadows', 'FBPages'],
+	'Support': ['Healing', 'Barrier', 'Outgoing Healing', 'Condition Cleanses', 'Duration of Conditions Cleansed', 'Stun Breaks', 'Stun Duration Removed', 'Boon Strips', 'Duration of Boons Stripped', 'Illusion of Life', 'Resurrect', 'Downed_Healing', 'Stealth', 'Hide in Shadows', 'FBPages'],
 	'Boons & Buffs': ['Total Boons', 'Stability', 'Protection', 'Aegis', 'Might', 'Fury', 'Resistance', 'Resolution', 'Quickness', 'Swiftness', 'Superspeed', 'Alacrity', 'Vigor', 'Regeneration', 'Auras - Out', 'Auras - In', 'Personal Buffs', 'Buff Uptime', 'Stacking Buffs'],
 	'Dashboard': ["Dashboard"]
 		}
@@ -1231,11 +1231,11 @@ if __name__ == '__main__':
 		myprint(output, '<$button setTitle="$:/state/curDefense" setTo="'+config.stat_names[stat]+'" selectedClass="" class="btn btn-sm btn-dark" style="">'+config.stat_names[stat]+' </$button>')
 
 	#Print Overview Table
-	DefensiveOverview = ['dmg_taken', 'barrierDamage', 'hitsMissed', 'interupted', 'invulns', 'evades', 'blocks', 'dodges', 'cleansesIn', 'ripsIn', 'downed', 'deaths']
+	DefensiveOverview = ['dmg_taken', 'barrierDamage', 'hitsMissed', 'interupted', 'invulns', 'evades', 'blocks', 'dodges', 'cleansesIn', 'ripsIn', 'downed', 'deaths', 'receivedCrowdControl','receivedCrowdControlDuration']
 	myprint(output,'<$reveal type="match" state="$:/state/curDefense" text="Overview">')	
 	myprint(output, '<div style="overflow-x:auto;">\n\n')
 	myprint(output, "|thead-dark table-hover sortable|k")	
-	myprint(output, "|!Name |!Profession | !{{Damage Taken}} | !{{BarrierDamage}} | !Eff {{BarrierDamage}} % | !{{MissedHits}} | !{{Interrupted}} | !{{Invuln}} | !{{Evades}} | !{{Blocks}} | !{{Dodges}} | !{{Condition Cleanses}} | !{{Boon Strips}} | !{{Downed}} | !{{Died}} |h")
+	myprint(output, "|!Name |!Profession | !{{Damage Taken}} | !{{BarrierDamage}} | !Eff {{BarrierDamage}} % | !{{MissedHits}} | !{{Interrupted}} | !{{Invuln}} | !{{Evades}} | !{{Blocks}} | !{{Dodges}} | !{{Condition Cleanses}} | !{{Boon Strips}} | !{{Downed}} | !{{Died}} | !Hard CC| !CC Duration|h")
 	for player in players:
 		player_name = player.name
 		player_prof = player.profession
@@ -2012,7 +2012,7 @@ if __name__ == '__main__':
 	#End Downed Healing
 
 	#start Offensive Stat Table insert
-	offensive_Order = ['Critical',  'Flanking',  'Glancing',  'Moving',  'Blinded',  'Interupt',  'Invulnerable',  'Evaded',  'Blocked']
+	offensive_Order = ['Critical',  'Flanking',  'Glancing',  'Moving',  'Blinded',  'Interupt',  'Invulnerable',  'Evaded',  'Blocked', 'Hard CC', 'CC Duration']
 	myprint(output, '<$reveal type="match" state="$:/state/curTab" text="Offensive Stats">')    
 	myprint(output, '\n<<alert dark "Offensive Stats across all fights attended." width:60%>>\n\n')
 	

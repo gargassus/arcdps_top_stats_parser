@@ -171,7 +171,7 @@ class Config:
 
 
 #Stats to exlucde from overview summary
-exclude_Stat = ["iol", "dist", "res", "dmgAll", "Cdmg", "Pdmg", "shieldDmg", "kills", "downs", 'downed', "HiS", "stealth", "superspeed", "swaps", "barrierDamage", "dodges", "evades", "blocks", "invulns", 'hitsMissed', 'interupted', 'fireOut', 'shockingOut', 'frostOut', 'magneticOut', 'lightOut', 'darkOut', 'chaosOut', 'ripsIn', 'ripsTime', 'cleansesIn', 'cleansesTime', 'resOutTime', 'cleansesOutTime', 'ripsOutTime', 'downContribution', 'againstDownedDamage', 'againstDownedCount']
+exclude_Stat = ["iol", "dist", "res", "dmgAll", "Cdmg", "Pdmg", "shieldDmg", "kills", "downs", 'downed', "HiS", "stealth", "superspeed", "swaps", "barrierDamage", "dodges", "evades", "blocks", "invulns", 'hitsMissed', 'interupted', 'fireOut', 'shockingOut', 'frostOut', 'magneticOut', 'lightOut', 'darkOut', 'chaosOut', 'ripsIn', 'ripsTime', 'cleansesIn', 'cleansesTime', 'resOutTime', 'cleansesOutTime', 'ripsOutTime', 'downContribution', 'againstDownedDamage', 'againstDownedCount', 'appliedCrowdControl', 'appliedCrowdControlDuration', 'stunBreak', 'removedStunDuration', 'receivedCrowdControl', 'receivedCrowdControlDuration']
 
 #Control Effects Tracking
 squad_offensive = {}
@@ -2432,7 +2432,7 @@ def collect_stat_data(args, config, log, anonymize=False):
 					for target in json_data['targets']:
 						if target['defenses'][0]['boonStripsTime'] > 99999:
 							player.stats_per_fight[fight_number][stat] = max(player.stats_per_fight[fight_number][stat] - target['defenses'][0]['boonStripsTime'], 0)
-				#print(stat, name)
+				print(stat, name)
 				# add stats of this fight and player to total stats of this fight and player
 				if player.stats_per_fight[fight_number][stat] > 0:
 					# buff are generation squad values, using total over time
@@ -2833,6 +2833,36 @@ def get_stat_from_player_json(player_json, players_running_healing_addon, stat, 
 			return -1
 		return float(player_json['statsAll'][0]['swapCount'])
 
+	if stat == 'receivedCrowdControl':
+		if 'defenses' not in player_json or 'receivedCrowdControl' not in player_json['defenses'][0]:
+			return -1
+		return float(player_json['defenses'][0]['receivedCrowdControl'])
+
+	if stat == 'receivedCrowdControlDuration':
+		if 'defenses' not in player_json or 'receivedCrowdControlDuration' not in player_json['defenses'][0]:
+			return -1
+		return float(player_json['defenses'][0]['receivedCrowdControlDuration'])
+
+	if stat == 'appliedCrowdControl':
+		if 'statsAll' not in player_json or 'appliedCrowdControl' not in player_json['statsAll'][0]:
+			return -1
+		return float(player_json['statsAll'][0]['appliedCrowdControl'])
+
+	if stat == 'appliedCrowdControlDuration':
+		if 'statsAll' not in player_json or 'appliedCrowdControlDuration' not in player_json['statsAll'][0]:
+			return -1
+		return float(player_json['statsAll'][0]['appliedCrowdControlDuration'])
+			
+	if stat == 'stunBreak':
+		if 'support' not in player_json or 'stunBreak' not in player_json['support'][0]:
+			return 0
+		return int(player_json['support'][0]['stunBreak'])
+
+	if stat == 'removedStunDuration':
+		if 'support' not in player_json or 'removedStunDuration' not in player_json['support'][0]:
+			return 0
+		return int(player_json['support'][0]['removedStunDuration'])
+	
 	if stat == 'kills':
 		countKills = 0
 		for target in player_json['statsTargets']:
@@ -3818,7 +3848,7 @@ def get_stats_from_fight_json(fight_json, config, log):
 								enemy_Control[skill_name][player['name']] = enemy_Control[skill_name][player['name']] + float((value/100)*player_combat_time)
 
 		#Track Offensive stats from [statsTarets]
-		statAll = ["totalDamageCount", "directDamageCount", "connectedDirectDamageCount", "connectedDamageCount", "critableDirectDamageCount", "criticalRate", "criticalDmg", "flankingRate", "againstMovingRate", "glanceRate", "missed", "evaded", "blocked", "interrupts", "invulned"]
+		statAll = ["totalDamageCount", "directDamageCount", "connectedDirectDamageCount", "connectedDamageCount", "critableDirectDamageCount", "criticalRate", "criticalDmg", "flankingRate", "againstMovingRate", "glanceRate", "missed", "evaded", "blocked", "interrupts", "invulned", "appliedCrowdControl", "appliedCrowdControlDuration"]
 		#squadDps_prof_name = player['name']
 		#squadDps_profession = player['profession']
 		#squadDps_prof_name = "{{"+squadDps_profession+"}} "+squadDps_name		
