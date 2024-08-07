@@ -49,6 +49,8 @@ if __name__ == '__main__':
 		sys.exit()
 	if args.output_filename is None:
 		args.output_filename = args.input_directory+"/TW5_top_stats_detailed_"+myDate.strftime("%Y%m%d%H%M")+".tid"
+	else:
+		args.output_filename = args.input_directory+"/"+args.output_filename
 	if args.xls_output_filename is None:
 		args.xls_output_filename = args.input_directory+"/TW5_top_stats_detailed.xls"
 	if args.json_output_filename is None:
