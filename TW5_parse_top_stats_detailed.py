@@ -42,11 +42,13 @@ if __name__ == '__main__':
 	parser.add_argument('-a', '--anonymized', dest="anonymize", help="Create an anonymized version of the top stats. All account and character names will be replaced.", default=False, action='store_true')
 	args = parser.parse_args()
 
+	myDate = datetime.datetime.now()
+
 	if not os.path.isdir(args.input_directory):
 		print("Directory ",args.input_directory," is not a directory or does not exist!")
 		sys.exit()
 	if args.output_filename is None:
-		args.output_filename = args.input_directory+"/TW5_top_stats_detailed.tid"
+		args.output_filename = args.input_directory+"/TW5_top_stats_detailed_"+myDate.strftime("%Y%m%d%H%M")+".tid"
 	if args.xls_output_filename is None:
 		args.xls_output_filename = args.input_directory+"/TW5_top_stats_detailed.xls"
 	if args.json_output_filename is None:
@@ -79,14 +81,14 @@ if __name__ == '__main__':
 
 	
 	#Create Tid file header to support drag and drop onto html page
-	myDate = datetime.datetime.now()
+	
 
 	myprint(output, 'created: '+myDate.strftime("%Y%m%d%H%M%S"))
 	myprint(output, 'modified: '+myDate.strftime("%Y%m%d%H%M%S"))
 	myprint(output, 'creator: '+config.summary_creator)
-	myprint(output, 'caption: '+myDate.strftime("%Y%m%d")+'-WvW-Log-Review')
+	myprint(output, 'caption: '+myDate.strftime("%Y%m%d%H%M")+'-WvW-Log-Review')
 	myprint(output, 'tags: Logs [['+myDate.strftime("%Y")+'-'+myDate.strftime("%m")+' Log Reviews]]')
-	myprint(output, 'title: '+myDate.strftime("%Y%m%d")+'-WvW-Log-Review\n')
+	myprint(output, 'title: '+myDate.strftime("%Y%m%d%H%M")+'-WvW-Log-Review\n')
 	#End Tid file header
 
 	
