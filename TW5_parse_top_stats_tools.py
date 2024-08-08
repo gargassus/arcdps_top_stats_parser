@@ -3860,11 +3860,16 @@ def get_stats_from_fight_json(fight_json, config, log):
 			squad_offensive[squadDps_prof_name]['stats']= {}
 			
 		for stat in statAll:
-			if stat not in squad_offensive[squadDps_prof_name]['stats']:
-				squad_offensive[squadDps_prof_name]['stats'][stat] = sum([stats[0][stat] for stats in player['statsTargets']])
+			if stat in player['statsTargets']:
+				if stat not in squad_offensive[squadDps_prof_name]['stats']:
+					squad_offensive[squadDps_prof_name]['stats'][stat] = sum([stats[0][stat] for stats in player['statsTargets']])
+				else:
+					squad_offensive[squadDps_prof_name]['stats'][stat] += sum([stats[0][stat] for stats in player['statsTargets']])
 			else:
-				squad_offensive[squadDps_prof_name]['stats'][stat] += sum([stats[0][stat] for stats in player['statsTargets']])
-
+				if stat not in squad_offensive[squadDps_prof_name]['stats']:
+					squad_offensive[squadDps_prof_name]['stats'][stat] = 0
+				else:
+					squad_offensive[squadDps_prof_name]['stats'][stat] += 0				
 
 		#Instant Revive tracking of downed healing
 		instant_Revive = {55026: 'Glyph of Stars - CA', 69336:"Nature's Renewal", 12601: "Nature's Renewal",  12596: "Nature's Renewal", 14419: 'Battle Standard', 9163: 'Signet of Mercy', 5763: 'Glyph of Renewal', 5762: 'Glyph of Renewal', 5760: 'Glyph of Renewal', 5761: 'Glyph of Renewal', 10611: 'Signet of Undeath', 59510: "Life Transfer", 10527: "Well of Blood", 13849: "Well of Blood", 30504: "Soul Spiral", 30591: "Soul Spiral", 5867: "Toss Elixer R", 6091: "Toss Elixer R"}
