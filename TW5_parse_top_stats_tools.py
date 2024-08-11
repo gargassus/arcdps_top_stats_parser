@@ -3860,7 +3860,7 @@ def get_stats_from_fight_json(fight_json, config, log):
 			squad_offensive[squadDps_prof_name]['stats']= {}
 			
 		for stat in statAll:
-			if stat in player['statsTargets']:
+			if stat in player['statsTargets'][0][0]:
 				if stat not in squad_offensive[squadDps_prof_name]['stats']:
 					squad_offensive[squadDps_prof_name]['stats'][stat] = sum([stats[0][stat] for stats in player['statsTargets']])
 				else:
