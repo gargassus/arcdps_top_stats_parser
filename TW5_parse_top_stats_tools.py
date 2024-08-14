@@ -436,7 +436,8 @@ Heal_Food = {
 	57100: "Bowl of Fruit Salad with Mint Garnish",
 	69105: "Bowl of Mists-Infused Fruit Salad with Mint Garnish",
 	26529: "Delicious Rice Ball",
-	57299: "Plate of Peppercorn-Spiced Poultry Aspic"
+	57299: "Plate of Peppercorn-Spiced Poultry Aspic",
+	57310: "Mint Creme Brulee"
 	}
 Cele_Food = {
 	57165: "Spherified Peppercorn-Spiced Oyster Soup",
