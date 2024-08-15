@@ -377,16 +377,20 @@ if Guild_Data:
 		api_url = "https://api.guildwars2.com/v2/guild/"+Guild_ID+"/members?access_token="+API_Key
 	
 	try:
-		response = requests.get(api_url)
+		response = requests.get(api_url, timeout=5)
 		if response.status_code == requests.codes.ok:
 			response = requests.get(api_url)
 			members = json.loads(response.text)
 			print("response code: "+str(response.status_code))
 			API_response = response.status_code
-	except (requests.exceptions.HTTPError, requests.exceptions.ConnectionError) as e:
-		print(f"Failure - Unable to establish connection: {e}.")
+	except (requests.exceptions.HTTPError, requests.exceptions.ConnectionError, requests.exceptions.Timeout) as e:
+		print(f"API Failure - Unable to establish connection: {e}.")
+		members = {}
+		API_response = " "
 	except Exception as e:
 		print(f"Failure - Unknown error occurred: {e}.")
+		members = {}
+		API_response = " "
 else:
 	members = {}
 	API_response = " "
