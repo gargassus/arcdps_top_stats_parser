@@ -52,11 +52,11 @@ if __name__ == '__main__':
 	else:
 		args.output_filename = args.input_directory+"/"+args.output_filename
 	if args.xls_output_filename is None:
-		args.xls_output_filename = args.input_directory+"/TW5_top_stats_detailed.xls"
+		args.xls_output_filename = args.input_directory+"/TW5_top_stats_detailed_"+myDate.strftime("%Y%m%d%H%M")+".xls"
 	if args.json_output_filename is None:
-		args.json_output_filename = args.input_directory+"/TW5_top_stats_detailed.json"                
+		args.json_output_filename = args.input_directory+"/TW5_top_stats_detailed_"+myDate.strftime("%Y%m%d%H%M")+".json"                
 	if args.log_file is None:
-		args.log_file = args.input_directory+"/log_detailed.txt"
+		args.log_file = args.input_directory+"/log_detailed_"+myDate.strftime("%Y%m%d%H%M")+".txt"
 
 	output = open(args.output_filename, "w",encoding="utf-8")
 	log = open(args.log_file, "w")
