@@ -5615,7 +5615,7 @@ def write_to_json(overall_raid_stats, overall_squad_stats, fights, players, top_
 	#json_dict["top_late_players"] =  {key: value for key, value in top_late_players.items()}
 	#json_dict["top_jack_of_all_trades_players"] =  {key: value for key, value in top_jack_of_all_trades_players.items()}
 	#json_dict["squad_offensive"] =  {key: value for key, value in squad_offensive.items()}
-	json_dict["squad_Control"] =  {key: value for key, value in squad_Control.items()}
+	#json_dict["squad_Control"] =  {key: value for key, value in squad_Control.items()}
 	#json_dict["enemy_Control"] =  {key: value for key, value in enemy_Control.items()}
 	#json_dict["enemy_Control_Player"] =  {key: value for key, value in enemy_Control_Player.items()}
 	#json_dict["uptime_Table"] =  {key: value for key, value in uptime_Table.items()}
@@ -5623,7 +5623,7 @@ def write_to_json(overall_raid_stats, overall_squad_stats, fights, players, top_
 	#json_dict["auras_TableOut"] =  {key: value for key, value in auras_TableOut.items()}
 	#json_dict["auras_TableIn"] =  {key: value for key, value in auras_TableIn.items()}
 	#json_dict["Death_OnTag"] =  {key: value for key, value in Death_OnTag.items()}
-	#json_dict["Attendance"] =  {key: value for key, value in Attendance.items()}
+	json_dict["Attendance"] =  {key: value for key, value in Attendance.items()}
 	#json_dict["DPS_List"] =  {key: value for key, value in DPS_List.items()}
 	#json_dict["CPS_List"] =  {key: value for key, value in CPS_List.items()}
 	#json_dict["SPS_List"] =  {key: value for key, value in SPS_List.items()}
@@ -5635,11 +5635,11 @@ def write_to_json(overall_raid_stats, overall_squad_stats, fights, players, top_
 	#json_dict["Buffs_Personal"] =  {key: value for key, value in buffs_personal.items()}
 	#json_dict["squad_damage_output"] =  {key: value for key, value in squad_damage_output.items()}
 	json_dict["skill_Dict"] =  {key: value for key, value in skill_Dict.items()}
-	json_dict["minion_Data"] =  {key: value for key, value in minion_Data.items()}
+	#json_dict["minion_Data"] =  {key: value for key, value in minion_Data.items()}
 	#json_dict["profModifiers"] =  {key: value for key, value in profModifiers.items()}
 	#json_dict["modifierMap"] =  {key: value for key, value in modifierMap.items()}
 	#json_dict["total_Squad_Skill_Dmg"] =  {key: value for key, value in total_Squad_Skill_Dmg.items()}
-	json_dict["Player_Damage_by_Skill"] =  {key: value for key, value in Player_Damage_by_Skill.items()}
+	#json_dict["Player_Damage_by_Skill"] =  {key: value for key, value in Player_Damage_by_Skill.items()}
 	#json_dict["total_Enemy_Skill_Dmg"] =  {key: value for key, value in total_Enemy_Skill_Dmg.items()}
 	#json_dict["squadDamageMods"] =  {key: value for key, value in squadDamageMods.items()}
 	#json_dict["Plen_Bot_Logs"] =  {key: value for key, value in Plen_Bot_Logs.items()}
