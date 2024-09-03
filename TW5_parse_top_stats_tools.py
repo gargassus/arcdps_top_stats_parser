@@ -2393,7 +2393,7 @@ def collect_stat_data(args, config, log, anonymize=False):
 					if skill_id in downed_skills or skill_id in heal_downed or skill_id in siege_golem or skill_id in generic_exclude:
 						continue
 					#skip auto attack skills
-					if skill_auto:
+					if skill_auto and skill_id != '31796':
 						continue
 					#skip node gathering and finishers
 					if 'Gather' in skill_name or 'Finisher' in skill_name or 'Harvest Plants' in skill_name or 'Unbound Magic' in skill_name:
