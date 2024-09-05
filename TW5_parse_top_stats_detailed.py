@@ -296,17 +296,36 @@ if __name__ == '__main__':
 		myprint(output, "|"+playerName+" | {{"+playerProf +"}} | "+my_value(playerTotal)+"|")
 		myprint(output, "\n\n")
 		myprint(output, "|thead-dark table-hover|k")
-		myprint(output, "|@@display:block;width:75px;Skill Name@@ | Skill Damage| % of Total Damage|h")
+		myprint(output, "|@@display:block;width:50px;Skill Name@@ | Damage| % of Total| Min| Avg| Max| Hit| Con Hit| Crit| Crit Dmg| Casts| Hits/Cast|h")
 		sorted_Player_Damage_by_Skill_Total = OrderedDict(sorted(Player_Damage_by_Skill[item]['Skills'].items(), key = lambda x: x[1], reverse = True))
 		for skill in sorted_Player_Damage_by_Skill_Total:
 			skillIcon=""
 			for skillID in skill_Dict:
 				if skill_Dict[skillID]['name'] == skill:
 					skillIcon = skill_Dict[skillID]['icon']
-			skillDamage = sorted_Player_Damage_by_Skill_Total[skill]
+			skillDamage = sorted_Player_Damage_by_Skill_Total[skill][0]
 			pctTotal = round((skillDamage / playerTotal)*100,2)
+			skill_Min = sorted_Player_Damage_by_Skill_Total[skill][1]
+			skill_Max = sorted_Player_Damage_by_Skill_Total[skill][2]
+			skill_Hit = sorted_Player_Damage_by_Skill_Total[skill][3]
+			skill_connectedHit = sorted_Player_Damage_by_Skill_Total[skill][4]
+			skill_Crit = sorted_Player_Damage_by_Skill_Total[skill][5]
+			skill_CritDmg = sorted_Player_Damage_by_Skill_Total[skill][6]
+			skill_Casts = sorted_Player_Damage_by_Skill_Total[skill][7]
+			if skill_connectedHit > 0:
+				skill_Avg =int(round((skillDamage / skill_connectedHit),0))
+			else:
+				skill_Avg = 0
+			if skill_connectedHit > 0:
+				skill_CritRate = round((skill_Crit / skill_connectedHit)*100,2)
+			else:
+				skill_CritRate = 0.00
+			if skill_Casts >0 and skill_Hit > 0:
+				skill_HitsPerCast = round((skill_Hit / skill_Casts),1)
+			else:
+				skill_HitsPerCast = 0
 
-			myprint(output, "|[img width=24 ["+skillIcon+"]] "+skill+" | "+my_value(skillDamage)+"| "+my_value(pctTotal)+"%|")
+			myprint(output, "|[img width=24 ["+skillIcon+"]] "+skill+" | "+my_value(skillDamage)+"| "+my_value(pctTotal)+"%| "+my_value(skill_Min)+"| "+my_value(skill_Avg)+"| "+my_value(skill_Max)+"| "+my_value(skill_Hit)+"| "+my_value(skill_connectedHit)+"| "+my_value(skill_CritRate)+"%| "+my_value(skill_CritDmg)+"| "+my_value(skill_Casts)+"| "+my_value(skill_HitsPerCast)+"|")
 		myprint(output, "\n")
 		myprint(output, "---")
 		myprint(output, "\n</div>\n")
@@ -1277,7 +1296,7 @@ if __name__ == '__main__':
 		top_percentage_stat_players[stat],comparison_val = get_top_percentage_players(players, config, stat, StatType.PERCENTAGE, num_used_fights, top_consistent_stat_players[stat], top_total_stat_players[stat], list(), list())
 		myprint(output, "</$reveal>\n")
 	myprint(output, "</$reveal>\n")	
-	write_to_json(overall_raid_stats, overall_squad_stats, fights, players, top_total_stat_players, top_average_stat_players, top_consistent_stat_players, top_percentage_stat_players, top_late_players, top_jack_of_all_trades_players, squad_offensive, squad_Control, enemy_Control, enemy_Control_Player, downed_Healing, uptime_Table, stacking_uptime_Table, auras_TableIn, auras_TableOut, Death_OnTag, Attendance, DPS_List, CPS_List, SPS_List, HPS_List, DPSStats, args.json_output_filename)
+	write_to_json(overall_raid_stats, overall_squad_stats, fights, players, top_total_stat_players, top_average_stat_players, top_consistent_stat_players, top_percentage_stat_players, top_late_players, top_jack_of_all_trades_players, squad_offensive, squad_Control, enemy_Control, enemy_Control_Player, downed_Healing, uptime_Table, stacking_uptime_Table, auras_TableIn, auras_TableOut, Death_OnTag, Attendance, DPS_List, CPS_List, SPS_List, HPS_List, DPSStats, Player_Damage_by_Skill, args.json_output_filename)
 
 	#print table of accounts that fielded support characters
 	myprint(output,'<$reveal type="match" state="$:/state/curTab" text="Support">')

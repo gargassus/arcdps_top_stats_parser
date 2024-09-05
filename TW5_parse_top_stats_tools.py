@@ -3695,6 +3695,12 @@ def get_stats_from_fight_json(fight_json, config, log):
 				else:
 					skill_name = 'Skill-'+str(skill_id)            
 				skill_dmg = skill_used['totalDamage']
+				skill_min = skill_used['min']
+				skill_max = skill_used['max']
+				skill_hits = skill_used['hits']
+				skill_connectedHits = skill_used['connectedHits']
+				skill_crit = skill_used['crit']
+				skill_critDamage = skill_used['critDamage']
 				if skill_name not in squad_skill_dmg:
 					squad_skill_dmg[skill_name] = skill_dmg
 				else:
@@ -3704,8 +3710,32 @@ def get_stats_from_fight_json(fight_json, config, log):
 				else:
 					total_Squad_Skill_Dmg[skill_name] = total_Squad_Skill_Dmg[skill_name] +skill_dmg
 
+				#Count number of skill casts
+				skill_casts = 0
+				for skill in player['rotation']:
+					check_Skill = skill['id']
+					if check_Skill == 72992:	#Adjust Spearmarshal's support damage ID for cast ID
+						check_Skill = 74290
+					if check_Skill == skill_id:
+						skill_casts = len(skill['skills'])
+						break
+
                 #Collect damage by skill for each player
-				Player_Damage_by_Skill[squadDps_prof_name]['Skills'][skill_name] = Player_Damage_by_Skill[squadDps_prof_name]['Skills'].get(skill_name, 0) + skill_dmg
+				if skill_name not in Player_Damage_by_Skill[squadDps_prof_name]['Skills']:
+					Player_Damage_by_Skill[squadDps_prof_name]['Skills'][skill_name] = [0,0,0,0,0,0,0,0]
+
+				Player_Damage_by_Skill[squadDps_prof_name]['Skills'][skill_name][0]+=skill_dmg
+				if Player_Damage_by_Skill[squadDps_prof_name]['Skills'][skill_name][1] == 0 or skill_min <= Player_Damage_by_Skill[squadDps_prof_name]['Skills'][skill_name][1]:
+					Player_Damage_by_Skill[squadDps_prof_name]['Skills'][skill_name][1]=skill_min
+				if Player_Damage_by_Skill[squadDps_prof_name]['Skills'][skill_name][2] == 0 or skill_max >= Player_Damage_by_Skill[squadDps_prof_name]['Skills'][skill_name][2]:
+					Player_Damage_by_Skill[squadDps_prof_name]['Skills'][skill_name][2]=skill_max
+				Player_Damage_by_Skill[squadDps_prof_name]['Skills'][skill_name][3]+=skill_hits
+				Player_Damage_by_Skill[squadDps_prof_name]['Skills'][skill_name][4]+=skill_connectedHits
+				Player_Damage_by_Skill[squadDps_prof_name]['Skills'][skill_name][5]+=skill_crit
+				Player_Damage_by_Skill[squadDps_prof_name]['Skills'][skill_name][6]+=skill_critDamage
+				if Player_Damage_by_Skill[squadDps_prof_name]['Skills'][skill_name][7] == 0:
+					Player_Damage_by_Skill[squadDps_prof_name]['Skills'][skill_name][7]+=skill_casts
+				#Player_Damage_by_Skill[squadDps_prof_name]['Skills'][skill_name] = Player_Damage_by_Skill[squadDps_prof_name]['Skills'].get(skill_name, 0) + skill_dmg
 				Player_Damage_by_Skill[squadDps_prof_name]['Total'] += skill_dmg
 
 				#Collect Offensive Battle Standard Data
@@ -5602,7 +5632,7 @@ def write_TotalBoon_bar_chart(players, myDate, input_directory):
 #end write Total Boon Bar chart
 	
 #end Total Boon Bar Chart
-def write_to_json(overall_raid_stats, overall_squad_stats, fights, players, top_total_stat_players, top_average_stat_players, top_consistent_stat_players, top_percentage_stat_players, top_late_players, top_jack_of_all_trades_players, squad_offensive, squad_Control, enemy_Control, enemy_Control_Player, downed_Healing, uptime_Table, stacking_uptime_Table, auras_Tablein, auras_TableOut, Death_OnTag, Attendance, DPS_List, CPS_List, SPS_List, HPS_List, DPSStats, output_file):
+def write_to_json(overall_raid_stats, overall_squad_stats, fights, players, top_total_stat_players, top_average_stat_players, top_consistent_stat_players, top_percentage_stat_players, top_late_players, top_jack_of_all_trades_players, squad_offensive, squad_Control, enemy_Control, enemy_Control_Player, downed_Healing, uptime_Table, stacking_uptime_Table, auras_Tablein, auras_TableOut, Death_OnTag, Attendance, DPS_List, CPS_List, SPS_List, HPS_List, DPSStats, Player_Damage_by_Skill, output_file):
 	json_dict = {}
 	json_dict["overall_raid_stats"] = {key: value for key, value in overall_raid_stats.items()}
 	json_dict["overall_squad_stats"] = {key: value for key, value in overall_squad_stats.items()}
@@ -5639,7 +5669,7 @@ def write_to_json(overall_raid_stats, overall_squad_stats, fights, players, top_
 	#json_dict["profModifiers"] =  {key: value for key, value in profModifiers.items()}
 	#json_dict["modifierMap"] =  {key: value for key, value in modifierMap.items()}
 	#json_dict["total_Squad_Skill_Dmg"] =  {key: value for key, value in total_Squad_Skill_Dmg.items()}
-	#json_dict["Player_Damage_by_Skill"] =  {key: value for key, value in Player_Damage_by_Skill.items()}
+	json_dict["Player_Damage_by_Skill"] =  {key: value for key, value in Player_Damage_by_Skill.items()}
 	#json_dict["total_Enemy_Skill_Dmg"] =  {key: value for key, value in total_Enemy_Skill_Dmg.items()}
 	#json_dict["squadDamageMods"] =  {key: value for key, value in squadDamageMods.items()}
 	#json_dict["Plen_Bot_Logs"] =  {key: value for key, value in Plen_Bot_Logs.items()}
