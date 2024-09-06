@@ -3742,6 +3742,8 @@ def get_stats_from_fight_json(fight_json, config, log):
 			for skill_cast in player['rotation']:
 				skill_id = skill_cast['id']
 				skill_name = skill_Dict[str(skill_id)]['name']
+				if skill_id == 72992:	#Adjust Spearmarshal's support damage ID for cast ID
+					skill_id = 74290
 				if skill_name in Player_Damage_by_Skill[squadDps_prof_name]['Skills'].keys():
 					skill_casts = len(skill_cast['skills'])
 					Player_Damage_by_Skill[squadDps_prof_name]['Skills'][skill_name][7]+=skill_casts
