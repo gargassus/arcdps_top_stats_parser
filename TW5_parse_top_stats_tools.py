@@ -3690,7 +3690,6 @@ def get_stats_from_fight_json(fight_json, config, log):
 				if skill_id in SiegeSkills:
 					continue            
 				if str(skill_id) in skill_Dict:
-					#skill_name = skill_Dict[str(skill_id)]
 					skill_name = skill_Dict[str(skill_id)]['name']
 				else:
 					skill_name = 'Skill-'+str(skill_id)            
@@ -3710,16 +3709,6 @@ def get_stats_from_fight_json(fight_json, config, log):
 				else:
 					total_Squad_Skill_Dmg[skill_name] = total_Squad_Skill_Dmg[skill_name] +skill_dmg
 
-				#Count number of skill casts
-				skill_casts = 0
-				for skill in player['rotation']:
-					check_Skill = skill['id']
-					if check_Skill == 72992:	#Adjust Spearmarshal's support damage ID for cast ID
-						check_Skill = 74290
-					if check_Skill == skill_id:
-						skill_casts = len(skill['skills'])
-						break
-
                 #Collect damage by skill for each player
 				if skill_name not in Player_Damage_by_Skill[squadDps_prof_name]['Skills']:
 					Player_Damage_by_Skill[squadDps_prof_name]['Skills'][skill_name] = [0,0,0,0,0,0,0,0]
@@ -3733,9 +3722,6 @@ def get_stats_from_fight_json(fight_json, config, log):
 				Player_Damage_by_Skill[squadDps_prof_name]['Skills'][skill_name][4]+=skill_connectedHits
 				Player_Damage_by_Skill[squadDps_prof_name]['Skills'][skill_name][5]+=skill_crit
 				Player_Damage_by_Skill[squadDps_prof_name]['Skills'][skill_name][6]+=skill_critDamage
-				if Player_Damage_by_Skill[squadDps_prof_name]['Skills'][skill_name][7] == 0:
-					Player_Damage_by_Skill[squadDps_prof_name]['Skills'][skill_name][7]+=skill_casts
-				#Player_Damage_by_Skill[squadDps_prof_name]['Skills'][skill_name] = Player_Damage_by_Skill[squadDps_prof_name]['Skills'].get(skill_name, 0) + skill_dmg
 				Player_Damage_by_Skill[squadDps_prof_name]['Total'] += skill_dmg
 
 				#Collect Offensive Battle Standard Data
@@ -3749,11 +3735,19 @@ def get_stats_from_fight_json(fight_json, config, log):
 						for item in skillData:
 							battle_Standard[squadDps_prof_name][item]+=skillData[item]
 
+		if 'rotation' in player:
+			squadDps_name = player['name']
+			squadDps_profession = player['profession']
+			squadDps_prof_name = "{{"+squadDps_profession+"}} "+squadDps_name			
+			for skill_cast in player['rotation']:
+				skill_id = skill_cast['id']
+				skill_name = skill_Dict[str(skill_id)]['name']
+				if skill_name in Player_Damage_by_Skill[squadDps_prof_name]['Skills'].keys():
+					skill_casts = len(skill_cast['skills'])
+					Player_Damage_by_Skill[squadDps_prof_name]['Skills'][skill_name][7]+=skill_casts
 
 		#Collect Spike Damage for first 60 seconds of each fight
 		sec_dmg = 0
-		#fight_name = fight_json['timeEnd'].split(" -",1)[0]
-		#squad_damage_output[fight_name] = {}
 		for idx, damage in enumerate(player['damage1S'][0]):
 			if damage > sec_dmg:
 				if idx in squad_damage_output[fight_name]:
