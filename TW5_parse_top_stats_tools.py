@@ -854,34 +854,35 @@ def sort_players_by_average(players, stat_name):
 
 
 
-# Input:
-# players = list of Players
-# config = the configuration being used to determine top players
-# stat = which stat are we considering
-# total_or_consistent_or_average = enum StatType, either StatType.TOTAL, StatType.CONSISTENT or StatType.AVERAGE, we are getting the players with top total values, top consistency values, or top average values.
-# Output:
 # list of player indices getting a consistency / total / average award
 def get_top_players(players, config, stat, total_or_consistent_or_average):
+    """
+    Get the players that have the top total, consistency, or average values in a given stat.
+
+    Args:
+        players (list[Player]): List of all Players.
+        config (Config): The configuration being used to determine top players.
+        stat (str): The stat that is being considered.
+        total_or_consistent_or_average (StatType): The type of stat that is being considered.
+
+    Returns:
+        list[int]: List of player indices that get a consistency / total / average award.
+    """
+    
     percentage = 0.
     sorted_index = []
-    if total_or_consistent_or_average == StatType.TOTAL and stat != 'dmg':
-        percentage = float(config.portion_of_top_for_total)
-        sorted_index = sort_players_by_total(players, stat)
-    elif total_or_consistent_or_average == StatType.TOTAL and stat == 'dmg':
-        percentage = float(config.portion_of_topDamage_for_total)
-        sorted_index = sort_players_by_total(players, stat)		
-    elif total_or_consistent_or_average == StatType.CONSISTENT:
-        percentage = float(config.portion_of_top_for_consistent)
-        sorted_index = sort_players_by_consistency(players, stat)
-    elif total_or_consistent_or_average == StatType.AVERAGE and stat != 'dmg':
-        percentage = float(config.portion_of_top_for_average)
-        sorted_index = sort_players_by_average(players, stat)        
-    elif total_or_consistent_or_average == StatType.AVERAGE and stat == 'dmg':
-        percentage = float(config.portion_of_topDamage_for_total)
-        sorted_index = sort_players_by_average(players, stat)        
-    else:
-        print("ERROR: Called get_top_players for stats that are not total or consistent")
-        return        
+    percentage_config_name = {
+        StatType.TOTAL: 'portion_of_top_for_total' if stat != 'dmg' else 'portion_of_topDamage_for_total',
+        StatType.CONSISTENT: 'portion_of_top_for_consistent',
+        StatType.AVERAGE: 'portion_of_top_for_average' if stat != 'dmg' else 'portion_of_topDamage_for_total',
+    }[total_or_consistent_or_average]
+    percentage = float(getattr(config, percentage_config_name))
+    sort_by = {
+        StatType.TOTAL: sort_players_by_total,
+        StatType.CONSISTENT: sort_players_by_consistency,
+        StatType.AVERAGE: sort_players_by_average,
+    }[total_or_consistent_or_average]
+    sorted_index = sort_by(players, stat)
         
     if config.player_sorting_stat_type == 'average':
         top_value = players[sorted_index[0][0]].average_stats[stat]
