@@ -700,60 +700,58 @@ def reset_globals():
 	Cmd_Tags = {}
 
 		
-# For all players considered to be top in stat in this fight, increase
-# the number of fights they reached top by 1 (i.e. increase
-# consistency_stats[stat]).
-# Input:
-# players = list of all players
-# sortedList = list of player names+profession, stat_value sorted by stat value in this fight
-# config = configuration to use
-# stat = stat that is considered
-def increase_top_x_reached(players, sortedList, config, stat):
+def increase_top_x_reached(players, sorted_list, config, stat):
+	'''
+	For all players considered to be top in stat in this fight, increase
+	the number of fights they reached top by 1 (i.e. increase
+	consistency_stats[stat]).
+
+	Input:
+	players = list of all players
+	sortedList = list of player names+profession, stat_value sorted by stat value in this fight
+	config = configuration to use
+	stat = stat that is considered
+
+	'''
+	# initialize variables
 	valid_values = 0
-	# filter out com for dist to tag
+	i = 0
+	last_value = 0
+
+	# special case for distance to tag
 	if stat == 'dist':
-		# different for dist
 		first_valid = True
-		i = 0
-		last_val = 0
-		while i < len(sortedList) and (valid_values < (len(sortedList)*config.num_players_considered_top)+1 or sortedList[i][1] == last_val):
-			# sometimes dist is -1, filter these out
-			if sortedList[i][1] >= 0:
-				# first valid dist is the comm, don't consider
+		while i < len(sorted_list) and (valid_values < (len(sorted_list) * config.num_players_considered_top) + 1 or sorted_list[i][1] == last_value):
+			if sorted_list[i][1] >= 0:
 				if first_valid:
-					first_valid  = False
+					first_valid = False
 				else:
-					players[sortedList[i][0]].consistency_stats[stat] += 1
+					players[sorted_list[i][0]].consistency_stats[stat] += 1
 					valid_values += 1
-			last_val = sortedList[i][1]
+			last_value = sorted_list[i][1]
 			i += 1
 		return
 
-	# total value doesn't need to be > 0 for deaths
+	# special case for deaths
 	elif stat == 'deaths':
-		i = 0
-		last_val = 0
-		while i < len(sortedList) and (valid_values < (len(sortedList)*config.num_players_considered_top) or sortedList[i][1] == last_val):
-			if sortedList[i][1] < 0:
+		while i < len(sorted_list) and (valid_values < (len(sorted_list) * config.num_players_considered_top) or sorted_list[i][1] == last_value):
+			if sorted_list[i][1] < 0:
 				i += 1
 				continue
-			if sortedList[i][1] == 0:
-				players[sortedList[i][0]].consistency_stats[stat] += 1
-				last_val = sortedList[i][1]
+			if sorted_list[i][1] == 0:
+				players[sorted_list[i][0]].consistency_stats[stat] += 1
+				last_value = sorted_list[i][1]
 			i += 1
 			valid_values += 1
 		return
-	
-	
+
 	# increase top stats reached for the first num_players_considered_top players
-	i = 0
-	last_val = 0
-	while i < len(sortedList) and (valid_values < (len(sortedList)*config.num_players_considered_top) or sortedList[i][1] == last_val) and players[sortedList[i][0]].total_stats[stat] > 0:
-		if sortedList[i][1] < 0 or (sortedList[i][1] == 0 and stat != 'dmg_taken'):
+	while i < len(sorted_list) and (valid_values < (len(sorted_list) * config.num_players_considered_top) or sorted_list[i][1] == last_value) and players[sorted_list[i][0]].total_stats[stat] > 0:
+		if sorted_list[i][1] < 0 or (sorted_list[i][1] == 0 and stat != 'dmg_taken'):
 			i += 1
 			continue
-		players[sortedList[i][0]].consistency_stats[stat] += 1
-		last_val = sortedList[i][1]
+		players[sorted_list[i][0]].consistency_stats[stat] += 1
+		last_value = sorted_list[i][1]
 		i += 1
 		valid_values += 1
 	return
