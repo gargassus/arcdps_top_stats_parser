@@ -527,8 +527,9 @@ def print_to_file(file, string):
 
 
 # JEL - format a number with commas every thousand
-def my_value(number):
-	return ("{:,}".format(number))
+def my_value(number: int) -> str:
+    """Format a number with commas every thousand."""
+    return "{:,}".format(number)
 
 
 # fills a Config with the given input    
