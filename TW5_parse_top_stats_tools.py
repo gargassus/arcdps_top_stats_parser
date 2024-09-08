@@ -474,53 +474,48 @@ DPS_Utility = {
 	34211: "Tin of Fruitcake"
 	}
 
-def find_sub_type(player, fightTime):
-	supportProf = ["Tempest", "Scrapper", "Druid", "Chronomancer", "Vindicator", "Firebrand", "Spectre", "Spellbreaker", "Willbender", "Guardian", "Berserker"]
-	if player['profession'] not in supportProf:
+def find_sub_type(player: dict) -> str:
+    """Determine the subtype of a given player based on their profession, consumables, and stats."""
+    support_professions = ["Tempest", "Scrapper", "Druid", "Chronomancer", "Vindicator", "Firebrand", "Spectre", "Spellbreaker", "Willbender", "Guardian", "Berserker"]
 
-		playerDamage = 0
-		playerPowerDamage = 0
-		playerCondiDamage = 0
-		for target in player['dpsTargets']:
-			playerDamage += target[0]['damage']
-			playerPowerDamage += target[0]['powerDamage']
-			playerCondiDamage += target[0]['condiDamage']
+    if player["profession"] not in support_professions:
+        # Calculate total damage, power damage, and condi damage
+        total_damage = 0
+        power_damage = 0
+        condi_damage = 0
+        for target in player["dpsTargets"]:
+            total_damage += target[0]["damage"]
+            power_damage += target[0]["powerDamage"]
+            condi_damage += target[0]["condiDamage"]
 
-		if 'consumables' in player:
-			for item in player['consumables']:
-				if item['id'] in Cele_Food:
-					return "Cele"
-				
-		# If a player is predominantly condi damage
-		if playerCondiDamage > playerPowerDamage:
-			return "Condi"
-		
-		# assume DPS on a nonSupport profession
-		else:
-			return "Dps"
-		
-	criticalCount = sum([stats[0]['criticalRate'] for stats in player['statsTargets']])
-	critableCount = sum([stats[0]['critableDirectDamageCount'] for stats in player['statsTargets']])
-	critPercent = criticalCount / critableCount if critableCount else 0
+        # If a player is predominantly condi damage
+        if condi_damage > power_damage:
+            return "Condi"
 
-	#adjusted consumable search since food and utility can reside in any consumable slot
-	if 'consumables' in player:
-		for item in player['consumables']:
-			if item['id'] in Cele_Food:
-				return "Cele"
-		for item in player['consumables']:			
-			if item['id'] in Heal_Food or item['id'] in Heal_Utility:
-				return "Support" 
-		for item in player['consumables']:			
-			if item['id'] in DPS_Food or item['id'] in DPS_Utility:
-				return "Dps"
+        # Assume DPS on a non-support profession
+        return "Dps"
 
-	# Only healers should have a crit % lower than 40%
-	if critPercent <= 0.4:
-		return "Support"
-	
-	# If all other detection fails, fallback to assuming DPS like before
-	return "Dps"
+    # Calculate critical hit percentage
+    critical_count = sum([stats[0]["criticalRate"] for stats in player["statsTargets"]])
+    critable_count = sum([stats[0]["critableDirectDamageCount"] for stats in player["statsTargets"]])
+    crit_percentage = critical_count / critable_count if critable_count else 0
+
+    # Search consumables for Cele, Heal, or DPS food/utility
+    if "consumables" in player:
+        for item in player["consumables"]:
+            if item["id"] in Cele_Food:
+                return "Cele"
+            if item["id"] in Heal_Food or item["id"] in Heal_Utility:
+                return "Support"
+            if item["id"] in DPS_Food or item["id"] in DPS_Utility:
+                return "Dps"
+
+    # Only healers should have a crit % lower than 40%
+    if crit_percentage <= 0.4:
+        return "Support"
+
+    # If all other detection fails, fallback to assuming DPS like before
+    return "Dps"
 #end define subtype based on consumables
 
 
@@ -2185,7 +2180,7 @@ def collect_stat_data(args, config, log, anonymize=False):
 
 			player = players[player_index[name_and_prof]]
 
-			playerRole=find_sub_type(player_data, 1)
+			playerRole=find_sub_type(player_data)
 			playerRoleActiveTime = get_stat_from_player_json(player_data, players_running_healing_addon, 'time_active', config)
 
 			if profession+' '+playerRole not in prof_role_skills:
@@ -2555,7 +2550,7 @@ def collect_stat_data(args, config, log, anonymize=False):
 			player.swapped_build |= build_swapped
 			player.stats_per_fight[fight_number]['fight_duration'] = fight.duration
 			player.stats_per_fight[fight_number]['allies'] = fight.squad
-			player.stats_per_fight[fight_number]['role'] = find_sub_type(player_data, fight.duration)
+			player.stats_per_fight[fight_number]['role'] = find_sub_type(player_data)
 
 
 		# create lists sorted according to stats
@@ -3067,7 +3062,7 @@ def calculate_dps_stats(fight_json, fight, players_running_healing_addon, config
 			continue
 
 		player_combat_time[player_prof_name] = time_in_combat
-		player_roles[player_prof_name] = find_sub_type(player, time_in_combat)
+		player_roles[player_prof_name] = find_sub_type(player)
 
 		if 'dead' in player['combatReplayData'] and len(player['combatReplayData']['dead']) > 0 and (time_in_combat / fight.duration) < 0.4:
 			skip_fight[player_prof_name] = True
@@ -4106,7 +4101,7 @@ def get_stats_from_fight_json(fight_json, config, log):
 		if time_in_combat == 0:
 			continue
 
-		player_role = find_sub_type(player, time_in_combat)
+		player_role = find_sub_type(player)
 		player_prof_role = player_prof+" "+player_role
 
 		if Guild_Data:
@@ -4335,7 +4330,7 @@ def get_stats_from_fight_json(fight_json, config, log):
 		playerHeals = 0						
 		name = player['name']
 		acct = player['account']
-		sub_type = player['profession'] + "_" + find_sub_type(player, durationMS / 1000)
+		sub_type = player['profession'] + "_" + find_sub_type(player)
 		prof = sub_type
 		prof_name = sub_type+"\n"+name
 		for target in player['dpsTargets']:
