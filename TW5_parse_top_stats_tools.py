@@ -701,18 +701,19 @@ def reset_globals():
 
         
 def increase_top_x_reached(players, sorted_list, config, stat):
-    '''
+    """
     For all players considered to be top in stat in this fight, increase
     the number of fights they reached top by 1 (i.e. increase
     consistency_stats[stat]).
 
-    Input:
-    players = list of all players
-    sortedList = list of player names+profession, stat_value sorted by stat value in this fight
+    Args:
+    players (list) = list of all players
+    sortedList (list)= list of player names+profession, stat_value sorted by stat value in this fight
     config = configuration to use
-    stat = stat that is considered
+    stat (str) = stat that is considered
 
-    '''
+    """
+
     # initialize variables
     valid_values = 0
     i = 0
@@ -760,16 +761,17 @@ def increase_top_x_reached(players, sorted_list, config, stat):
 
 
 def sort_players_by_value_in_fight(players, stat, fight_num):
-    '''
+    """
     Sort the list of players by total value in stat for the given fight
     
-    Input:
-    players = list of all Players
-    stat = stat that is considered
-    fight_num = number of the fight that is considered
-    Output:
-    list of player index and total stat value, sorted by total stat value
-    '''
+    Args:
+    players (list): list of all Players
+    stat (str): stat that is considered
+    fight_num: number of the fight that is considered
+
+    Returns:
+    list: List of player index and total stat value, sorted by total stat value
+    """
 
     decorated = [(player.stats_per_fight[fight_num][stat], i, player) for i, player in enumerate(players)]
     if stat in ('dist', 'dmg_taken', 'deaths'):
@@ -806,11 +808,19 @@ def sort_players_by_total_value(players, stat):
 # stat = stat that is considered
 # Output:
 # list of player index and consistency stat value, sorted by consistency stat value (how often was top x reached)
-def sort_players_by_consistency(players, stat):
-    decorated = [(player.consistency_stats[stat], player.total_stats[stat], i, player) for i, player in enumerate(players)]
-    decorated.sort(reverse=True)    
-    sorted_by_consistency = [(i, consistency) for consistency, total, i, player in decorated]
-    return sorted_by_consistency
+def sort_players_by_consistency(players, stat_name):
+    """Sort the list of players by consistency value in stat_name.
+
+    Args:
+        players (list[Player]): List of all Players.
+        stat_name (str): Stat that is considered.
+
+    Returns:
+        list[tuple[int, int]]: List of player index and consistency stat value, sorted by consistency stat value.
+    """
+    decorated = [(player.consistency_stats[stat_name], i) for i, player in enumerate(players)]
+    decorated.sort(reverse=True)
+    return [(i, consistency) for consistency, i in decorated]
 
 
 # sort the list of players by percentage value in stat
