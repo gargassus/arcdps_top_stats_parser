@@ -783,7 +783,7 @@ def sort_players_by_value_in_fight(players, stat, fight_num):
 
 
 
-def sort_players_by_total_value(players, stat):
+def sort_players_by_total(players, stat):
     """
     Sort the list of players by total value in stat.
 
@@ -803,11 +803,6 @@ def sort_players_by_total_value(players, stat):
 
 
 # sort the list of players by consistency value in stat
-# Input:
-# players = list of all Players
-# stat = stat that is considered
-# Output:
-# list of player index and consistency stat value, sorted by consistency stat value (how often was top x reached)
 def sort_players_by_consistency(players, stat_name):
     """Sort the list of players by consistency value in stat_name.
 
@@ -824,11 +819,6 @@ def sort_players_by_consistency(players, stat_name):
 
 
 # sort the list of players by percentage value in stat
-# Input:
-# players = list of all Players
-# stat = stat that is considered
-# Output:
-# list of player index and percentage stat value, sorted by percentage stat value (how often was top x reached / number of fights attended)
 def sort_players_by_percentage(players, stat_name):
     """Sort the list of players by percentage value in stat_name.
 
@@ -845,19 +835,22 @@ def sort_players_by_percentage(players, stat_name):
 
 
 # sort the list of players by average value in stat
-# Input:
-# players = list of all Players
-# stat = stat that is considered
-# Output:
-# list of player index and average stat value, sorted by average stat value ( total stat value / duration of fights attended)
-def sort_players_by_average(players, stat):
-    decorated = [(player.average_stats[stat], player.consistency_stats[stat], player.total_stats[stat], i, player) for i, player in enumerate(players)]                
-    if stat == 'dist' or stat == 'dmg_taken' or stat == 'deaths':
+def sort_players_by_average(players, stat_name):
+    """Sort the list of players by average value in stat_name.
+
+    Args:
+        players (list[Player]): List of all Players.
+        stat_name (str): Stat that is considered.
+
+    Returns:
+        list[tuple[int, float]]: List of player index and average stat value, sorted by average stat value.
+    """
+    decorated = [(player.average_stats[stat_name], i) for i, player in enumerate(players)]
+    if stat_name in ['dist', 'dmg_taken', 'deaths']:
         decorated.sort()
     else:
-        decorated.sort(reverse=True)    
-    sorted_by_average = [(i, average) for average, consistency, total, i, player in decorated]
-    return sorted_by_average
+        decorated.sort(reverse=True)
+    return [(i, average) for average, i in decorated]
 
 
 
