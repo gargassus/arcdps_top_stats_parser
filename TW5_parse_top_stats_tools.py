@@ -1008,15 +1008,20 @@ def get_professions_and_length(players, indices, config):
 
 
 # Get and write the top x people who achieved top y in stat most often.
-# Input:
-# players = list of Players
-# config = the configuration being used to determine the top consistent players
-# num_used_fights = the number of fights that are being used in stat computation
-# stat = which stat are we considering
-# output_file = the file to write the output to
-# Output:
-# list of player indices that got a top consistency award
 def get_and_write_sorted_top_consistent(players, config, num_used_fights, stat, output_file):
+    """
+    Get and write the top x people who achieved top y in stat most often.
+
+    Args:
+        players (list[Player]): List of all Players.
+        config (Config): The configuration being used to determine the top consistent players.
+        num_used_fights (int): The number of fights that are being used in stat computation.
+        stat (str): Which stat are we considering.
+        output_file (str): The file to write the output to.
+
+    Returns:
+        list[int]: List of player indices that got a top consistency award.
+    """
     top_consistent_players = get_top_players(players, config, stat, StatType.CONSISTENT)
     write_sorted_top_consistent_or_avg(players, top_consistent_players, config, num_used_fights, stat, StatType.CONSISTENT, output_file)
     return top_consistent_players
@@ -1024,15 +1029,20 @@ def get_and_write_sorted_top_consistent(players, config, num_used_fights, stat, 
 
 
 # Get and write the people who achieved top x average in stat
-# Input:
-# players = list of Players
-# config = the configuration being used to determine the top consistent players
-# num_used_fights = the number of fights that are being used in stat computation
-# stat = which stat are we considering
-# output_file = the file to write the output to
-# Output:
-# list of player indices that got a top consistency award
 def get_and_write_sorted_average(players, config, num_used_fights, stat, output_file):
+    """
+    Get and write the people who achieved top x average in stat
+
+    Args:
+        players (list[Player]): List of all Players.
+        config (Config): The configuration being used to determine the top consistent players.
+        num_used_fights (int): The number of fights that are being used in stat computation.
+        stat (str): Which stat are we considering.
+        output_file (str): The file to write the output to.
+
+    Returns:
+        list[int]: List of player indices that got a top consistency award.
+    """
     top_average_players = get_top_players(players, config, stat, StatType.AVERAGE)
     write_sorted_top_consistent_or_avg(players, top_average_players, config, num_used_fights, stat, StatType.AVERAGE, output_file)
     return top_average_players
@@ -1041,17 +1051,23 @@ def get_and_write_sorted_average(players, config, num_used_fights, stat, output_
 
 #JEL - Modified for TW5 Output
 # Write the top x people who achieved top y in stat most often.
-# Input:
-# players = list of Players
-# top_consistent_players = list of Player indices considered top consistent players
-# config = the configuration being used to determine the top consistent players
-# num_used_fights = the number of fights that are being used in stat computation
-# stat = which stat are we considering
-# output_file = the file to write the output to
-# Output:
-# list of player indices that got a top consistency award
 def write_sorted_top_consistent_or_avg(players, top_consistent_players, config, num_used_fights, stat, consistent_or_avg, output_file):
 
+    """
+    Write the top x people who achieved top y in stat most often.
+
+    Args:
+        players (list[Player]): List of all Players.
+        top_consistent_players (list[int]): List of player indices considered top consistent players.
+        config (Config): The configuration being used to determine the top consistent players.
+        num_used_fights (int): The number of fights that are being used in stat computation.
+        stat (str): Which stat are we considering.
+        consistent_or_avg (StatType): The type of stat that is being considered.
+        output_file (str): The file to write the output to.
+
+    Returns:
+        list[int]: List of player indices that got a top consistency award.
+    """
     profession_strings, profession_length = get_professions_and_length(players, top_consistent_players, config)
 
     if consistent_or_avg == StatType.CONSISTENT:
@@ -1089,19 +1105,24 @@ def write_sorted_top_consistent_or_avg(players, top_consistent_players, config, 
     place = 0
     last_val = 0
     # print table
-    for i in range(len(top_consistent_players)):
-        player = players[top_consistent_players[i]]
-        #if player.duration_in_combat > 0:
-        #	combat_Time = int(player.duration_in_combat)
-        #else:
-        #	combat_Time = int(player.duration_fights_present)
+    for i, player_index in enumerate(top_consistent_players):
+        player = players[player_index]
+
         if player.consistency_stats[stat] != last_val:
             place += 1
-        nameWithTooltip = '<span data-tooltip="'+player.account+'">'+player.name+'</span>'
-        print_string = "|"+str(place)+". |"+nameWithTooltip+" | {{"+profession_strings[i]+"}} | "+str(player.num_fights_present)+" | "+my_value(round(player.consistency_stats[stat]))+" |"
-        if stat == 'dmg_taken':
-            print_string += " "+my_value(round(player.total_stats[stat],1))+"| "+my_value(round(player.average_stats[stat]))+"|"
+        last_val = player.consistency_stats[stat]
 
+        name_with_tooltip = f'<span data-tooltip="{player.account}">{player.name}</span>'
+        prof_string = "{{"+profession_strings[i]+"}}"
+        print_string = (
+            f"|{place}. |{name_with_tooltip} | {prof_string} | "
+            f"{player.num_fights_present} | {my_value(round(player.consistency_stats[stat]))} |"
+        )
+        if stat == 'dmg_taken':
+            print_string += (
+                f" {my_value(round(player.total_stats[stat], 1))} | "
+                f"{my_value(round(player.average_stats[stat]))} |"
+            )
         print_to_file(output_file, print_string)
         last_val = player.consistency_stats[stat]
     print_to_file(output_file, "\n")
