@@ -1173,13 +1173,15 @@ def write_support_players(players, top_players, stat, output_file):
 
 
 
-# Write the top x people who achieved top total stat.
-# Input:
-# players = list of Players
-# top_players = list of indices in players that are considered as top
-# stat = which stat are we considering
-# xls_output_filename = where to write to
 def write_stats_xls(players, top_players, stat, xls_output_filename):
+    """
+    Write the top x people who achieved top total stat.
+    Input:
+    players = list of Players
+    top_players = list of indices in players that are considered as top
+    stat = which stat are we considering
+    xls_output_filename = where to write to
+    """
     fileDate = datetime.datetime.now()
     book = xlrd.open_workbook(xls_output_filename)
     wb = copy(book)
@@ -1215,6 +1217,15 @@ def write_stats_xls(players, top_players, stat, xls_output_filename):
     wb.save(xls_output_filename)
 
 def write_control_effects_out_xls(sorted_squadControl, stat, players, xls_output_filename):
+    """
+    Write the top x people who achieved top outbound stat.
+    Input:
+        sorted_squadControl = sorted dictionary of player names to their total outbound control effect
+        stat = which stat are we considering
+        players = list of Player objects
+        xls_output_filename = where to write to
+    """
+
     fileDate = datetime.datetime.now()
     book = xlrd.open_workbook(xls_output_filename)
     wb = copy(book)
