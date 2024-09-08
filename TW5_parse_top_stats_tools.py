@@ -829,11 +829,19 @@ def sort_players_by_consistency(players, stat_name):
 # stat = stat that is considered
 # Output:
 # list of player index and percentage stat value, sorted by percentage stat value (how often was top x reached / number of fights attended)
-def sort_players_by_percentage(players, stat):
-    decorated = [(player.portion_top_stats[stat], player.consistency_stats[stat], player.total_stats[stat], i, player) for i, player in enumerate(players)]                
-    decorated.sort(reverse=True)    
-    sorted_by_percentage = [(i, percentage) for percentage, consistency, total, i, player in decorated]
-    return sorted_by_percentage
+def sort_players_by_percentage(players, stat_name):
+    """Sort the list of players by percentage value in stat_name.
+
+    Args:
+        players (list[Player]): List of all Players.
+        stat_name (str): Stat that is considered.
+
+    Returns:
+        list[tuple[int, float]]: List of player index and percentage stat value, sorted by percentage stat value.
+    """
+    decorated = [(player.portion_top_stats[stat_name], i) for i, player in enumerate(players)]
+    decorated.sort(reverse=True)
+    return [(i, percentage) for percentage, i in decorated]
 
 
 # sort the list of players by average value in stat
