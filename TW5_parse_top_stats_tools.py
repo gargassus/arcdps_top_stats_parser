@@ -1130,24 +1130,49 @@ def write_sorted_top_consistent_or_avg(players, top_consistent_players, config, 
                 
 # Write out accounts that played support classes
 def write_support_players(players, top_players, stat, output_file):
+    """
+    Write the top x people who achieved top in stat with the highest percentage. This only considers fights where each player was present, i.e., a player who was in 4 fights and achieved a top spot in 2 of them gets 50%, as does a player who was only in 2 fights and achieved a top spot in 1 of them.
+
+    Args:
+        players (list[Player]): List of all Players.
+        top_players (list[int]): List of player indices considered top percentage players.
+        stat (str): Which stat are we considering.
+        output_file (str): The file to write the output to.
+
+    Returns:
+        list[int]: List of player indices that got a top percentage award.
+    """
     for i in range(len(top_players)):
         player = players[top_players[i]]
-        if Guild_Data:
-            guildStatus = find_member(members, player.account)
-        else:
-            guildStatus = ""
-        if stat == 'rips' and (player.profession == 'Chronomancer' or player.profession == 'Spellbreaker'):
-            print_string = "|"+player.account+" |"+player.name+" |"+player.profession+" | "+str(player.num_fights_present)+"| "+str(player.duration_fights_present)+"| "+stat+" |"+guildStatus+" |"
+        guild_status = find_member(members, player.account) if Guild_Data else ""
+        player_prof = "{{" + player.profession + "}}"
+        if stat == 'rips' and player.profession in {'Chronomancer', 'Spellbreaker'}:
+            print_string = (
+                f"|{player.account} |{player.name} | {player_prof} | {player.num_fights_present} | "
+                f"{player.duration_fights_present} | {stat} |{guild_status} |"
+            )
             print_to_file(output_file, print_string)
-        if stat == 'cleanses' and (player.profession == 'Scrapper' or player.profession == 'Tempest' or player.profession == 'Druid' or player.profession == 'Willbender'):
-            print_string = "|"+player.account+" |"+player.name+" |"+player.profession+" | "+str(player.num_fights_present)+"| "+str(player.duration_fights_present)+"| "+stat+" |"+guildStatus+" |"
+        if stat == 'cleanses' and player.profession in {'Scrapper', 'Tempest', 'Druid', 'Willbender'}:
+            print_string = (
+                f"|{player.account} |{player.name} | {player_prof} | {player.num_fights_present} | "
+                f"{player.duration_fights_present} | {stat} |{guild_status} |"
+            )
             print_to_file(output_file, print_string)
-        if stat == 'stability' and (player.profession == 'Firebrand'):
-            print_string = "|"+player.account+" |"+player.name+" |"+player.profession+" | "+str(player.num_fights_present)+"| "+str(player.duration_fights_present)+"| "+stat+" |"+guildStatus+" |"
+        if stat == 'stability' and player.profession == 'Firebrand':
+            print_string = (
+                f"|{player.account} |{player.name} | {player_prof} | {player.num_fights_present} | "
+                f"{player.duration_fights_present} | {stat} |{guild_status} |"
+            )
             print_to_file(output_file, print_string)
-        if stat == 'heal' and (player.profession == 'Vindicator' or player.profession == 'Berserker'):
-            print_string = "|"+player.account+" |"+player.name+" |"+player.profession+" | "+str(player.num_fights_present)+"| "+str(player.duration_fights_present)+"| "+stat+" |"+guildStatus+" |"
+        if stat == 'heal' and player.profession in {'Vindicator', 'Berserker'}:
+            print_string = (
+                f"|{player.account} |{player.name} | {player_prof} | {player.num_fights_present} | "
+                f"{player.duration_fights_present} | {stat} |{guild_status} |"
+            )
             print_to_file(output_file, print_string)
+
+
+
 # Write the top x people who achieved top total stat.
 # Input:
 # players = list of Players
