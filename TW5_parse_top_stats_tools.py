@@ -914,36 +914,45 @@ def get_top_players(players, config, stat, total_or_consistent_or_average):
             
 
 
-# Input:
-# players = list of Players
-# config = the configuration being used to determine top players
-# stat = which stat are we considering
-# late_or_swapping = which type of stat. can be StatType.PERCENTAGE, StatType.LATE_PERCENTAGE or StatType.SWAPPED_PERCENTAGE
-# num_used_fights = number of fights considered for computing top stats
-# top_consistent_players = list of top consistent player indices
-# top_total_players = list of top total player indices
-# top_percentage_players = list of top percentage player indices
-# top_late_players = list of player indices with late but great awards
-# Output:
 # list of player indices getting a percentage award, value with which the percentage stat was compared
 def get_top_percentage_players(players, config, stat, late_or_swapping, num_used_fights, top_consistent_players, top_total_players, top_percentage_players, top_late_players):    
+    """
+    Get the players that have the top percentage values in a given stat.
+
+    Args:
+        players (list[Player]): List of all Players.
+        config (Config): The configuration being used to determine top players.
+        stat (str): The stat that is being considered.
+        late_or_swapping (StatType): The type of stat that is being considered.
+        num_used_fights (int): The number of fights that are being used in stat computation.
+        top_consistent_players (list[int]): List of top consistent player indices.
+        top_total_players (list[int]): List of top total player indices.
+        top_percentage_players (list[int]): List of top percentage player indices.
+        top_late_players (list[int]): List of player indices with late but great awards.
+
+    Returns:
+        List of player indices that got a top percentage award, value with which the percentage stat was compared.
+    """
     sorted_index = sort_players_by_percentage(players, stat)
     top_percentage = players[sorted_index[0][0]].portion_top_stats[stat]
     
     comparison_value = 0
     min_attendance = 0
+    portion_of_top = None
+    min_attendance_portion = None
     if late_or_swapping == StatType.LATE_PERCENTAGE:
-        comparison_value = top_percentage * config.portion_of_top_for_late
-        min_attendance = config.min_attendance_portion_for_late * num_used_fights
+        portion_of_top = config.portion_of_top_for_late
+        min_attendance_portion = config.min_attendance_portion_for_late
     elif late_or_swapping == StatType.SWAPPED_PERCENTAGE:
-        comparison_value = top_percentage * config.portion_of_top_for_buildswap
-        min_attendance = config.min_attendance_portion_for_buildswap * num_used_fights
+        portion_of_top = config.portion_of_top_for_buildswap
+        min_attendance_portion = config.min_attendance_portion_for_buildswap
     elif late_or_swapping == StatType.PERCENTAGE:
-        comparison_value = top_percentage * config.portion_of_top_for_percentage
-        min_attendance = config.min_attendance_portion_for_percentage * num_used_fights
-    else:
-        print("ERROR: Called get_top_percentage_players for stats that are not percentage, late_percentage or swapped_percentage")
-        return
+        portion_of_top = config.portion_of_top_for_percentage
+        min_attendance_portion = config.min_attendance_portion_for_percentage
+    if portion_of_top is None or min_attendance_portion is None:
+        raise ValueError(f"Called get_top_percentage_players for unknown late_or_swapping value: {late_or_swapping}")
+    comparison_value = top_percentage * portion_of_top
+    min_attendance = min_attendance_portion * num_used_fights
 
     top_players = list()
 
