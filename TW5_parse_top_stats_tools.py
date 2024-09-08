@@ -983,22 +983,27 @@ def get_top_percentage_players(players, config, stat, late_or_swapping, num_used
 
 
 # get the professions of all players indicated by the indices. Additionally, get the length of the longest profession name.
-# Input:
-# players = list of all players
-# indices = list of relevant indices
-# config = config to use for top stats computation/printing
-# Output:
-# list of profession strings, maximum profession length
 def get_professions_and_length(players, indices, config):
-    profession_strings = list()
-    profession_length = 0
-    for i in indices:
-        player = players[i]
-        professions_str = config.profession_abbreviations[player.profession]
-        profession_strings.append(professions_str)
-        if len(professions_str) > profession_length:
-            profession_length = len(professions_str)
-    return profession_strings, profession_length
+    """
+    Get the professions of all players indicated by the indices. Additionally, get the length of the longest profession name.
+
+    Args:
+        players (list[Player]): List of all Players.
+        indices (list[int]): List of relevant indices.
+        config (Config): The configuration being used to determine top players.
+
+    Returns:
+        list[str]: List of profession strings.
+        int: Maximum profession length.
+    """
+    profession_strings = []
+    max_profession_length = 0
+    for index in indices:
+        player = players[index]
+        profession_str = config.profession_abbreviations[player.profession]
+        profession_strings.append(profession_str)
+        max_profession_length = max(max_profession_length, len(profession_str))
+    return profession_strings, max_profession_length
 
 
 
