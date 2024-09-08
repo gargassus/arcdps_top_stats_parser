@@ -781,20 +781,22 @@ def sort_players_by_value_in_fight(players, stat, fight_num):
 
 
 
-# sort the list of players by total value in stat
-# Input:
-# players = list of all Players
-# stat = stat that is considered
-# Output:
-# list of player index and total stat value, sorted by total stat value
-def sort_players_by_total(players, stat):
+def sort_players_by_total_value(players, stat):
+    """
+    Sort the list of players by total value in stat.
+
+    Args:
+        players (list): List of all Players.
+        stat (str): Stat that is considered.
+
+    Returns:
+        list: List of player index and total stat value, sorted by total stat value.
+    """
     decorated = [(player.total_stats[stat], i, player) for i, player in enumerate(players)]
-    if stat == 'dist' or stat == 'dmg_taken' or stat == 'deaths':
-        decorated.sort()
-    else:
-        decorated.sort(reverse=True)
-    sorted_by_total = [(i, total) for total, i, player in decorated]
+    decorated.sort(key=lambda x: x[0], reverse=stat not in ('dist', 'dmg_taken', 'deaths'))
+    sorted_by_total = [(i, total) for total, i, _ in decorated]
     return sorted_by_total
+
 
 
 
