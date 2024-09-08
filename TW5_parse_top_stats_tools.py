@@ -416,20 +416,20 @@ def find_member(guild_data: list, name: str) -> str:
 
 
 #High Score capture
-def findLowest(dict):
-	temp = min(dict.values())
-	res = []
-	for key, value in dict.items():
-		if(value == temp):
-			res.append(key)
-	return res[0]
+def update_high_score(stat: str, key: str, value: float) -> None:
+    """Update the high scores for a given stat.
 
-def updateHighScore(Stat, Key, Value):
-	if len(HighScores[Stat]) <5:
-		HighScores[Stat][Key]=Value
-	elif Value > HighScores[Stat][findLowest(HighScores[Stat])]:
-		del HighScores[Stat][findLowest(HighScores[Stat])]
-		HighScores[Stat][Key]=Value
+    Args:
+        stat (str): The stat to update.
+        key (str): The key to update or add.
+        value (float): The value to update or add.
+    """
+    if len(HighScores[stat]) < 5:
+        HighScores[stat][key] = value
+    elif value > min(HighScores[stat].values()):
+        lowest_key = min(HighScores[stat], key=HighScores[stat].get)
+        del HighScores[stat][lowest_key]
+        HighScores[stat][key] = value
 	
 #define subtype based on consumables
 
@@ -2492,12 +2492,12 @@ def collect_stat_data(args, config, log, anonymize=False):
 						if stat not in HighScores:
 							HighScores[stat]={}
 							HighScores[stat+'_PS']={}						
-						updateHighScore(stat, "{{"+player_data['profession']+"}}"+player_data['name']+" | [["+str(fightStamp)+"|"+str(get_fight_log_link_data(json_data, fightStamp, fight_number)[7])+"]]", player.stats_per_fight[fight_number][stat])
+						update_high_score(stat, "{{"+player_data['profession']+"}}"+player_data['name']+" | [["+str(fightStamp)+"|"+str(get_fight_log_link_data(json_data, fightStamp, fight_number)[7])+"]]", player.stats_per_fight[fight_number][stat])
 						if player.stats_per_fight[fight_number]['time_active'] > 0:
 							stat_per_sec = (player.stats_per_fight[fight_number][stat]/player.stats_per_fight[fight_number]['time_active'])
 						else:
 							stat_per_sec = 0
-						updateHighScore(stat+'_PS', "{{"+player_data['profession']+"}}"+player_data['name']+" | [["+str(fightStamp)+"|"+str(get_fight_log_link_data(json_data, fightStamp, fight_number)[7])+"]]", stat_per_sec)
+						update_high_score(stat+'_PS', "{{"+player_data['profession']+"}}"+player_data['name']+" | [["+str(fightStamp)+"|"+str(get_fight_log_link_data(json_data, fightStamp, fight_number)[7])+"]]", stat_per_sec)
 					elif stat == 'barrier':
 						fight.total_stats[stat] += player.stats_per_fight[fight_number][stat]
 						player.total_stats[stat] += player.stats_per_fight[fight_number][stat]
@@ -2515,12 +2515,12 @@ def collect_stat_data(args, config, log, anonymize=False):
 						if stat not in HighScores:
 							HighScores[stat]={}
 							HighScores[stat+'_PS']={}						
-						updateHighScore(stat, "{{"+player_data['profession']+"}}"+player_data['name']+" | [["+str(fightStamp)+"|"+str(get_fight_log_link_data(json_data, fightStamp, fight_number)[7])+"]]", player.stats_per_fight[fight_number][stat])
+						update_high_score(stat, "{{"+player_data['profession']+"}}"+player_data['name']+" | [["+str(fightStamp)+"|"+str(get_fight_log_link_data(json_data, fightStamp, fight_number)[7])+"]]", player.stats_per_fight[fight_number][stat])
 						if player.stats_per_fight[fight_number]['time_active'] > 0:
 							stat_per_sec = (player.stats_per_fight[fight_number][stat]/player.stats_per_fight[fight_number]['time_active'])
 						else:
 							stat_per_sec = 0
-						updateHighScore(stat+'_PS', "{{"+player_data['profession']+"}}"+player_data['name']+" | [["+str(fightStamp)+"|"+str(get_fight_log_link_data(json_data, fightStamp, fight_number)[7])+"]]", stat_per_sec)
+						update_high_score(stat+'_PS', "{{"+player_data['profession']+"}}"+player_data['name']+" | [["+str(fightStamp)+"|"+str(get_fight_log_link_data(json_data, fightStamp, fight_number)[7])+"]]", stat_per_sec)
 					else:
 						# all non-buff stats
 						fight.total_stats[stat] += player.stats_per_fight[fight_number][stat]
@@ -2529,12 +2529,12 @@ def collect_stat_data(args, config, log, anonymize=False):
 							HighScores[stat]={}
 							HighScores[stat+'_PS']={}
 			
-						updateHighScore(stat, "{{"+player_data['profession']+"}}"+player_data['name']+" | [["+str(fightStamp)+"|"+str(get_fight_log_link_data(json_data, fightStamp, fight_number)[7])+"]]", player.stats_per_fight[fight_number][stat])
+						update_high_score(stat, "{{"+player_data['profession']+"}}"+player_data['name']+" | [["+str(fightStamp)+"|"+str(get_fight_log_link_data(json_data, fightStamp, fight_number)[7])+"]]", player.stats_per_fight[fight_number][stat])
 						if player.stats_per_fight[fight_number]['time_active'] > 0:
 							stat_per_sec = (player.stats_per_fight[fight_number][stat]/player.stats_per_fight[fight_number]['time_active'])
 						else:
 							stat_per_sec = 0
-						updateHighScore(stat+'_PS', "{{"+player_data['profession']+"}}"+player_data['name']+" | [["+str(fightStamp)+"|"+str(get_fight_log_link_data(json_data, fightStamp, fight_number)[7])+"]]", stat_per_sec)
+						update_high_score(stat+'_PS', "{{"+player_data['profession']+"}}"+player_data['name']+" | [["+str(fightStamp)+"|"+str(get_fight_log_link_data(json_data, fightStamp, fight_number)[7])+"]]", stat_per_sec)
 
 			if debug:
 				print("\n")
