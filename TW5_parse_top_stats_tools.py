@@ -362,6 +362,7 @@ RelicDataSkills = {}
 members: dict = field(default_factory=dict) 
 API_response = ""
 
+#If Guild_Data exists and Guild_ID is a dict, ask which guild to use.  Otherwise, use the guild data in Guild_Data variables
 if Guild_Data:
 	if type(Guild_Data.Guild_ID) == dict:
 		print("Guild Keys Available: ", Guild_Data.Guild_ID.keys())
@@ -375,7 +376,8 @@ if Guild_Data:
 		Guild_ID = Guild_Data.Guild_ID
 		API_Key = Guild_Data.API_Key
 		api_url = "https://api.guildwars2.com/v2/guild/"+Guild_ID+"/members?access_token="+API_Key
-	
+
+	#Fetch Guild Data from API
 	try:
 		response = requests.get(api_url, timeout=5)
 		if response.status_code == requests.codes.ok:
@@ -395,17 +397,23 @@ else:
 	members = {}
 	API_response = " "
 
-def findMember(json_object, name):
-	if API_response == requests.codes.ok:
-		guildStatus = "--==Non Member==--"
-		for dict in json_object:
-			if dict['name'] == name:
-				guildStatus = dict['rank']
-		return guildStatus
-	else:
-		guildStatus = ""
-		return guildStatus
-# End fetch Guild Data and Check Guild Status
+def find_member(guild_data: list, name: str) -> str:
+    """
+    Find the rank of a player in the guild.
+
+    Args:
+        guild_data (list): The list of guild members.
+        name (str): The player name to find.
+
+    Returns:
+        str: The rank of the player if found, otherwise "--==Non Member==--".
+    """
+    for member in guild_data:
+        if member["name"] == name:
+            return member["rank"]
+
+    return "--==Non Member==--"
+
 
 #High Score capture
 def findLowest(dict):
@@ -1077,7 +1085,7 @@ def write_support_players(players, top_players, stat, output_file):
 	for i in range(len(top_players)):
 		player = players[top_players[i]]
 		if Guild_Data:
-			guildStatus = findMember(members, player.account)
+			guildStatus = find_member(members, player.account)
 		else:
 			guildStatus = ""
 		if stat == 'rips' and (player.profession == 'Chronomancer' or player.profession == 'Spellbreaker'):
@@ -4102,7 +4110,7 @@ def get_stats_from_fight_json(fight_json, config, log):
 		player_prof_role = player_prof+" "+player_role
 
 		if Guild_Data:
-			guildStatus = findMember(members, player_account)
+			guildStatus = find_member(members, player_account)
 		else:
 			guildStatus = ""			
 
