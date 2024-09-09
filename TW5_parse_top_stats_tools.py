@@ -2154,6 +2154,12 @@ def collect_stat_data(args, config, log, anonymize=False):
         # load file
         with (gzip.open if file_extension == '.gz' else open)(file_path, mode='rt', encoding='utf-8') as file:
             json_data = json.load(file)
+        if file_extension == '.gz':
+            with gzip.open(file_path, mode="r") as f:
+                json_data = json.loads(f.read().decode('utf-8'))
+        else:
+            json_datafile = open(file_path, encoding='utf-8')
+            json_data = json.load(json_datafile)
         # get fight stats
         fight, players_running_healing_addon, squad_offensive, squad_Control, enemy_Control, enemy_Control_Player, downed_Healing, uptime_Table, stacking_uptime_Table, auras_TableIn, auras_TableOut, Death_OnTag, Attendance, DPS_List, CPS_List, SPS_List, HPS_List, DPSStats = get_stats_from_fight_json(json_data, config, log)
             
@@ -2190,42 +2196,42 @@ def collect_stat_data(args, config, log, anonymize=False):
         party_comp[fight_number]={}
         
 
-        #Collect Personal Damage Modifiers for this fight
-        damageModMap = json_data['damageModMap']
+        # Collect personal damage modifiers for this fight
+        damage_mod_map = json_data['damageModMap']
         if 'personalDamageMods' in json_data:
-            personalDamageMods = json_data['personalDamageMods']
-            for prof in personalDamageMods:
-                for mod in personalDamageMods[prof]:
-                    modID ='d'+str(mod)
-                    modName = damageModMap[modID]['name']
-                    if modName not in profModifiers['buffList']:
-                        profModifiers['buffList'].append(modName)
-                    if prof not in profModifiers['Professions']:
-                        profModifiers['Professions'][prof] = []
-                    if modName not in profModifiers['Professions'][prof]:
-                        profModifiers['Professions'][prof].append(modName)
+            personal_damage_mods = json_data['personalDamageMods']
+            for profession in personal_damage_mods:
+                for mod_id in personal_damage_mods[profession]:
+                    mod_name = damage_mod_map['d' + str(mod_id)]['name']
+                    if mod_name not in profModifiers['buffList']:
+                        profModifiers['buffList'].append(mod_name)
+                    if profession not in profModifiers['Professions']:
+                        profModifiers['Professions'][profession] = []
+                    if mod_name not in profModifiers['Professions'][profession]:
+                        profModifiers['Professions'][profession].append(mod_name)
 
         #Collect Damage Modifiers for this fight
         activeMods = {}
-        #damageModMap = json_data['damageModMap']
-        for Modifier in damageModMap:
-            modifierName = damageModMap[Modifier]['name']
-            modifierIcon = damageModMap[Modifier]['icon']
-            if 'incoming' in damageModMap[Modifier]:
-                if damageModMap[Modifier]['incoming']:
-                    if modifierName in profModifiers['buffList'] and modifierName not in modifierMap['Incoming']['Prof']:
-                        modifierMap['Incoming']['Prof'][modifierName] = modifierIcon
-                    if modifierName not in profModifiers['buffList'] and modifierName not in modifierMap['Incoming']['Shared']:
-                        modifierMap['Incoming']['Shared'][modifierName] = modifierIcon
-                else:
-                    if modifierName in profModifiers['buffList'] and modifierName not in modifierMap['Outgoing']['Prof']:
-                        modifierMap['Outgoing']['Prof'][modifierName] = modifierIcon
-                    if modifierName not in profModifiers['buffList'] and modifierName not in modifierMap['Outgoing']['Shared']:
-                        modifierMap['Outgoing']['Shared'][modifierName] = modifierIcon
+        #damage_mod_map = json_data['damageModMap']
+        for modifier_id, modifier_data in damage_mod_map.items():
+            modifier_name = modifier_data['name']
+            modifier_icon = modifier_data['icon']
 
-            if 'Relic' in damageModMap[Modifier]['name'] or 'Superior Sigil of' in damageModMap[Modifier]['name'] or "Nourys's" in damageModMap[Modifier]['name']:
-                if damageModMap[Modifier]['name'] not in activeMods:
-                    activeMods[damageModMap[Modifier]['name']] = Modifier[1:]
+            if 'incoming' in modifier_data:
+                if modifier_data['incoming']:
+                    if modifier_name in profModifiers['buffList'] and modifier_name not in modifierMap['Incoming']['Prof']:
+                        modifierMap['Incoming']['Prof'][modifier_name] = modifier_icon
+                    if modifier_name not in profModifiers['buffList'] and modifier_name not in modifierMap['Incoming']['Shared']:
+                        modifierMap['Incoming']['Shared'][modifier_name] = modifier_icon
+                else:
+                    if modifier_name in profModifiers['buffList'] and modifier_name not in modifierMap['Outgoing']['Prof']:
+                        modifierMap['Outgoing']['Prof'][modifier_name] = modifier_icon
+                    if modifier_name not in profModifiers['buffList'] and modifier_name not in modifierMap['Outgoing']['Shared']:
+                        modifierMap['Outgoing']['Shared'][modifier_name] = modifier_icon
+
+            if any(keyword in modifier_name for keyword in ['Relic', 'Superior Sigil of', "Nourys's"]):
+                if modifier_name not in activeMods:
+                    activeMods[modifier_name] = modifier_id[1:]
             
         #End Damage Modifier collection
 
@@ -2402,7 +2408,7 @@ def collect_stat_data(args, config, log, anonymize=False):
 
                 for modifier in player_data['damageModifiers']:
                     modID = 'd'+str(modifier['id'])
-                    modName = damageModMap[modID]['name']
+                    modName = damage_mod_map[modID]['name']
                     modHitCount = modifier['damageModifiers'][0]['hitCount']
                     modTotalHitCount = modifier['damageModifiers'][0]['totalHitCount']
                     modDamageGain = modifier['damageModifiers'][0]['damageGain']
@@ -2444,7 +2450,7 @@ def collect_stat_data(args, config, log, anonymize=False):
 
                 for modifier in player_data['incomingDamageModifiers']:
                     modID = 'd'+str(modifier['id'])
-                    modName = damageModMap[modID]['name']
+                    modName = damage_mod_map[modID]['name']
                     modHitCount = modifier['damageModifiers'][0]['hitCount']
                     modTotalHitCount = modifier['damageModifiers'][0]['totalHitCount']
                     modDamageGain = modifier['damageModifiers'][0]['damageGain']
