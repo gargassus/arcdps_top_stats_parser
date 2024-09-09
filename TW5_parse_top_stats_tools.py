@@ -531,6 +531,107 @@ def my_value(number: int) -> str:
     """Format a number with commas every thousand."""
     return "{:,}".format(number)
 
+def get_skill_casts_by_role(player_data, name, player_prof_role, playerRoleActiveTime, skill_map):
+    
+    if player_prof_role not in prof_role_skills:
+        prof_role_skills[player_prof_role] = {'castTotals': {}, 'player': {}}
+
+    if name not in prof_role_skills[player_prof_role]['player']:
+        prof_role_skills[player_prof_role]['player'][name] = {
+            'ActiveTime': playerRoleActiveTime,
+            'Fights': 1,
+            'Skills': {}
+        }
+    else:
+        prof_role_skills[player_prof_role]['player'][name]['Fights'] += 1
+        prof_role_skills[player_prof_role]['player'][name]['ActiveTime'] += playerRoleActiveTime
+
+    if 'rotation' in player_data:
+        for rotation_skill in player_data['rotation']:
+            skill_id = str(rotation_skill['id'])
+            skill_name = skill_map['s'+skill_id]['name']
+            skill_auto = skill_map['s'+skill_id]['autoAttack']
+            #skip unknown skills:
+            if skill_name.isnumeric():
+                continue
+
+            # Exclude skills that are not relevant to role performance
+            excluded_skills = {
+                # Downed skills
+                '9149': 'Wrath',
+                '9096': 'Wave of Light',
+                '9095': 'Symbol of Judgement',
+                '28180': 'Essence Sap',
+                '27063': 'Forceful Displacement',
+                '27792': 'Vengeful Blast',
+                '14390': 'Throw Rock',
+                '14515': 'Hammer Toss',
+                '14391': 'Vengeance',
+                '5820': 'Throw Junk',
+                '5962': 'Grappling Line',
+                '5963': 'Booby Trap',
+                '12486': 'Throw Dirt',
+                '12485': 'Thunderclap',
+                '12515': 'Lick Wounds',
+                '13003': 'Trail of Knives',
+                '13138': 'Venomous Knife',
+                '13140': 'Shadow Escape',
+                '13033': 'Smoke Bomb',
+                # Resurrect skills
+                '1006': 'Resurrect',
+                '1066': 'Resurrect',
+                '1175': 'Bandage',
+                # Siege golem skills
+                '14627': 'Punch',
+                '14709': 'Rocket Punch',
+                '14713': 'Rocket Punch',
+                '63185': 'Rocket Punch',
+                '1656': "Whirling Assualt",
+                '14639': "Whirling Assualt",
+                '14642': 'Eject',
+                # Generic skills to exclude
+                '14601': 'Turn Left',
+                '14600': 'Turn Right',
+                '23284': 'Weapon Draw',
+                '23285': 'Weapon Stow',
+                '-2': 'Weapon Swap',
+                '58083': 'Lance',
+                '20285': 'Fire Hollowed Boulder',
+                '9284': 'Flame Blast',
+                '23275': 'Dodge',
+                '54877': 'Chain Pull',
+                '54941': 'Chain Pull',
+                '54953': 'Chain Pull',
+                '21615': '((276158))',
+                '23267': '((290194))',
+                '18792': '((300969))',
+                '18793': '((300969))',
+                '25533': '((300969))',
+                '27927': '((300969))',
+                '30765': '((300969))',
+                '34797': '((300969))',
+            }            
+
+            if skill_id in excluded_skills:
+                continue
+            #skip auto attack skills
+            if skill_auto and skill_id != '31796':
+                continue
+            #skip node gathering and finishers
+            if 'Gather' in skill_name or 'Finisher' in skill_name or 'Harvest Plants' in skill_name or 'Unbound Magic' in skill_name:
+                continue
+            #skip siege deployment
+            if 'Deploy' in skill_name and 'Jade Sphere' not in skill_name:
+                continue
+        
+            skill_casts = 0
+            for skill_usage in rotation_skill['skills']:
+                # When the duration equals the timeLost, the skill was interrupted or cancelled	
+                if skill_usage['duration'] == 0 or skill_usage['duration'] != -skill_usage['timeGained']:
+                    skill_casts += 1
+
+            prof_role_skills[player_prof_role]['player'][name]['Skills'][skill_id] = prof_role_skills[player_prof_role]['player'][name]['Skills'].get(skill_id, 0) + skill_casts
+            prof_role_skills[player_prof_role]['castTotals'][skill_id] = prof_role_skills[player_prof_role]['castTotals'].get(skill_id, 0) + skill_casts
 
 # fills a Config with the given input    
 def fill_config(config_input):
@@ -2287,22 +2388,14 @@ def collect_stat_data(args, config, log, anonymize=False):
 
             playerRole=find_sub_type(player_data)
             playerRoleActiveTime = get_stat_from_player_json(player_data, players_running_healing_addon, 'time_active', config)
+            
+            player_prof_role = profession + ' ' + playerRole
+            skill_map = json_data['skillMap']
 
             #Collect Role Data for Skill Casts
-            player_prof_role = profession + ' ' + playerRole
-            if player_prof_role not in prof_role_skills:
-                prof_role_skills[player_prof_role] = {'castTotals': {}, 'player': {}}
+            get_skill_casts_by_role(player_data, name, player_prof_role, playerRoleActiveTime, skill_map)
 
-            if name not in prof_role_skills[player_prof_role]['player']:
-                prof_role_skills[player_prof_role]['player'][name] = {
-                    'ActiveTime': playerRoleActiveTime,
-                    'Fights': 1,
-                    'Skills': {}
-                }
-            else:
-                prof_role_skills[player_prof_role]['player'][name]['Fights'] += 1
-                prof_role_skills[player_prof_role]['player'][name]['ActiveTime'] += playerRoleActiveTime
-                
+
             # Collect Gear Buff Data for each player
             if config.include_comp_and_review:
                 buff_map = json_data['buffMap']
@@ -2491,40 +2584,6 @@ def collect_stat_data(args, config, log, anonymize=False):
                             squadDamageMods[playerNameProf]['Prof'][modName]['damageGain']+=modDamageGain
                             squadDamageMods[playerNameProf]['Prof'][modName]['totalDamage']+=modTotalDamage
 
-            if 'rotation' in player_data:
-                for rotation_skill in player_data['rotation']:
-                    skill_id = str(rotation_skill['id'])
-                    skill_name = json_data['skillMap']['s'+skill_id]['name']
-                    skill_auto = json_data['skillMap']['s'+skill_id]['autoAttack']
-                    #skip unknown skills:
-                    if skill_name.isnumeric():
-                        continue
-                    #skip downed skills, bandage, resurrect and generic excludes
-                    downed_skills = {'9149': 'Wrath', '9096': 'Wave of Light', '9095': 'Symbol of Judgement', '28180': 'Essence Sap', '27063': 'Forceful Displacement', '27792': 'Vengeful Blast', '14390': 'Throw Rock', '14515': 'Hammer Toss', '14391': 'Vengeance', '5820': 'Throw Junk', '5962': 'Grappling Line', '5963': 'Booby Trap', '12486': 'Throw Dirt', '12485': 'Thunderclap', '12515': 'Lick Wounds', '13003': 'Trail of Knives', '13138': 'Venomous Knife', '13140': 'Shadow Escape', '13033': 'Smoke Bomb', '5504': 'Discharge Lightning', '5564': 'Vapor Form', '5505': 'Grasping Earth', '10196': 'Mind Blast', '10366': 'Deception', '10224': 'Phantasmal Rogue', '10560': 'Life Leech', '10660': 'Fear', '10559': 'Fetid Ground', '1175': 'Bandage'}
-                    heal_downed = {'1006': 'Resurrect', '1066': 'Resurrect', '1175': 'Bandage'}
-                    siege_golem = {'14627': 'Punch', '14709': 'Rocket Punch', '14713': 'Rocket Punch', '63185': 'Rocket Punch', '1656': "Whirling Assualt", '14639': "Whirling Assualt", '14642': 'Eject'}
-                    generic_exclude = {'14601': 'Turn Left', '14600':  'Turn Right', '23284':  'Weapon Draw', '23285':  'Weapon Stow', '-2':  'Weapon Swap', '58083':  'Lance', '20285':  'Fire Hollowed Boulder', '9284':  'Flame Blast', '23275':  'Dodge', '54877': 'Chain Pull', '54941': 'Chain Pull', '54953': 'Chain Pull', '21615':  '((276158))', '23267':  '((290194))', '18792':  '((300969))', '18793':  '((300969))', '25533':  '((300969))', '27927':  '((300969))', '30765':  '((300969))', '34797':  '((300969))'}
-                    if skill_id in downed_skills or skill_id in heal_downed or skill_id in siege_golem or skill_id in generic_exclude:
-                        continue
-                    #skip auto attack skills
-                    if skill_auto and skill_id != '31796':
-                        continue
-                    #skip node gathering and finishers
-                    if 'Gather' in skill_name or 'Finisher' in skill_name or 'Harvest Plants' in skill_name or 'Unbound Magic' in skill_name:
-                        continue
-                    #skip siege deployment
-                    if 'Deploy' in skill_name and 'Jade Sphere' not in skill_name:
-                        continue
-                
-                    skill_casts = 0
-                    for skill_usage in rotation_skill['skills']:
-                        # When the duration equals the timeLost, the skill was interrupted or cancelled	
-                        if skill_usage['duration'] == 0 or skill_usage['duration'] != -skill_usage['timeGained']:
-                            skill_casts += 1
-
-                    prof_role_skills[profession+' '+playerRole]['player'][name]['Skills'][skill_id] = prof_role_skills[profession+' '+playerRole]['player'][name]['Skills'].get(skill_id, 0) + skill_casts
-                    prof_role_skills[profession+' '+playerRole]['castTotals'][skill_id] = prof_role_skills[profession+' '+playerRole]['castTotals'].get(skill_id, 0) + skill_casts
-                    
 
             player.stats_per_fight[fight_number]['time_active'] = get_stat_from_player_json(player_data, players_running_healing_addon, 'time_active', config)
             player.stats_per_fight[fight_number]['time_in_combat'] = get_stat_from_player_json(player_data, players_running_healing_addon, 'time_in_combat', config)
