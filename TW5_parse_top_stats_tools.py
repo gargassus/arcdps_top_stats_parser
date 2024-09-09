@@ -2233,8 +2233,6 @@ def collect_stat_data(args, config, log, anonymize=False):
                 if modifier_name not in activeMods:
                     activeMods[modifier_name] = modifier_id[1:]
             
-        #End Damage Modifier collection
-
         # get stats for each player
         for player_data in json_data['players']:
             if player_data['notInSquad']:
@@ -2305,68 +2303,73 @@ def collect_stat_data(args, config, log, anonymize=False):
                 prof_role_skills[player_prof_role]['player'][name]['Fights'] += 1
                 prof_role_skills[player_prof_role]['player'][name]['ActiveTime'] += playerRoleActiveTime
                 
-            #Collect Gear Buff Data for each player
+            # Collect Gear Buff Data for each player
             if config.include_comp_and_review:
-                buffMap = json_data['buffMap']
-                playerName_Prof = "{{"+profession+"}} "+name
+                buff_map = json_data['buffMap']
+                player_name_prof = "{{" + profession + "}} " + name
                 if 'selfBuffs' in player_data:
                     for index, buff in enumerate(player_data['selfBuffs']):
-                        selfGen = buff['buffData'][0]['generation']
-                        buffID = "b"+str(buff['id'])
-                        generated=0
-                        buffStacks=0
-                        if "Relic" in buffMap[buffID]['name'] or "Superior Sigil of" in buffMap[buffID]['name'] or "Nourys's" in buffMap[buffID]['name']:
-                            relicName = buffMap[buffID]['name']
-                            relicIcon = buffMap[buffID]['icon']
-                            if playerName_Prof not in RelicDataBuffs:
-                                RelicDataBuffs[playerName_Prof]={}
+                        buff_id = "b" + str(buff['id'])
+                        generated = 0
+                        buff_stacks = 0
+                        if ("Relic" in buff_map[buff_id]['name'] or
+                            "Superior Sigil of" in buff_map[buff_id]['name'] or
+                            "Nourys's" in buff_map[buff_id]['name']):
+                            relic_name = buff_map[buff_id]['name']
+                            relic_icon = buff_map[buff_id]['icon']
+                            if player_name_prof not in RelicDataBuffs:
+                                RelicDataBuffs[player_name_prof] = {}
+
                             if name in player_data['buffUptimesActive'][index]['buffData'][0]['generated']:
-                                if relicName in relic_Stacks:
+                                if relic_name in relic_Stacks:
                                     generated = player_data['buffUptimesActive'][index]['buffData'][0]['presence']
-                                    buffStacks = player_data['buffUptimesActive'][index]['buffData'][0]['uptime']
+                                    buff_stacks = player_data['buffUptimesActive'][index]['buffData'][0]['uptime']
                                 else:
                                     generated = player_data['buffUptimesActive'][index]['buffData'][0]['uptime']
-                                damageGained = 0
-                                hitCount = 0
-                                totalHits = 0
-                                if relicName not in RelicDataBuffs[playerName_Prof]: #changed to handle sigil of doom?
-                                    if relicName not in usedRelicBuff:
-                                        usedRelicBuff[relicName] = relicIcon
-                                    RelicDataBuffs[playerName_Prof][relicName]={}
-                                    RelicDataBuffs[playerName_Prof][relicName]['fightTime']=[]
-                                    RelicDataBuffs[playerName_Prof][relicName]['buffDuration'] =[]
-                                    RelicDataBuffs[playerName_Prof][relicName]['buffStacks'] =[]
-                                    RelicDataBuffs[playerName_Prof][relicName]['damageGain'] =[]
-                                    RelicDataBuffs[playerName_Prof][relicName]['hitCount'] =[]
-                                    RelicDataBuffs[playerName_Prof][relicName]['totalHits'] =[]
-                                    buffDuration = (generated*playerRoleActiveTime)/100
 
-                                    RelicDataBuffs[playerName_Prof][relicName]['fightTime'].append(playerRoleActiveTime)
-                                    RelicDataBuffs[playerName_Prof][relicName]['buffDuration'].append(buffDuration)
-                                    RelicDataBuffs[playerName_Prof][relicName]['buffStacks'].append(buffStacks)
-                                    if relicName in activeMods:
+                                damage_gained = 0
+                                hit_count = 0
+                                total_hits = 0
+                                if relic_name not in RelicDataBuffs[player_name_prof]:
+                                    if relic_name not in usedRelicBuff:
+                                        usedRelicBuff[relic_name] = relic_icon
+                                    RelicDataBuffs[player_name_prof][relic_name] = {
+                                        'fightTime': [],
+                                        'buffDuration': [],
+                                        'buffStacks': [],
+                                        'damageGain': [],
+                                        'hitCount': [],
+                                        'totalHits': []
+                                    }
+                                    buff_duration = (generated * playerRoleActiveTime) / 100
+
+                                    RelicDataBuffs[player_name_prof][relic_name]['fightTime'].append(playerRoleActiveTime)
+                                    RelicDataBuffs[player_name_prof][relic_name]['buffDuration'].append(buff_duration)
+                                    RelicDataBuffs[player_name_prof][relic_name]['buffStacks'].append(buff_stacks)
+                                    if relic_name in activeMods:
                                         for target in player_data['damageModifiersTarget']:
                                             for Modifier in target:
-                                                if str(Modifier['id']) == str(activeMods[relicName]):
-                                                    damageGained += Modifier['damageModifiers'][0]['damageGain']
-                                                    hitCount += Modifier['damageModifiers'][0]['hitCount']
-                                                    totalHits += Modifier['damageModifiers'][0]['totalHitCount']
+                                                if str(Modifier['id']) == str(activeMods[relic_name]):
+                                                    damage_gained += Modifier['damageModifiers'][0]['damageGain']
+                                                    hit_count += Modifier['damageModifiers'][0]['hitCount']
+                                                    total_hits += Modifier['damageModifiers'][0]['totalHitCount']
+
                                 else:
-                                    buffDuration = (generated*playerRoleActiveTime)/100
-                                    RelicDataBuffs[playerName_Prof][relicName]['fightTime'].append(playerRoleActiveTime)
-                                    RelicDataBuffs[playerName_Prof][relicName]['buffDuration'].append(buffDuration)
-                                    RelicDataBuffs[playerName_Prof][relicName]['buffStacks'].append(buffStacks)
-                                    if relicName in activeMods:
+                                    buff_duration = (generated * playerRoleActiveTime) / 100
+                                    RelicDataBuffs[player_name_prof][relic_name]['fightTime'].append(playerRoleActiveTime)
+                                    RelicDataBuffs[player_name_prof][relic_name]['buffDuration'].append(buff_duration)
+                                    RelicDataBuffs[player_name_prof][relic_name]['buffStacks'].append(buff_stacks)
+                                    if relic_name in activeMods:
                                         for target in player_data['damageModifiersTarget']:
                                             for Modifier in target:
-                                                if str(Modifier['id']) == str(activeMods[relicName]):
-                                                    damageGained += Modifier['damageModifiers'][0]['damageGain']
-                                                    hitCount += Modifier['damageModifiers'][0]['hitCount']
-                                                    totalHits += Modifier['damageModifiers'][0]['totalHitCount']
-                                RelicDataBuffs[playerName_Prof][relicName]['damageGain'].append(damageGained)
-                                RelicDataBuffs[playerName_Prof][relicName]['hitCount'].append(hitCount)
-                                RelicDataBuffs[playerName_Prof][relicName]['totalHits'].append(totalHits)
-                #End Collect Relic Buff Data for each player				
+                                                if str(Modifier['id']) == str(activeMods[relic_name]):
+                                                    damage_gained += Modifier['damageModifiers'][0]['damageGain']
+                                                    hit_count += Modifier['damageModifiers'][0]['hitCount']
+                                                    total_hits += Modifier['damageModifiers'][0]['totalHitCount']
+
+                                RelicDataBuffs[player_name_prof][relic_name]['damageGain'].append(damage_gained)
+                                RelicDataBuffs[player_name_prof][relic_name]['hitCount'].append(hit_count)
+                                RelicDataBuffs[player_name_prof][relic_name]['totalHits'].append(total_hits)
 
             #Collect Relic Skill Data for each player
             if config.include_comp_and_review:
@@ -2386,21 +2389,21 @@ def collect_stat_data(args, config, log, anonymize=False):
                         else:
                             continue
                         if itemName in usedRelicSkill:
-                            if playerName_Prof not in RelicDataSkills:
-                                RelicDataSkills[playerName_Prof]={}
-                                if itemName not in RelicDataSkills[playerName_Prof]:
-                                    RelicDataSkills[playerName_Prof][itemName]={}
+                            if player_name_prof not in RelicDataSkills:
+                                RelicDataSkills[player_name_prof]={}
+                                if itemName not in RelicDataSkills[player_name_prof]:
+                                    RelicDataSkills[player_name_prof][itemName]={}
                                     for stat in item:
-                                        RelicDataSkills[playerName_Prof][itemName][stat]=item[stat]
+                                        RelicDataSkills[player_name_prof][itemName][stat]=item[stat]
                                 else:
                                     for stat in item:
-                                        RelicDataSkills[playerName_Prof][itemName][stat]+=item[stat]
+                                        RelicDataSkills[player_name_prof][itemName][stat]+=item[stat]
                                 for cast in player_data['rotation']:
                                     if cast['id'] == itemID:
-                                        if 'casts' not in RelicDataSkills[playerName_Prof][itemName]:
-                                            RelicDataSkills[playerName_Prof][itemName]['casts'] = len(cast['skills'])
+                                        if 'casts' not in RelicDataSkills[player_name_prof][itemName]:
+                                            RelicDataSkills[player_name_prof][itemName]['casts'] = len(cast['skills'])
                                         else:
-                                            RelicDataSkills[playerName_Prof][itemName]['casts'] += len(cast['skills'])
+                                            RelicDataSkills[player_name_prof][itemName]['casts'] += len(cast['skills'])
             #End Collect Relic Skill Data for each player
 
             #Collect Damage Modifier Data for each player
