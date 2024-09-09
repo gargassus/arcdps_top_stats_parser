@@ -1765,31 +1765,42 @@ def write_support_xls(players, top_players, stat, xls_output_filename, supportCo
     return supportCount
 
 # Get and write the top x people who achieved top total stat.
-# Input:
-# players = list of Players
-# config = the configuration being used to determine topx consistent players
-# total_fight_duration = the total duration of all fights
-# stat = which stat are we considering
-# output_file = where to write to
-# Output:
-# list of top total player indices
 def get_and_write_sorted_total(players, config, total_fight_duration, stat, output_file):
     # get players that get an award and their professions
+    """
+    Get and write the top x people who achieved top total stat.
+
+    Args:
+        players (list[Player]): List of all Players.
+        config (Config): The configuration being used to determine topx consistent players.
+        total_fight_duration (dict): The total duration of all fights.
+        stat (str): Which stat are we considering.
+        output_file (str): The file to write the output to.
+
+    Returns:
+        list[int]: List of top total player indices.
+    """
     top_total_players = get_top_players(players, config, stat, StatType.TOTAL)
     write_sorted_total(players, top_total_players, config, total_fight_duration, stat, output_file)
     return top_total_players
 
 # Get and write the top x people who achieved top total stat.
-# Input:
-# players = list of Players
-# config = the configuration being used to determine topx consistent players
-# total_fight_duration = the total duration of all fights
-# stat = which stat are we considering
-# output_file = where to write to
-# Output:
-# list of top total player indices
 def get_and_write_sorted_total_by_average(players, config, total_fight_duration, stat, output_file):
     # get players that get an award and their professions
+    """
+    Get and write the top x people who achieved top total by average stat.
+
+    Args:
+        players (list[Player]): List of all Players.
+        config (Config): The configuration being used to determine topx consistent players.
+        total_fight_duration (dict): The total duration of all fights.
+        stat (str): Which stat are we considering.
+        output_file (str): The file to write the output to.
+
+    Returns:
+        list[int]: List of top total player indices.
+    """
+    
     top_total_players = get_top_players(players, config, stat, StatType.AVERAGE)
     write_sorted_total(players, top_total_players, config, total_fight_duration, stat, output_file)
     return top_total_players
@@ -1959,21 +1970,26 @@ def write_sorted_total(players, top_total_players, config, total_fight_duration,
    
 
 # Get and write the top x people who achieved top in stat with the highest percentage. This only considers fights where each player was present, i.e., a player who was in 4 fights and achieved a top spot in 2 of them gets 50%, as does a player who was only in 2 fights and achieved a top spot in 1 of them.
-# Input:
-# players = list of Players
-# config = the configuration being used to determine topx consistent players
-# num_used_fights = the number of fights that are being used in stat computation
-# stat = which stat are we considering
-# output_file = file to write to
-# late_or_swapping = which type of stat. can be StatType.PERCENTAGE, StatType.LATE_PERCENTAGE or StatType.SWAPPED_PERCENTAGE
-# top_consistent_players = list with indices of top consistent players
-# top_total_players = list with indices of top total players
-# top_percentage_players = list with indices of players with top percentage award
-# top_late_players = list with indices of players who got a late but great award
-# Output:
-# list of players that got a top percentage award (or late but great or jack of all trades)
 def get_and_write_sorted_top_percentage(players, config, num_used_fights, stat, output_file, late_or_swapping, top_consistent_players, top_total_players = list(), top_percentage_players = list(), top_late_players = list()):
     # get names that get on the list and their professions
+    """
+    Get and write the top x people who achieved top in stat with the highest percentage. This only considers fights where each player was present, i.e., a player who was in 4 fights and achieved a top spot in 2 of them gets 50%, as does a player who was only in 2 fights and achieved a top spot in 1 of them.
+
+    Args:
+        players (list[Player]): List of all Players.
+        config (Config): The configuration being used to determine top players.
+        num_used_fights (int): The number of fights that are being used in stat computation.
+        stat (str): The stat that is being considered.
+        output_file (str): The file to write the output to.
+        late_or_swapping (StatType): The type of stat that is being considered.
+        top_consistent_players (list[int]): List of top consistent player indices.
+        top_total_players (list[int]): List of top total player indices.
+        top_percentage_players (list[int]): List of top percentage player indices.
+        top_late_players (list[int]): List of player indices with late but great awards.
+
+    Returns:
+        list[int], float: List of player indices that got a top percentage award, value with which the percentage stat was compared.
+    """
     top_percentage_players, comparison_percentage = get_top_percentage_players(players, config, stat, late_or_swapping, num_used_fights, top_consistent_players, top_total_players, top_percentage_players, top_late_players)
     write_sorted_top_percentage(players, top_percentage_players, comparison_percentage, config, num_used_fights, stat, output_file, late_or_swapping, top_consistent_players, top_total_players, top_percentage_players, top_late_players)
     return top_percentage_players, comparison_percentage
@@ -2136,12 +2152,8 @@ def collect_stat_data(args, config, log, anonymize=False):
         file_path = "".join((args.input_directory,"/",filename))
 
         # load file
-        if file_extension == '.gz':
-            with gzip.open(file_path, mode="r") as f:
-                json_data = json.loads(f.read().decode('utf-8'))
-        else:
-            json_datafile = open(file_path, encoding='utf-8')
-            json_data = json.load(json_datafile)
+        with (gzip.open if file_extension == '.gz' else open)(file_path, mode='rt', encoding='utf-8') as file:
+            json_data = json.load(file)
         # get fight stats
         fight, players_running_healing_addon, squad_offensive, squad_Control, enemy_Control, enemy_Control_Player, downed_Healing, uptime_Table, stacking_uptime_Table, auras_TableIn, auras_TableOut, Death_OnTag, Attendance, DPS_List, CPS_List, SPS_List, HPS_List, DPSStats = get_stats_from_fight_json(json_data, config, log)
             
