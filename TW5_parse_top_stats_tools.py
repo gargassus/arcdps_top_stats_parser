@@ -2290,19 +2290,20 @@ def collect_stat_data(args, config, log, anonymize=False):
             playerRole=find_sub_type(player_data)
             playerRoleActiveTime = get_stat_from_player_json(player_data, players_running_healing_addon, 'time_active', config)
 
-            if profession+' '+playerRole not in prof_role_skills:
-                prof_role_skills[profession+' '+playerRole] = {}
-                prof_role_skills[profession+' '+playerRole]['castTotals'] = {}
-                prof_role_skills[profession+' '+playerRole]['player'] = {}
+            #Collect Role Data for Skill Casts
+            player_prof_role = profession + ' ' + playerRole
+            if player_prof_role not in prof_role_skills:
+                prof_role_skills[player_prof_role] = {'castTotals': {}, 'player': {}}
 
-            if name not in prof_role_skills[profession+' '+playerRole]['player']:
-                prof_role_skills[profession+' '+playerRole]['player'][name] = {}
-                prof_role_skills[profession+' '+playerRole]['player'][name]['ActiveTime'] = playerRoleActiveTime
-                prof_role_skills[profession+' '+playerRole]['player'][name]['Fights'] = 1
-                prof_role_skills[profession+' '+playerRole]['player'][name]['Skills'] = {}
+            if name not in prof_role_skills[player_prof_role]['player']:
+                prof_role_skills[player_prof_role]['player'][name] = {
+                    'ActiveTime': playerRoleActiveTime,
+                    'Fights': 1,
+                    'Skills': {}
+                }
             else:
-                prof_role_skills[profession+' '+playerRole]['player'][name]['Fights'] += 1
-                prof_role_skills[profession+' '+playerRole]['player'][name]['ActiveTime'] += playerRoleActiveTime
+                prof_role_skills[player_prof_role]['player'][name]['Fights'] += 1
+                prof_role_skills[player_prof_role]['player'][name]['ActiveTime'] += playerRoleActiveTime
                 
             #Collect Gear Buff Data for each player
             if config.include_comp_and_review:
