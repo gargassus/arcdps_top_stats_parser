@@ -5248,9 +5248,9 @@ def write_DPSStats_bubble_charts(uptime_Table, DPSStats, myDate, input_directory
 
 #JEL - write TW5 Bubble Chart tids
 def write_bubble_charts(players, top_players, squad_Control, myDate, input_directory):
-    get_Stats = ['deaths', 'kills', 'downs', 'dmg_taken', 'dmg', 'rips', 'cleanses', 'heal', 'dist']
+    get_Stats = ['deaths', 'kills', 'downs', 'dmg_taken', 'dmg', 'rips', 'cleanses', 'heal', 'dist', 'receivedCrowdControl', 'receivedCrowdControlDuration']
     boon_List = ['stability', 'protection', 'aegis', 'might', 'fury', 'resistance', 'resolution', 'quickness', 'swiftness', 'alacrity', 'vigor', 'regeneration', 'fireOut', 'shockingOut', 'frostOut', 'magneticOut', 'lightOut']
-    Charts = ['kills', 'cleanse', 'rips', 'deaths', 'fury_might']
+    Charts = ['kills', 'cleanse', 'rips', 'deaths', 'fury_might', 'stab_CC']
     Bubble_Chart = {}
 
     #for i in range(len(top_players)):
@@ -5276,6 +5276,7 @@ def write_bubble_charts(players, top_players, squad_Control, myDate, input_direc
             Bubble_Chart[prof_name]['dist']=0
             Bubble_Chart[prof_name]['Fury_Uptime']=0
             Bubble_Chart[prof_name]['Might_Uptime']=0
+            Bubble_Chart[prof_name]['Stability_Uptime']=0
         
         #gather control score per player
         sum_Control = 0
@@ -5299,7 +5300,16 @@ def write_bubble_charts(players, top_players, squad_Control, myDate, input_direc
         
         #gather Stats scores per player
         for statItem in get_Stats:
-            Bubble_Chart[prof_name][statItem] = player.average_stats[statItem]
+            if statItem in ["receivedCrowdControl", "receivedCrowdControlDuration"]:
+                Bubble_Chart[prof_name][statItem] = player.total_stats[statItem]
+            else:
+                Bubble_Chart[prof_name][statItem] = player.average_stats[statItem]
+
+        #Calculate Stability Uptime per player
+        if prof_name in uptime_Table and 'stability' in uptime_Table[prof_name] and uptime_Table[prof_name]['duration'] >0:
+            Bubble_Chart[prof_name]['Stability_Uptime'] = round((uptime_Table[prof_name]['stability']/uptime_Table[prof_name]['duration'])*100,2)
+        else:
+            Bubble_Chart[prof_name]['Stability_Uptime'] = 0.00
 
         #Calculate Fury Uptime per player
         if prof_name in uptime_Table and 'fury' in uptime_Table[prof_name] and uptime_Table[prof_name]['duration'] >0:
@@ -5327,7 +5337,17 @@ def write_bubble_charts(players, top_players, squad_Control, myDate, input_direc
         print_string +="type: text/vnd.tiddlywiki\n\n\n"
 
         print_string +='\nvar option = {\n  dataset: [{\n    source: ['
-        
+
+        if chart == 'stab_CC':
+            print_string += '\n            ["Name", "Profession", "Stability Uptime", "Hard CC Count", "Hard CC Duration", "color"],'
+            for prof_name in Bubble_Chart:
+                color = ProfessionColor[Bubble_Chart[prof_name]['profession']]
+                print_string += '\n            ["'+Bubble_Chart[prof_name]['name']+'", "'+Bubble_Chart[prof_name]['profession']+'", '+str(Bubble_Chart[prof_name]['Stability_Uptime'])+', '+str(Bubble_Chart[prof_name]['receivedCrowdControl'])+', '+str(Bubble_Chart[prof_name]['receivedCrowdControlDuration'])+', "'+color+'"],'
+                if Bubble_Chart[prof_name]['receivedCrowdControlDuration'] > maxStatSec:
+                    maxStatSec = Bubble_Chart[prof_name]['receivedCrowdControlDuration']
+                if Bubble_Chart[prof_name]['receivedCrowdControlDuration'] < minStatSec:
+                    minStatSec = Bubble_Chart[prof_name]['receivedCrowdControlDuration']
+
         if chart == 'kills':
             print_string += '\n            ["Name", "Profession", "Kills", "Downs", "DPS", "color"],'
             for prof_name in Bubble_Chart:
@@ -5401,7 +5421,9 @@ def write_bubble_charts(players, top_players, squad_Control, myDate, input_direc
         if chart == 'rips':
             print_string +='\n    name: "Control Effect Score"'			
         if chart == 'fury_might':
-            print_string +='\n    name: "Fury Uptime"'			
+            print_string +='\n    name: "Fury Uptime"'
+        if chart == 'stab_CC':
+            print_string +='\n    name: "Stability Uptime"'            	
         print_string +='\n  },'
         print_string +='\n  yAxis: {'
         print_string +="\n    type: 'value',"
@@ -5415,6 +5437,8 @@ def write_bubble_charts(players, top_players, squad_Control, myDate, input_direc
             print_string +='\n    name: "Strips per Second"'
         if chart == 'fury_might':
             print_string +='\n    name: "Might Uptime"'						
+        if chart == 'stab_CC':
+            print_string +='\n    name: "Hard CC Count"'            
         print_string +='\n  },'
         print_string +="\n  tooltip: {trigger: 'axis',\n        axisPointer: {\n          type: 'cross'\n        },    \n},"
         print_string +='\n  series: ['
@@ -5432,6 +5456,8 @@ def write_bubble_charts(players, top_players, squad_Control, myDate, input_direc
             print_string +="\n        x: 'Control',"	
         if chart == 'fury_might':
             print_string +="\n        x: 'Fury',"				
+        if chart == 'stab_CC':	
+            print_string +="\n        x: 'Stability Uptime',"
         print_string +='\n        // Map "product" row to y-axis.'
         if chart == 'kills':	
             print_string +="\n        y: 'Kills',"
@@ -5442,7 +5468,9 @@ def write_bubble_charts(players, top_players, squad_Control, myDate, input_direc
         if chart == 'rips':	
             print_string +="\n        y: 'Strips',"	
         if chart == 'fury_might':	
-            print_string +="\n        y: 'Might',"				
+            print_string +="\n        y: 'Might',"
+        if chart == 'stab_CC':	
+            print_string +="\n        y: 'Hard CC Count',"        				
         print_string +='\n        // format tooltip'
         print_string +='\n        tooltip: [0, 1, 2, 3, 4],'
         print_string +='\n      },	'
@@ -5817,8 +5845,8 @@ def write_to_json(overall_raid_stats, overall_squad_stats, fights, players, top_
     #json_dict["squad_Control"] =  {key: value for key, value in squad_Control.items()}
     #json_dict["enemy_Control"] =  {key: value for key, value in enemy_Control.items()}
     #json_dict["enemy_Control_Player"] =  {key: value for key, value in enemy_Control_Player.items()}
-    #json_dict["uptime_Table"] =  {key: value for key, value in uptime_Table.items()}
-    #json_dict["stacking_uptime_Table"] =  {key: value for key, value in stacking_uptime_Table.items()}
+    json_dict["uptime_Table"] =  {key: value for key, value in uptime_Table.items()}
+    json_dict["stacking_uptime_Table"] =  {key: value for key, value in stacking_uptime_Table.items()}
     #json_dict["auras_TableOut"] =  {key: value for key, value in auras_TableOut.items()}
     #json_dict["auras_TableIn"] =  {key: value for key, value in auras_TableIn.items()}
     #json_dict["Death_OnTag"] =  {key: value for key, value in Death_OnTag.items()}
