@@ -476,7 +476,7 @@ DPS_Utility = {
 
 def find_sub_type(player: dict) -> str:
     """Determine the subtype of a given player based on their profession, consumables, and stats."""
-    support_professions = ["Tempest", "Scrapper", "Druid", "Chronomancer", "Vindicator", "Firebrand", "Spectre", "Spellbreaker", "Willbender", "Guardian", "Berserker"]
+    support_professions = ["Tempest", "Scrapper", "Druid", "Chronomancer", "Vindicator", "Firebrand", "Spectre", "Spellbreaker", "Willbender", "Guardian", "Berserker", "Scourge"]
 
     if player["profession"] not in support_professions:
         # Calculate total damage, power damage, and condi damage
