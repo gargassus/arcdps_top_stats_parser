@@ -206,6 +206,9 @@ squadUptimes['buffs'] = {}
 #Stacking Buffs Tracking
 stacking_uptime_Table = {}
 
+#Firebrand Pages Tracking
+FB_Pages = {}
+
 #Personal Buff Tracking
 buffs_personal = {}
 
@@ -3469,7 +3472,7 @@ def calculate_dps_stats(fight_json, fight, players_running_healing_addon, config
             stacking_uptime_Table[DPSStats_prof_name]["firebrand_pages"] = {}
             for buff_name in damage_with_buff_buffs:
                 stacking_uptime_Table[DPSStats_prof_name]["damage_with_"+buff_name] = [0] * 26 if buff_name == 'might' else [0] * 2
-
+          
         player_damage = damagePS[player_prof_name]
         player_damage_per_tick = [player_damage[0]]
         for fight_tick in range(fight_ticks - 1):
@@ -3538,7 +3541,14 @@ def calculate_dps_stats(fight_json, fight, players_running_healing_addon, config
 
                 if buff_name in ['stability', 'might']:
                     stacking_uptime_Table[DPSStats_prof_name]["duration_"+buff_name] += total_time
-        
+                    
+        if player_prof_name not in FB_Pages:
+            FB_Pages[player_prof_name] = {}
+            FB_Pages[player_prof_name]["account"] = player['account']
+            FB_Pages[player_prof_name]["name"] = player['name']
+            FB_Pages[player_prof_name]["fightTime"] = 0
+            FB_Pages[player_prof_name]["firebrand_pages"] = {}
+                    
         # Track Firebrand Buffs
         tome1_skill_ids = ["41258", "40635", "42449", "40015", "42898"]
         tome2_skill_ids = ["45022", "40679", "45128", "42008", "42925"]
@@ -3549,11 +3559,12 @@ def calculate_dps_stats(fight_json, fight, players_running_healing_addon, config
             *tome3_skill_ids,
         ]
 
-        if player['profession'] == "Firebrand" and "rotation" in player:		
+        if player['profession'] == "Firebrand" and "rotation" in player:
+            FB_Pages[player_prof_name]["fightTime"] += player['activeTimes'][0]/1000
             for rotation_skill in player['rotation']:
                 skill_id = str(rotation_skill['id'])
                 if skill_id in tome_skill_ids:
-                    pages_data = stacking_uptime_Table[DPSStats_prof_name]["firebrand_pages"]
+                    pages_data = FB_Pages[player_prof_name]["firebrand_pages"]
                     pages_data[skill_id] = pages_data.get(skill_id, 0) + len(rotation_skill['skills'])
  
     return DPSStats

@@ -2247,14 +2247,15 @@ if __name__ == '__main__':
 	print_to_file(output, output_header)
 	
 	pages_sorted_stacking_uptime_Table = []
-	for uptime_prof_name in stacking_uptime_Table:
-		fight_time = (stacking_uptime_Table[uptime_prof_name]['duration_stability'] / 1000) or 1
-		stability_stacks = stacking_uptime_Table[uptime_prof_name]['stability']
+	#FB_Pages[player_prof_name]["firebrand_pages"]
+	for uptime_prof_name in FB_Pages:
+		fight_time = FB_Pages[uptime_prof_name]["fightTime"] or 1
+		#stability_stacks = stacking_uptime_Table[uptime_prof_name]['stability']
 
-		if (DPSStats[uptime_prof_name]['duration'] * 100) / max_fightTime < config.min_attendance_percentage_for_top:
-			continue
+		#if (DPSStats[uptime_prof_name]['duration'] * 100) / max_fightTime < config.min_attendance_percentage_for_top:
+		#	continue
 
-		firebrand_pages = stacking_uptime_Table[uptime_prof_name]['firebrand_pages']
+		firebrand_pages = FB_Pages[uptime_prof_name]['firebrand_pages']
 		
 		all_tomes_total = 0
 		for skill_id in tome_skill_ids:
@@ -2287,11 +2288,11 @@ if __name__ == '__main__':
 
 	
 	for uptime_prof_name in pages_sorted_stacking_uptime_Table:
-		name = stacking_uptime_Table[uptime_prof_name]['name']
-		role = stacking_uptime_Table[uptime_prof_name]['role']
-		fight_time = DPSStats[uptime_prof_name]['duration'] or 1
+		name = FB_Pages[uptime_prof_name]['name']
+		#role = FB_Pages[uptime_prof_name]['role']
+		fight_time = FB_Pages[uptime_prof_name]["fightTime"] or 1
 
-		firebrand_pages = stacking_uptime_Table[uptime_prof_name]['firebrand_pages']
+		firebrand_pages = FB_Pages[uptime_prof_name]['firebrand_pages']
 	
 		tome1_total = 0
 		for skill_id in tome1_skill_ids:
@@ -2311,8 +2312,8 @@ if __name__ == '__main__':
 			continue
 
 		output_string = '|'+name
-		if role != "Support":
-			output_string += ' (' + role + ')'
+		#if role != "Support":
+		#	output_string += ' (' + role + ')'
 		output_string += ' | ' + my_value(round(fight_time))+' | '
 		output_string += "{:.2f}".format(round(60 * all_tomes_total / fight_time, 4)) + '|'
 		output_string += ' |'
