@@ -2346,7 +2346,7 @@ if __name__ == '__main__':
 	#start Dashboard insert
 	print_to_file(output, '<$reveal type="match" state="$:/state/curTab" text="Dashboard">')    
 	print_to_file(output, '\n<<alert dark "Dashboard for various charts" width:60%>>\n\n')
-	Dashboard_Charts = ["Kills/Downs/DPS", "Fury/Might/DPS", "Deaths/DamageTaken/DistanceFromTag", "Total_Boon_Generation", "Cleanses/Heals/BoonScore", "BoonStrips/OutgoingControlScore/DPS", "Profession_DPS_BoxPlot", "Player_DPS_BoxPlot", "Profession_SPS_BoxPlot", "Player_SPS_BoxPlot", "Profession_CPS_BoxPlot", "Player_CPS_BoxPlot", "Profession_HPS_BoxPlot", "Player_HPS_BoxPlot"]
+	Dashboard_Charts = ["Stab vs. HardCC","Kills/Downs/DPS", "Fury/Might/DPS", "Deaths/DamageTaken/DistanceFromTag", "Total Boon Generation", "Cleanses/Heals/BoonScore", "BoonStrips/OutgoingControlScore/DPS", "Profession_DPS_BoxPlot", "Player_DPS_BoxPlot", "Profession_SPS_BoxPlot", "Player_SPS_BoxPlot", "Profession_CPS_BoxPlot", "Player_CPS_BoxPlot", "Profession_HPS_BoxPlot", "Player_HPS_BoxPlot"]
 	
 	for chart in Dashboard_Charts:
 		print_to_file(output, '<$button setTitle="$:/state/curChart" setTo="'+chart+'" selectedClass="" class="btn btn-sm btn-dark" style="">'+chart+' </$button>')
@@ -2358,6 +2358,11 @@ if __name__ == '__main__':
 			print_to_file(output, '<$reveal type="match" state="$:/state/curChart" text="'+chart+'">\n')
 			print_to_file(output, '\n---\n')
 			print_to_file(output, '\n<div class="flex-row">\n    <div class="flex-col border">\n')
+
+			if chart == "Stab vs. HardCC":
+				print_to_file(output, "\n!!Stability Uptime versus Hard CC\n")
+				print_to_file(output, ",,Bubble Size based on Cc Duration output,,\n")
+				print_to_file(output, '<$echarts $text={{'+fileDate.strftime("%Y%m%d%H%M")+'_stab_CC_BubbleChartData}} $height="500px" $theme="dark"/>')
 
 			if chart == "Kills/Downs/DPS":
 				print_to_file(output, "\n!!Kills / Downs / DPS\n")
@@ -2373,7 +2378,8 @@ if __name__ == '__main__':
 				print_to_file(output, "\n!!Deaths / Damage Taken / Distance from Tag\n")
 				print_to_file(output, ",,Bubble Size based on Average Distance to Tag,,\n")
 				print_to_file(output, '<$echarts $text={{'+fileDate.strftime("%Y%m%d%H%M")+'_deaths_BubbleChartData}} $height="500px" $theme="dark"/>')
-			if chart == "Total_Boon_Generation":
+
+			if chart == "Total Boon Generation":
 				playerCount = len(players)
 				calcHeight = str(playerCount*25)
 				print_to_file(output, "\n!!Total Boon Generation\n")
@@ -2463,7 +2469,7 @@ if __name__ == '__main__':
 	print_to_file(output, '|table-caption-top|k')
 	print_to_file(output, '|Sortable table - Click header item to sort table |c')
 	print_to_file(output, '|thead-dark table-hover sortable|k')
-	output_header =  '|!Name | !Class'
+	output_header =  '|!Name | !Class | !Role'
 	output_header += ' | ! <span data-tooltip="Number of seconds player was in squad logs">Seconds</span>'
 	output_header += '| !DPS| !Ch2DPS| !Ch4DPS| !Ch8DPS| !CaDPS'
 	output_header += '|h'
@@ -2471,9 +2477,10 @@ if __name__ == '__main__':
 	for DPSStats_prof_name in sorted_DPSStats:
 		name = DPSStats[DPSStats_prof_name]['name']
 		prof = DPSStats[DPSStats_prof_name]['profession']
+		role = DPSStats[DPSStats_prof_name]['role']
 		fightTime = DPSStats[DPSStats_prof_name]['duration'] or 1
 
-		output_string = '|'+name+' |'+' {{'+prof+'}} | '+my_value(fightTime)
+		output_string = '|'+name+' |'+' {{'+prof+'}} | '+role+' | '+my_value(fightTime)
 		output_string += '| '+'<span data-tooltip="'+my_value(DPSStats[DPSStats_prof_name]['Damage_Total'])+' total damage">'+my_value(round(DPSStats[DPSStats_prof_name]['Damage_Total'] / fightTime))+'</span>'
 		output_string += '| '+'<span data-tooltip="'+my_value(DPSStats[DPSStats_prof_name]['Chunk_Damage'][2])+' chunk(2) damage">'+my_value(round(DPSStats[DPSStats_prof_name]['Chunk_Damage'][2] / fightTime))+'</span>'
 		output_string += '| '+'<span data-tooltip="'+my_value(DPSStats[DPSStats_prof_name]['Chunk_Damage'][4])+' chunk (4) damage">'+my_value(round(DPSStats[DPSStats_prof_name]['Chunk_Damage'][4] / fightTime))+'</span>'
@@ -2517,7 +2524,7 @@ if __name__ == '__main__':
 	print_to_file(output, burst_menu_string)
 	print_to_file(output, '|thead-dark table-hover sortable|k')
 	
-	output_string = '|!Name | !Class |'
+	output_string = '|!Name | !Class | !Role |'
 
 	for i in list(range(1, 6)) + list(range(10, 21, 5)):
 		output_string += " !"+str(i)+"s |"
@@ -2528,9 +2535,10 @@ if __name__ == '__main__':
 	for DPSStats_prof_name in sorted_DPSStats:
 		name = DPSStats[DPSStats_prof_name]['name']
 		prof = DPSStats[DPSStats_prof_name]['profession']
+		role = DPSStats[DPSStats_prof_name]['role']
 		fightTime = DPSStats[DPSStats_prof_name]['duration']
 
-		output_string = '|'+name+' |'+' {{'+prof+'}} | '
+		output_string = '|'+name+' |'+' {{'+prof+'}} | '+role+' |'
 		for i in list(range(1, 6)) + list(range(10, 21, 5)):
 			output_string += ' '+my_value(round(DPSStats[DPSStats_prof_name]['Burst_Damage'][i] / i))+'|'
 				
@@ -2545,7 +2553,7 @@ if __name__ == '__main__':
 	print_to_file(output, burst_menu_string)
 	print_to_file(output, '|thead-dark table-hover sortable|k')
 	
-	output_string = '|!Name | !Class |'
+	output_string = '|!Name | !Class | !Role |'
 
 	for i in list(range(1, 6)) + list(range(10, 21, 5)):
 		output_string += " !"+str(i)+"s |"
@@ -2556,9 +2564,10 @@ if __name__ == '__main__':
 	for DPSStats_prof_name in sorted_DPSStats:
 		name = DPSStats[DPSStats_prof_name]['name']
 		prof = DPSStats[DPSStats_prof_name]['profession']
+		role = DPSStats[DPSStats_prof_name]['role']
 		fightTime = DPSStats[DPSStats_prof_name]['duration'] or 1
 
-		output_string = '|'+name+' |'+' {{'+prof+'}} | '
+		output_string = '|'+name+' |'+' {{'+prof+'}} | '+role+' |'
 		for i in list(range(1, 6)) + list(range(10, 21, 5)):
 			output_string += ' '+my_value(DPSStats[DPSStats_prof_name]['Burst_Damage'][i])+'|'
 				
@@ -2576,7 +2585,7 @@ if __name__ == '__main__':
 	print_to_file(output, burst_menu_string)
 	print_to_file(output, '|thead-dark table-hover sortable|k')
 	
-	output_string = '|!Name | !Class |'
+	output_string = '|!Name | !Class | !Role |'
 
 	for i in list(range(1, 6)) + list(range(10, 21, 5)):
 		output_string += " !"+str(i)+"s |"
@@ -2587,9 +2596,10 @@ if __name__ == '__main__':
 	for DPSStats_prof_name in sorted_DPSStats:
 		name = DPSStats[DPSStats_prof_name]['name']
 		prof = DPSStats[DPSStats_prof_name]['profession']
+		role = DPSStats[DPSStats_prof_name]['role']
 		fightTime = DPSStats[DPSStats_prof_name]['duration'] or 1
 
-		output_string = '|'+name+' |'+' {{'+prof+'}} | '
+		output_string = '|'+name+' |'+' {{'+prof+'}} | '+role+' |'
 		for i in list(range(1, 6)) + list(range(10, 21, 5)):
 			output_string += ' '+my_value(round(DPSStats[DPSStats_prof_name]['Ch5Ca_Burst_Damage'][i] / i))+'|'
 				
@@ -2604,7 +2614,7 @@ if __name__ == '__main__':
 	print_to_file(output, burst_menu_string)
 	print_to_file(output, '|thead-dark table-hover sortable|k')
 	
-	output_string = '|!Name | !Class |'
+	output_string = '|!Name | !Class | !Role |'
 
 	for i in list(range(1, 6)) + list(range(10, 21, 5)):
 		output_string += " !"+str(i)+"s |"
@@ -2615,9 +2625,10 @@ if __name__ == '__main__':
 	for DPSStats_prof_name in sorted_DPSStats:
 		name = DPSStats[DPSStats_prof_name]['name']
 		prof = DPSStats[DPSStats_prof_name]['profession']
+		role = DPSStats[DPSStats_prof_name]['role']
 		fightTime = DPSStats[DPSStats_prof_name]['duration'] or 1
 
-		output_string = '|'+name+' |'+' {{'+prof+'}} | '
+		output_string = '|'+name+' |'+' {{'+prof+'}} | '+role+' |'
 		for i in list(range(1, 6)) + list(range(10, 21, 5)):
 			output_string += ' '+my_value(DPSStats[DPSStats_prof_name]['Ch5Ca_Burst_Damage'][i])+'|'
 				
