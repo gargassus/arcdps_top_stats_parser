@@ -5195,23 +5195,24 @@ def write_bubble_charts(players, top_players, squad_Control, myDate, input_direc
         prof_name = "{{"+player.profession+"}} "+player.name
         name_prof = player.name+"_{{"+player.profession+"}}"
         if prof_name not in Bubble_Chart:
-            Bubble_Chart[prof_name]={}
-            Bubble_Chart[prof_name]['name'] = player.name
-            Bubble_Chart[prof_name]['profession'] = player.profession
-            Bubble_Chart[prof_name]['control']=0
-            Bubble_Chart[prof_name]['rips']=0
-            Bubble_Chart[prof_name]['dmg']=0
-            Bubble_Chart[prof_name]['cleanses']=0
-            Bubble_Chart[prof_name]['heal']=0
-            Bubble_Chart[prof_name]['boonScore']=0
-            Bubble_Chart[prof_name]['kills']=0
-            Bubble_Chart[prof_name]['downs']=0
-            Bubble_Chart[prof_name]['deaths']=0
-            Bubble_Chart[prof_name]['dmg_taken']=0
-            Bubble_Chart[prof_name]['dist']=0
-            Bubble_Chart[prof_name]['Fury_Uptime']=0
-            Bubble_Chart[prof_name]['Might_Uptime']=0
-            Bubble_Chart[prof_name]['Stability_Uptime']=0
+            Bubble_Chart[prof_name] = {
+                "name": player.name,
+                "profession": player.profession,
+                "control": 0,
+                "rips": 0,
+                "dmg": 0,
+                "cleanses": 0,
+                "heal": 0,
+                "boon_score": 0,
+                "kills": 0,
+                "downs": 0,
+                "deaths": 0,
+                "dmg_taken": 0,
+                "dist": 0,
+                "fury_uptime": 0,
+                "might_uptime": 0,
+                "stability_uptime": 0,
+            }
         
         #gather control score per player
         sum_Control = 0
