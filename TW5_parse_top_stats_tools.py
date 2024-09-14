@@ -2164,7 +2164,9 @@ def get_basic_player_data_from_json(player_json):
     account = player_json['account']
     name = player_json['name']
     profession = player_json['profession']
-    return account, name, profession
+    not_in_squad = player_json['notInSquad']
+    group = player_json['group']
+    return account, name, profession, not_in_squad, group
 
 def getPlenBotLogs(PlenBotPath):
     filename="uploaded_logs.csv"
@@ -2339,26 +2341,24 @@ def collect_stat_data(args, config, log, anonymize=False):
             
         # get stats for each player
         for player_data in json_data['players']:
-            if player_data['notInSquad']:
+            # get basic player data
+            account, name, profession, not_in_squad, playerGroup = get_basic_player_data_from_json(player_data)
+
+            if not_in_squad:
                 continue
             create_new_player = False
             build_swapped = False
-
-            #if args.filetype == "xml":
-            #    account, name, profession = get_basic_player_data_from_xml(player_data)
-            #else:
-            account, name, profession = get_basic_player_data_from_json(player_data)
-            playerGroup = player_data['group']
             
+            # Update squad composition for this fight
             if profession not in squad_comp[fight_number]:
                 squad_comp[fight_number][profession] = 1
             else:
-                squad_comp[fight_number][profession] = squad_comp[fight_number][profession]+1
+                squad_comp[fight_number][profession] += 1
+                
             #collect players by party
             if playerGroup not in party_comp[fight_number]:
                 party_comp[fight_number][playerGroup]=[]
             party_comp[fight_number][playerGroup].append([profession, name])
-
 
             # if this combination of charname + profession is not in the player index yet, create a new entry
             name_and_prof = name+" "+profession
@@ -2852,228 +2852,170 @@ def get_stat_from_player_json(player_json, players_running_healing_addon, stat, 
         return round(sum_breakpoints(get_combat_time_breakpoints(player_json)) / 1000)
 
     if stat == 'group':
-        if 'group' not in player_json:
-            return 0
-        return int(player_json['group'])
-    
+        return int(player_json.get('group', 0))
+
     if stat == 'time_active':
-        if 'activeTimes' not in player_json:
+        active_times = player_json.get('activeTimes')
+        if active_times is None:
             return 0
-        return round(int(player_json['activeTimes'][0])/1000)
-    
+        return round(active_times[0] / 1000)
+
     if stat == 'dmg_taken':
-        if 'defenses' not in player_json or 'damageTaken' not in player_json['defenses'][0] or 'damageBarrier' not in player_json['defenses'][0]:
-            return 0
-        return int(player_json['defenses'][0]['damageTaken'])
+        dmg_taken = int(player_json.get('defenses', [{}])[0].get('dmg_taken', 0))
+        return dmg_taken
 
     if stat == 'barrierDamage':
-        if 'defenses' not in player_json or 'damageBarrier' not in player_json['defenses'][0]:
-            return 0
-        return int(player_json['defenses'][0]['damageBarrier'])
-        
+        barrier_damage = int(player_json.get('defenses', [{}])[0].get('barrierDamage', 0))
+        return barrier_damage
+
     if stat == 'deaths':
-        if 'defenses' not in player_json or 'deadCount' not in player_json['defenses'][0]:
-            return 0        
-        return int(player_json['defenses'][0]['deadCount'])
+        deaths = int(player_json.get('defenses', [{}])[0].get('deaths', 0))
+        return deaths
 
     if stat == 'downed':
-        if 'defenses' not in player_json or 'downCount' not in player_json['defenses'][0]:
-            return 0        
-        return int(player_json['defenses'][0]['downCount'])
+        downed = int(player_json.get('defenses', [{}])[0].get('downed', 0))
+        return downed
 
     if stat == 'hitsMissed':
-        if 'defenses' not in player_json or 'missedCount' not in player_json['defenses'][0]:
-            return 0        
-        return int(player_json['defenses'][0]['missedCount'])
+        hits_missed = int(player_json.get('defenses', [{}])[0].get('hitsMissed', 0))
+        return hits_missed
 
     if stat == 'interupted':
-        if 'defenses' not in player_json or 'interruptedCount' not in player_json['defenses'][0]:
-            return 0        
-        return int(player_json['defenses'][0]['interruptedCount'])
+        interupted = int(player_json.get('defenses', [{}])[0].get('interupted', 0))
+        return interupted
 
     if stat == 'dmg':
-        if 'targetDamageDist' not in player_json:
-            return 0
-        sumDamage = 0
+        total_damage = 0
         for target in player_json['targetDamageDist']:
-            for skill in target[0]:
-                sumDamage += skill['totalDamage']
-            #sumDamage = sumDamage + int(target[0]['damage'])
-        return int(sumDamage)
-    #Add Shield Damage Tracking
+            total_damage += sum([int(skill.get('totalDamage', 0)) for skill in target[0]])
+        return total_damage
+
     if stat == 'shieldDmg':
-        if 'targetDamageDist' not in player_json:
-            return 0
-        sumDamage = 0
+        total_shield_damage = 0
         for target in player_json['targetDamageDist']:
-            for skill in target[0]:
-                sumDamage += skill['shieldDamage']
-        return int(sumDamage)
+            total_shield_damage += sum([int(skill.get('shieldDamage', 0)) for skill in target[0]])
+        return total_shield_damage
     
     if stat == 'dmgAll':
-        if 'dpsAll' not in player_json:
-            return 0
-        return int(player_json['dpsAll'][0]['damage'])
-    
-    #Add Power and Condition Damage Tracking
+        total_damage_all = int(player_json.get('dpsAll', [{}])[0].get('damage', 0))
+        return total_damage_all
+
     if stat == 'Cdmg':
-        if 'dpsTargets' not in player_json:
-            return 0
-        sumDamage = 0
-        for target in player_json['dpsTargets']:
-            sumDamage = sumDamage + int(target[0]['condiDamage'])
-        return int(sumDamage)
-        #return int(player_json['dpsAll'][0]['condiDamage'])    
-    
+        total_condi_damage = sum([int(target[0].get('condiDamage', 0)) for target in player_json['dpsTargets']])
+        return total_condi_damage
+
     if stat == 'Pdmg':
-        if 'dpsTargets' not in player_json:
-            return 0
-        sumDamage = 0
-        for target in player_json['dpsTargets']:
-            sumDamage = sumDamage + int(target[0]['powerDamage'])
-        return int(sumDamage)
-        #return int(player_json['dpsAll'][0]['powerDamage'])  
+        total_power_damage = sum([int(target[0].get('powerDamage', 0)) for target in player_json['dpsTargets']])
+        return total_power_damage
 
     if stat == 'res':
-        if 'support' not in player_json or 'resurrects' not in player_json['support'][0]:
-            return 0
-        return int(player_json['support'][0]['resurrects'])
+        resurrect_count = int(player_json.get('support', [{}])[0].get('resurrects', 0))
+        return resurrect_count
 
     if stat == 'resOutTime':
-        if 'support' not in player_json or 'resurrectTime' not in player_json['support'][0]:
-            return 0
-        return int(player_json['support'][0]['resurrectTime'])
-    
+        resurrect_time = int(player_json.get('support', [{}])[0].get('resurrectTime', 0))
+        return resurrect_time
+
     if stat == 'rips':
-        if 'support' not in player_json or 'boonStrips' not in player_json['support'][0]:
-            return 0
-        return int(player_json['support'][0]['boonStrips'])
+        boon_strip_count = int(player_json.get('support', [{}])[0].get('boonStrips', 0))
+        return boon_strip_count
 
     if stat == 'ripsOutTime':
-        if 'support' not in player_json or 'boonStripsTime' not in player_json['support'][0]:
-            return 0
-        return int(player_json['support'][0]['boonStripsTime'])
+        boon_strip_time = int(player_json.get('support', [{}])[0].get('boonStripsTime', 0))
+        return boon_strip_time
         
     if stat == 'cleanses':
-        if 'support' not in player_json or 'condiCleanse' not in player_json['support'][0]:
-            return 0
-        return int(player_json['support'][0]['condiCleanse'])
+        cleanse_count = int(player_json.get('support', [{}])[0].get('condiCleanse', 0))
+        return cleanse_count
 
     if stat == 'cleansesOutTime':
-        if 'support' not in player_json or 'condiCleanseTime' not in player_json['support'][0]:
-            return 0
-        return int(player_json['support'][0]['condiCleanseTime'])
-    
+        cleanse_out_time = int(player_json.get('support', [{}])[0].get('condiCleanseTime', 0))
+        return cleanse_out_time
+
     if stat == 'ripsIn':
-        if 'defenses' not in player_json or 'boonStrips' not in player_json['defenses'][0]:
-            return 0        
-        return int(player_json['defenses'][0]['boonStrips'])
+        boon_strip_count = int(player_json.get('defenses', [{}])[0].get('boonStrips', 0))
+        return boon_strip_count
 
     if stat == 'ripsTime':
-        if 'defenses' not in player_json or 'boonStripsTime' not in player_json['defenses'][0]:
-            return 0        
-        return int(player_json['defenses'][0]['boonStripsTime'])
+        boon_strip_time = int(player_json.get('defenses', [{}])[0].get('boonStripsTime', 0))
+        return boon_strip_time
 
     if stat == 'cleansesIn':
-        if 'defenses' not in player_json or 'conditionCleanses' not in player_json['defenses'][0]:
-            return 0        
-        return int(player_json['defenses'][0]['conditionCleanses'])				
+        cleanses_in = player_json.get('defenses', [{}])[0].get('conditionCleanses', 0)
+        return int(cleanses_in)
 
     if stat == 'cleansesTime':
-        if 'defenses' not in player_json or 'conditionCleansesTime' not in player_json['defenses'][0]:
-            return 0        
-        return int(player_json['defenses'][0]['conditionCleansesTime'])		
+        cleanse_time = player_json.get('defenses', [{}])[0].get('conditionCleansesTime', 0)
+        return int(cleanse_time)
 
     if stat == 'dodges':
-        if 'defenses' not in player_json or 'dodgeCount' not in player_json['defenses'][0]:
-            return 0        
-        return int(player_json['defenses'][0]['dodgeCount'])	
+        dodge_count = player_json.get('defenses', [{}])[0].get('dodgeCount', 0)
+        return int(dodge_count)
 
     if stat == 'evades':
-        if 'defenses' not in player_json or 'evadedCount' not in player_json['defenses'][0]:
-            return 0        
-        return int(player_json['defenses'][0]['evadedCount'])
+        evaded_count = player_json.get('defenses', [{}])[0].get('evadedCount', 0)
+        return int(evaded_count)
 
     if stat == 'invulns':
-        if 'defenses' not in player_json or 'invulnedCount' not in player_json['defenses'][0]:
-            return 0        
-        return int(player_json['defenses'][0]['invulnedCount'])
+        invulned_count = player_json.get('defenses', [{}])[0].get('invulnedCount', 0)
+        return int(invulned_count)
 
     if stat == 'blocks':
-        if 'defenses' not in player_json or 'blockedCount' not in player_json['defenses'][0]:
-            return 0        
-        return int(player_json['defenses'][0]['blockedCount'])		
+        blocked_count = player_json.get('defenses', [{}])[0].get('blockedCount', 0)
+        return int(blocked_count)
 
     if stat == 'dist':
-        if 'statsAll' not in player_json or 'distToCom' not in player_json['statsAll'][0]:
-            return -1
-        return float(player_json['statsAll'][0]['distToCom'])
+        dist_to_com = player_json.get('statsAll', [{}])[0].get('distToCom', 0)
+        return float(dist_to_com)
 
     if stat == 'swaps':
-        if 'statsAll' not in player_json or 'swapCount' not in player_json['statsAll'][0]:
-            return -1
-        return float(player_json['statsAll'][0]['swapCount'])
+        swap_count = player_json.get('statsAll', [{}])[0].get('swapCount', 0)
+        return int(swap_count)
 
     if stat == 'receivedCrowdControl':
-        if 'defenses' not in player_json or 'receivedCrowdControl' not in player_json['defenses'][0]:
-            return -1
-        return float(player_json['defenses'][0]['receivedCrowdControl'])
+        received_cc = player_json.get('defenses', [{}])[0].get('receivedCrowdControl', 0)
+        return int(received_cc)
 
     if stat == 'receivedCrowdControlDuration':
-        if 'defenses' not in player_json or 'receivedCrowdControlDuration' not in player_json['defenses'][0]:
-            return -1
-        return float(player_json['defenses'][0]['receivedCrowdControlDuration'])
+        received_cc_duration = player_json.get('defenses', [{}])[0].get('receivedCrowdControlDuration', 0)
+        return float(received_cc_duration)
 
     if stat == 'appliedCrowdControl':
-        if 'statsAll' not in player_json or 'appliedCrowdControl' not in player_json['statsAll'][0]:
-            return -1
-        return float(player_json['statsAll'][0]['appliedCrowdControl'])
+        applied_cc = player_json.get('statsAll', [{}])[0].get('appliedCrowdControl', 0)
+        return float(applied_cc)
 
     if stat == 'appliedCrowdControlDuration':
-        if 'statsAll' not in player_json or 'appliedCrowdControlDuration' not in player_json['statsAll'][0]:
-            return -1
-        return float(player_json['statsAll'][0]['appliedCrowdControlDuration'])
-            
+        applied_cc_duration = player_json.get('statsAll', [{}])[0].get('appliedCrowdControlDuration', 0)
+        return float(applied_cc_duration)
+
     if stat == 'stunBreak':
-        if 'support' not in player_json or 'stunBreak' not in player_json['support'][0]:
-            return 0
-        return int(player_json['support'][0]['stunBreak'])
+        stun_breaks = player_json.get('support', [{}])[0].get('stunBreak', 0)
+        return int(stun_breaks)
 
     if stat == 'removedStunDuration':
-        if 'support' not in player_json or 'removedStunDuration' not in player_json['support'][0]:
-            return 0
-        return int(player_json['support'][0]['removedStunDuration'])
-    
+        removed_stun_duration = player_json.get('support', [{}])[0].get('removedStunDuration', 0)
+        return int(removed_stun_duration)
+
     if stat == 'kills':
-        countKills = 0
-        for target in player_json['statsTargets']:
-            countKills = countKills + int(target[0]['killed'])
-        return int(countKills)
+        killed_count = sum([int(target[0].get('killed',0)) for target in player_json['statsTargets']])
+        return killed_count
 
     if stat == 'downs':
-        countDowns = 0
-        for target in player_json['statsTargets']:
-            countDowns = countDowns + int(target[0]['downed'])
-        return int(countDowns)
+        downs = sum([int(target[0].get('downed',0)) for target in player_json['statsTargets']])
+        return downs
 
     if stat == 'againstDownedDamage':
-        againstDownedDamage = 0
-        for target in player_json['statsTargets']:
-            againstDownedDamage = againstDownedDamage + int(target[0]['againstDownedDamage'])
-        return int(againstDownedDamage)		
+        against_downed_damage = sum([int(target[0].get('againstDownedDamage',0)) for target in player_json['statsTargets']])
+        return against_downed_damage
 
     if stat == 'againstDownedCount':
-        againstDownedCount = 0
-        for target in player_json['statsTargets']:
-            againstDownedCount = againstDownedCount + int(target[0]['againstDownedCount'])
-        return int(againstDownedCount)		
+        against_downed_count = sum([int(target[0].get('againstDownedCount',0)) for target in player_json['statsTargets']])
+        return against_downed_count
 
     if stat == 'downContribution':
-        downContributionDamage = 0
-        for target in player_json['statsTargets']:
-            downContributionDamage = downContributionDamage + int(target[0]['downContribution'])
-        return int(downContributionDamage)
-        
+        down_contribution_damage = sum([int(target[0].get('downContribution',0)) for target in player_json['statsTargets']])
+        return down_contribution_damage
+
     ### Buffs ###
     if stat in config.buff_ids:
         if buffGenType == BuffGenerationType.GROUP:
@@ -3694,20 +3636,12 @@ def get_stats_from_fight_json(fight_json, config, log):
                 if str(skill_id) in SiegeSkills:
                     continue
                 if str(skill_id) in skill_Dict:
-                    #skill_name = skill_Dict[str(skill_id)]
                     skill_name = skill_Dict[str(skill_id)]['name']
                 else:
                     skill_name = 'Skill-'+str(skill_id)
-                #skill_name = skill_Dict[skill_id]
+
                 skill_dmg = skill_used['totalDamage']
-                #if skill_name not in enemy_skill_dmg:
-                #	enemy_skill_dmg[skill_name] = skill_dmg
-                #else:
-                #	enemy_skill_dmg[skill_name] = enemy_skill_dmg[skill_name] +skill_dmg
-                #if skill_name not in total_Enemy_Skill_Dmg:
-                #	total_Enemy_Skill_Dmg[skill_name] = skill_dmg
-                #else:
-                #	total_Enemy_Skill_Dmg[skill_name] = total_Enemy_Skill_Dmg[skill_name] +skill_dmg
+
                 enemy_skill_dmg[skill_name] = enemy_skill_dmg.get(skill_name, 0) +skill_dmg
                 total_Enemy_Skill_Dmg[skill_name] = total_Enemy_Skill_Dmg.get(skill_name, 0) +skill_dmg
 
@@ -3731,8 +3665,7 @@ def get_stats_from_fight_json(fight_json, config, log):
 
             #Tracking Outgoing Control Effects generated by the squad against enemy players
             Control_Effects = {736: 'Bleeding', 737: 'Burning',861: 'Confusion', 723: 'Poison', 19426: 'Torment', 720: 'Blinded', 721: 'Crippled', 722: 'Chilled', 727: 'Immobile', 742: 'Weakness', 791: 'Fear', 833: 'Daze', 872: 'Stun', 26766: 'Slow', 27705: 'Taunt', 738: 'Vulnerability', 30778: "Hunter's Mark", 72941: 'Extirpation', 44633:'Disenchantment'}
-            #Control_Duration = {720: 'Blinded', 721: 'Crippled', 722: 'Chilled', 727: 'Immobile', 742: 'Weakness', 791: 'Fear',  26766: 'Slow', 27705: 'Taunt', 30778: "Hunter's Mark", 833: 'Daze', 872: 'Stun'}
-            #Control_Intensity = {736: 'Bleeding', 737: 'Burning',861: 'Confusion', 723: 'Poison', 19426: 'Torment', 738: 'Vulnerability', 833: 'Daze', 872: 'Stun'}
+
             for item in enemy['buffs']:
                 conditionId = int(item['id'])
                 if conditionId not in Control_Effects:
@@ -3780,14 +3713,6 @@ def get_stats_from_fight_json(fight_json, config, log):
                 enemy_squad[enemy_name] = 1
             else:
                 enemy_squad[enemy_name] = enemy_squad[enemy_name] + 1
-#       Broke in EI v2.55.2.0
-#			if 'combatReplayData' in enemy:
-#				for item in enemy['combatReplayData']['dead']:
-#					if abs(item[1]) <= fight_json['durationMS']:
-#						num_kills += 1
-#				for item in enemy['combatReplayData']['down']:
-#					if abs(item[1]) <= fight_json['durationMS']:						
-#						num_downs += 1
 
             if enemy['defenses'][0]['downCount']:
                 num_downs += enemy['defenses'][0]['downCount']
@@ -4312,13 +4237,11 @@ def get_stats_from_fight_json(fight_json, config, log):
                 Attendance[player_account]['names'][player_name]['professions'][player_prof_role]['fights'] = 1
                 Attendance[player_account]['names'][player_name]['professions'][player_prof_role]['duration'] = duration
                 Attendance[player_account]['names'][player_name]['professions'][player_prof_role]['guildStatus'] = guildStatus
+
             else:
                 Attendance[player_account]['names'][player_name]['professions'][player_prof_role]['fights'] += 1
                 Attendance[player_account]['names'][player_name]['professions'][player_prof_role]['duration'] += duration
                 Attendance[player_account]['names'][player_name]['professions'][player_prof_role]['guildStatus'] = guildStatus
-
-
-        #if player_name in Attendance[player_account]['names']:
 
         elif player_prof_role not in Attendance[player_account]['names'][player_name]['professions']:
             Attendance[player_account]['names'][player_name]['professions'][player_prof_role]={}
@@ -4326,6 +4249,7 @@ def get_stats_from_fight_json(fight_json, config, log):
             Attendance[player_account]['names'][player_name]['professions'][player_prof_role]['fights'] = 1
             Attendance[player_account]['names'][player_name]['professions'][player_prof_role]['duration'] = duration
             Attendance[player_account]['names'][player_name]['professions'][player_prof_role]['guildStatus'] = guildStatus
+
         else:
             Attendance[player_account]['names'][player_name]['professions'][player_prof_role]['fights'] += 1
             Attendance[player_account]['names'][player_name]['professions'][player_prof_role]['duration'] += duration
