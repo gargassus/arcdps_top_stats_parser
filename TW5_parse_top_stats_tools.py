@@ -4568,15 +4568,10 @@ def get_stats_from_fight_json(fight_json, config, log):
         for player in fight_json['players']:
             if player['notInSquad']:
                 continue
-            if 'defenses' not in player or 'deadCount' not in player['defenses'][0]:
-                Cmd_Tags[current_Tag]['Deaths'] += 0
-            else:
-                Cmd_Tags[current_Tag]['Deaths'] += int(player['defenses'][0]['deadCount'])
-                
-            if 'defenses' not in player or 'downCount' not in player['defenses'][0]:
-                Cmd_Tags[current_Tag]['Downed'] += 0
-            else:
-                Cmd_Tags[current_Tag]['Downed'] += int(player['defenses'][0]['downCount'])
+            player_deaths = player.get('defenses', [{}])[0].get('deadCount', 0)
+            player_downed = player.get('defenses', [{}])[0].get('downCount', 0)
+            Cmd_Tags[current_Tag]['Deaths'] += player_deaths
+            Cmd_Tags[current_Tag]['Downed'] += player_downed
 
     # skip fights that last less than min_fight_duration seconds
     if(duration < config.min_fight_duration):
@@ -4781,17 +4776,6 @@ def write_fights_overview_xls(fights, overall_squad_stats, overall_raid_stats, c
         sheet1.write(i+1, 9, fight.kills)
         for j,stat in enumerate(config.stats_to_compute):
             sheet1.write(i+1, 10+j, fight.total_stats[stat])
-
-    #used_fights = [f for f in fights if not f.skipped]
-    #used_fights_duration = sum([f.duration for f in used_fights])
-    #num_used_fights = len(used_fights)
-    #date = min([f.start_time.split()[0] for f in used_fights])
-    #start_time = min([f.start_time.split()[1] for f in used_fights])
-    #end_time = max([f.end_time.split()[1] for f in used_fights])
-    #skipped_fights = len(fights) - num_used_fights
-    #mean_allies = round(sum([f.allies for f in used_fights])/num_used_fights, 1)
-    #mean_enemies = round(sum([f.enemies for f in used_fights])/num_used_fights, 1)
-    #total_kills = sum([f.kills for f in used_fights])
 
     sheet1.write(len(fights)+1, 0, "Sum/Avg. in used fights")
     sheet1.write(len(fights)+1, 1, overall_raid_stats['num_used_fights'])
