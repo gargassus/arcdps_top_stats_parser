@@ -2354,7 +2354,7 @@ def collect_stat_data(args, config, log, anonymize=False):
                 squad_comp[fight_number][profession] = 1
             else:
                 squad_comp[fight_number][profession] += 1
-                
+
             #collect players by party
             if playerGroup not in party_comp[fight_number]:
                 party_comp[fight_number][playerGroup]=[]
@@ -5817,26 +5817,23 @@ def write_to_json(overall_raid_stats, overall_squad_stats, fights, players, top_
     with open(output_file, 'w') as json_file:
         json.dump(json_dict, json_file, indent=4)
 
-def calc_weighted_dps_enemy(players, fights):
+def calculate_weighted_dps_against_enemies(players, fights):
+    """
+    Calculates a player's weighted DPS against enemies.
+    """
+    weighted_dps_against_enemies = []
+
     for player in players:
-        playerDamages = []
-        playerDurations = []
-        playerEnemies = []
-        weighted_DPS_Enemy = []
-        sum_playerDurations = 0
+        total_dmg = 0
+        total_duration = 0
 
         for fight in player['stats_per_fight']:
-            playerDamages.append(fight['dmg'])
-            playerDurations.append(fight['time_in_combat'])
-        for fight in fights:
-            playerEnemies.append(fight['enemies'])
+            if fight['dmg'] != -1:
+                total_dmg += fight['dmg']
+                total_duration += fight['time_in_combat']
 
-        for fightTime in playerDurations:
-            if fightTime >0:
-                sum_playerDurations += fightTime
+        if total_duration > 0:
+            weighted_dps_against_enemies.append(
+                round((total_dmg / len(fights['enemies'])) * (total_duration / sum(player['stats_per_fight']['time_in_combat'])), 2))
 
-        for (dmg, enemy, duration) in zip(playerDamages, playerEnemies, playerDurations):
-            if dmg != -1:
-                weighted_DPS_Enemy.append(round((dmg/enemy) * (duration / sum_playerDurations),2))
-
-    return sum(weighted_DPS_Enemy)
+    return sum(weighted_dps_against_enemies)
