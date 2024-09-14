@@ -5112,27 +5112,31 @@ def write_DPSStats_bubble_charts(uptime_Table, DPSStats, myDate, input_directory
 
     print_string +='\nvar option = {\n  dataset: [{\n    source: ['
     print_string += '\n            ["Name", "Profession", "DPS", "Ch2DPS", "Ch5DPS", "CaDPS", "CDPS", "Downs", "Kills", "color", "Fight Time"],'
-    for DPSStats_prof_name in DPSStats:
-        name = DPSStats[DPSStats_prof_name]['name']
-        prof = DPSStats[DPSStats_prof_name]['profession']
-        fightTime = DPSStats[DPSStats_prof_name]['duration']
-        myDPS = round(DPSStats[DPSStats_prof_name]['Damage_Total'] / fightTime)
-        Ch2DPS = round(DPSStats[DPSStats_prof_name]['Chunk_Damage'][2] / fightTime)
-        Ch5DPS = round(DPSStats[DPSStats_prof_name]['Chunk_Damage'][5] / fightTime)
-        CaDPS = round(DPSStats[DPSStats_prof_name]['Carrion_Damage'] / fightTime)
-        myCDPS = round(DPSStats[DPSStats_prof_name]['Coordination_Damage'] / fightTime)
-        Downs = round(DPSStats[DPSStats_prof_name]['Downs'] / (fightTime / 60), 2)
-        Kills = round(DPSStats[DPSStats_prof_name]['Kills'] / (fightTime / 60), 2)
-        color = ProfessionColor[prof]
-        if myCDPS > maxStatSec:
-            maxStatSec = myCDPS
-        if myCDPS < minStatSec:
-            minStatSec = myCDPS
-        if DPSStats[DPSStats_prof_name]['Damage_Total'] / fightTime < 500 or fightTime * 10 < max_fightTime:
+    for prof_name, stats in DPSStats.items():
+        name = stats['name']
+        profession = stats['profession']
+        fight_time = stats['duration']
+        dps = round(stats['Damage_Total'] / fight_time)
+        chunk_2_dps = round(stats['Chunk_Damage'][2] / fight_time)
+        chunk_5_dps = round(stats['Chunk_Damage'][5] / fight_time)
+        carrion_dps = round(stats['Carrion_Damage'] / fight_time)
+        coordination_dps = round(stats['Coordination_Damage'] / fight_time)
+        downs_per_minute = round(stats['Downs'] / (fight_time / 60), 2)
+        kills_per_minute = round(stats['Kills'] / (fight_time / 60), 2)
+        color = ProfessionColor[profession]
+        if coordination_dps > maxStatSec:
+            maxStatSec = coordination_dps
+        if coordination_dps < minStatSec:
+            minStatSec = coordination_dps
+        if dps < 500 or fight_time * 10 < max_fightTime:
             continue
         else:
-            print_string += '\n            ["'+name+'", "'+prof+'", '+str(myDPS)+', '+str(Ch2DPS)+', '+str(Ch5DPS)+', '+str(CaDPS)+', '+str(myCDPS)+', '+str(Downs)+', '+str(Kills)+', "'+color+'", '+str(fightTime)+'],'
-                
+            print_string += (
+                '\n            ["{}", "{}", {}, {}, {}, {}, {}, {}, {}, "{}", {}],'
+                .format(name, profession, dps, chunk_2_dps, chunk_5_dps, carrion_dps,
+                        coordination_dps, downs_per_minute, kills_per_minute, color, fight_time)
+            )
+
     print_string += '\n   ]'
     print_string += '\n  }],'
     print_string += '\n  visualMap: {'
