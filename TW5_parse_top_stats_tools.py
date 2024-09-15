@@ -4268,6 +4268,8 @@ def get_stats_from_fight_json(fight_json, config, log):
                 buffs_personal[prof]['buffList'].append(buff)
 
     for player in fight_json['players']:
+        if player['notInSquad']:
+            continue
         player_prof = player['profession']
         player_name = player['name']
         player_activeTime = round(player['activeTimes'][0]/1000,2)
