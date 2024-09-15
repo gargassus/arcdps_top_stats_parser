@@ -4216,40 +4216,29 @@ def get_stats_from_fight_json(fight_json, config, log):
             guildStatus = ""			
 
         if player_account not in Attendance:
+            Attendance[player_account] = {
+                'fights': 1,
+                'duration': duration,
+                'guildStatus': guildStatus,
+                'names': {}
+            }
 
-            Attendance[player['account']]={}
-            Attendance[player['account']]['fights'] = 1
-            Attendance[player['account']]['duration'] = duration
-            Attendance[player['account']]['guildStatus'] = guildStatus
-            Attendance[player['account']]['names']={}
-        
         elif player_account in Attendance:
-            Attendance[player['account']]['fights'] += 1
-            Attendance[player['account']]['duration'] += duration
+            Attendance[player_account]['fights'] += 1
+            Attendance[player_account]['duration'] += duration
 
         if player_name not in Attendance[player_account]['names']:
-            Attendance[player_account]['names'][player_name]={}
+            Attendance[player_account]['names'][player_name] = {
+                'professions': {}
+            }
 
-            if player_prof_role not in Attendance[player_account]['names'][player_name]:
-                Attendance[player_account]['names'][player_name]['professions']={}
-                Attendance[player_account]['names'][player_name]['professions'][player_prof_role]={}
-                Attendance[player_account]['names'][player_name]['professions'][player_prof_role]['role'] = player_role
-                Attendance[player_account]['names'][player_name]['professions'][player_prof_role]['fights'] = 1
-                Attendance[player_account]['names'][player_name]['professions'][player_prof_role]['duration'] = duration
-                Attendance[player_account]['names'][player_name]['professions'][player_prof_role]['guildStatus'] = guildStatus
-
-            else:
-                Attendance[player_account]['names'][player_name]['professions'][player_prof_role]['fights'] += 1
-                Attendance[player_account]['names'][player_name]['professions'][player_prof_role]['duration'] += duration
-                Attendance[player_account]['names'][player_name]['professions'][player_prof_role]['guildStatus'] = guildStatus
-
-        elif player_prof_role not in Attendance[player_account]['names'][player_name]['professions']:
-            Attendance[player_account]['names'][player_name]['professions'][player_prof_role]={}
-            Attendance[player_account]['names'][player_name]['professions'][player_prof_role]['role'] = player_role
-            Attendance[player_account]['names'][player_name]['professions'][player_prof_role]['fights'] = 1
-            Attendance[player_account]['names'][player_name]['professions'][player_prof_role]['duration'] = duration
-            Attendance[player_account]['names'][player_name]['professions'][player_prof_role]['guildStatus'] = guildStatus
-
+        if player_prof_role not in Attendance[player_account]['names'][player_name]['professions']:
+            Attendance[player_account]['names'][player_name]['professions'][player_prof_role] = {
+                'role': player_role,
+                'fights': 1,
+                'duration': duration,
+                'guildStatus': guildStatus
+            }
         else:
             Attendance[player_account]['names'][player_name]['professions'][player_prof_role]['fights'] += 1
             Attendance[player_account]['names'][player_name]['professions'][player_prof_role]['duration'] += duration
@@ -4257,37 +4246,35 @@ def get_stats_from_fight_json(fight_json, config, log):
 
     #Personal Buff Tracking
     personalBuffs = fight_json['personalBuffs']
-    for prof in personalBuffs:
-        if prof not in buffs_personal:
-            buffs_personal[prof] = {}
-            buffs_personal[prof]['buffList'] = []
-            buffs_personal[prof]['player'] = {}
+    for profession, buffs in personalBuffs.items():
+        if profession not in buffs_personal:
+            buffs_personal[profession] = {'buffList': [], 'player': {}}
 
-        for buff in personalBuffs[prof]:
-            if buff not in buffs_personal[prof]['buffList']:
-                buffs_personal[prof]['buffList'].append(buff)
+        for buff in buffs:
+            if buff not in buffs_personal[profession]['buffList']:
+                buffs_personal[profession]['buffList'].append(buff)
 
     for player in fight_json['players']:
         if player['notInSquad']:
             continue
-        player_prof = player['profession']
-        player_name = player['name']
-        player_activeTime = round(player['activeTimes'][0]/1000,2)
-        if player_prof in buffs_personal:
-            for buff in buffs_personal[player_prof]['buffList']:
-                for activeBuff in player['buffUptimesActive']:
-                    if activeBuff['id'] == buff:
-                        buffUptime = activeBuff['buffData'][0]['uptime']
-                        uptimeSeconds =round(((buffUptime*player_activeTime)/100),2)
-                        if player_name not in buffs_personal[player_prof]['player']:
-                            buffs_personal[player_prof]['player'][player_name]={}
-                            buffs_personal[player_prof]['player'][player_name][buff]=0
-                            buffs_personal[player_prof]['player'][player_name][buff]=uptimeSeconds
-                        elif buff not in buffs_personal[player_prof]['player'][player_name]:
-                            buffs_personal[player_prof]['player'][player_name][buff]={}
-                            buffs_personal[player_prof]['player'][player_name][buff]=uptimeSeconds
+
+        profession = player['profession']
+        name = player['name']
+        active_time = round(player['activeTimes'][0] / 1000, 2)
+
+        if profession in buffs_personal:
+            for buff in buffs_personal[profession]['buffList']:
+                for active_buff in player['buffUptimesActive']:
+                    if active_buff['id'] == buff:
+                        uptime = active_buff['buffData'][0]['uptime']
+                        uptime_seconds = round((uptime * active_time) / 100, 2)
+
+                        if name not in buffs_personal[profession]['player']:
+                            buffs_personal[profession]['player'][name] = {buff: uptime_seconds}
+                        elif buff not in buffs_personal[profession]['player'][name]:
+                            buffs_personal[profession]['player'][name][buff] = uptime_seconds
                         else:
-                            buffs_personal[player_prof]['player'][player_name][buff]+=uptimeSeconds
+                            buffs_personal[profession]['player'][name][buff] += uptime_seconds
 
 
         #track minions created by player
