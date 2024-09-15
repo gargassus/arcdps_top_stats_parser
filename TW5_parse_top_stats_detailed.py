@@ -142,9 +142,13 @@ if __name__ == '__main__':
 	excludeForDmgOverview = ['Down Contribution', 'Enemies Downed', 'Enemies Killed', 'Damage', 'Shield Damage', 'Power Damage', 'Condi Damage', 'Against Downed Damage', 'Against Downed Count', 'Damage All']
 
 	for item in MenuTabs:
+		if not config.charts and item == 'Dashboard':
+			continue
 		print_to_file(output, '<$button class="btn btn-sm btn-dark"> <$action-setfield $tiddler="$:/state/MenuTab" $field="text" $value="'+item+'"/> <$action-setfield $tiddler="$:/state/curTab" $field="text" $value="'+SubMenuTabs[item][0]+'"/> '+item+' </$button>')
 	
 	for item in MenuTabs:
+		if not config.charts and item == 'Dashboard':
+			continue
 		print_to_file(output, '<$reveal type="match" state="$:/state/MenuTab" text="'+item+'">')
 		print_to_file(output, '\n')
 		print_to_file(output, '<<alert-leftbar '+alertColors[MenuTabs.index(item)]+' "'+item+'" width:60%, class:"font-weight-bold">>')
@@ -769,8 +773,11 @@ if __name__ == '__main__':
 	playerCount = len(players)
 	calcHeight = str(playerCount*25)
 	print_to_file(output, "\n!!Total Boon Generation\n")
-	print_to_file(output, '<$echarts $text={{'+myDate.strftime("%Y%m%d%H%M")+'_Total_Boon_Generation_BarChartData}} $height="'+calcHeight+'px" $theme="dark"/>')
 
+	if config.charts:
+		print_to_file(output, '<$echarts $text={{'+myDate.strftime("%Y%m%d%H%M")+'_Total_Boon_Generation_BarChartData}} $height="'+calcHeight+'px" $theme="dark"/>')
+	else:
+		print_to_file(output, '\n Charts Disabled in config \n')
 
 	#end reveal
 	print_to_file(output, '\n\n</div>\n\n')
@@ -1144,7 +1151,10 @@ if __name__ == '__main__':
 				print_to_file(output, '\n\n</div>\n\n')
 				print_to_file(output, '\n</div>\n    <div class="flex-col border">\n')
 				print_to_file(output, '<div style="overflow-x:auto;">\n\n')
-				print_to_file(output, '<$echarts $text={{'+fileDate.strftime("%Y%m%d%H%M")+'_'+stat+'_ChartData}} $height="800px" $theme="dark"/>')
+				if config.charts:
+					print_to_file(output, '<$echarts $text={{'+fileDate.strftime("%Y%m%d%H%M")+'_'+stat+'_ChartData}} $height="800px" $theme="dark"/>')
+				else:
+					print_to_file(output, '\n Charts Disabled in config \n')
 				print_to_file(output, '\n\n</div>\n\n')
 				print_to_file(output, '\n</div>\n</div>\n')
 			else:
@@ -1162,16 +1172,15 @@ if __name__ == '__main__':
 				print_to_file(output, '\n</div>\n    <div class="flex-col border">\n')
 				print_to_file(output, '<div style="overflow-x:auto;">\n\n')
 				#top_total_stat_players[stat] = get_and_write_sorted_total(players, config, total_fight_duration, stat, output)
-				print_to_file(output, '<$echarts $text={{'+fileDate.strftime("%Y%m%d%H%M")+'_'+stat+'_ChartData}} $height="800px" $theme="dark"/>')
+				if config.charts:
+					print_to_file(output, '<$echarts $text={{'+fileDate.strftime("%Y%m%d%H%M")+'_'+stat+'_ChartData}} $height="800px" $theme="dark"/>')
+				else:
+					print_to_file(output, '\n Charts Disabled in config \n')
 				print_to_file(output, '\n\n</div>\n\n')
 				print_to_file(output, '\n</div>\n</div>\n')
 				top_average_stat_players[stat] = get_top_players(players, config, stat, StatType.AVERAGE)
 				top_percentage_stat_players[stat],comparison_val = get_top_percentage_players(players, config, stat, StatType.PERCENTAGE, num_used_fights, top_consistent_stat_players[stat], top_total_stat_players[stat], list(), list())
 				
-				#print_to_file(output, '<div>')
-				#print_to_file(output, '<$echarts $text={{'+fileDate.strftime("%Y%m%d%H%M")+'_'+stat+'_ChartData}} $height="800px" $theme="dark"/>')
-				#print_to_file(output, '</div>')
-			#JEL-Tweaked to output TW5 output to maintain formatted table and slider (https://drevarr.github.io/FluxCapacity.html)
 			print_to_file(output, "</$reveal>\n")
 
 	#print Auras-Out details
@@ -1195,8 +1204,10 @@ if __name__ == '__main__':
 		print_to_file(output, '\n</div>')
 		print_to_file(output, '\n</div>\n    <div class="flex-col border">\n')
 		print_to_file(output, '<div style="overflow-x:auto;">\n')
-		#top_total_stat_players[stat] = get_and_write_sorted_total(players, config, total_fight_duration, stat, output)
-		print_to_file(output, '<$echarts $text={{'+fileDate.strftime("%Y%m%d%H%M")+'_'+stat+'_ChartData}} $height="800px" $theme="dark"/>')
+		if config.charts:
+			print_to_file(output, '<$echarts $text={{'+fileDate.strftime("%Y%m%d%H%M")+'_'+stat+'_ChartData}} $height="800px" $theme="dark"/>')
+		else:
+			print_to_file(output, '\n Charts Disabled in config \n')	
 		print_to_file(output, '\n</div>')
 		print_to_file(output, '\n</div></div>\n')
 		top_percentage_stat_players[stat],comparison_val = get_top_percentage_players(players, config, stat, StatType.PERCENTAGE, num_used_fights, top_consistent_stat_players[stat], top_total_stat_players[stat], list(), list())
@@ -1289,8 +1300,10 @@ if __name__ == '__main__':
 		print_to_file(output, '\n</div>')
 		print_to_file(output, '\n</div>\n    <div class="flex-col border">\n')
 		print_to_file(output, '<div style="overflow-x:auto;">\n')
-		#top_total_stat_players[stat] = get_and_write_sorted_total(players, config, total_fight_duration, stat, output)
-		print_to_file(output, '<$echarts $text={{'+fileDate.strftime("%Y%m%d%H%M")+'_'+stat+'_ChartData}} $height="800px" $theme="dark"/>')
+		if config.charts:
+			print_to_file(output, '<$echarts $text={{'+fileDate.strftime("%Y%m%d%H%M")+'_'+stat+'_ChartData}} $height="800px" $theme="dark"/>')
+		else:
+			print_to_file(output, '\n Charts Disabled in config \n')	
 		print_to_file(output, '\n</div>')
 		print_to_file(output, '\n</div></div>\n')
 		top_percentage_stat_players[stat],comparison_val = get_top_percentage_players(players, config, stat, StatType.PERCENTAGE, num_used_fights, top_consistent_stat_players[stat], top_total_stat_players[stat], list(), list())
@@ -2344,102 +2357,103 @@ if __name__ == '__main__':
 	#End Firebrand pages
 
 	#start Dashboard insert
-	print_to_file(output, '<$reveal type="match" state="$:/state/curTab" text="Dashboard">')    
-	print_to_file(output, '\n<<alert dark "Dashboard for various charts" width:60%>>\n\n')
-	Dashboard_Charts = ["Stab vs. HardCC","Kills/Downs/DPS", "Fury/Might/DPS", "Deaths/DamageTaken/DistanceFromTag", "Total Boon Generation", "Cleanses/Heals/BoonScore", "BoonStrips/OutgoingControlScore/DPS", "Profession_DPS_BoxPlot", "Player_DPS_BoxPlot", "Profession_SPS_BoxPlot", "Player_SPS_BoxPlot", "Profession_CPS_BoxPlot", "Player_CPS_BoxPlot", "Profession_HPS_BoxPlot", "Player_HPS_BoxPlot"]
-	
-	for chart in Dashboard_Charts:
-		print_to_file(output, '<$button setTitle="$:/state/curChart" setTo="'+chart+'" selectedClass="" class="btn btn-sm btn-dark" style="">'+chart+' </$button>')
-	
-	print_to_file(output, '\n---\n')
-	
+	if config.charts:
+		print_to_file(output, '<$reveal type="match" state="$:/state/curTab" text="Dashboard">')    
+		print_to_file(output, '\n<<alert dark "Dashboard for various charts" width:60%>>\n\n')
+		Dashboard_Charts = ["Stab vs. HardCC","Kills/Downs/DPS", "Fury/Might/DPS", "Deaths/DamageTaken/DistanceFromTag", "Total Boon Generation", "Cleanses/Heals/BoonScore", "BoonStrips/OutgoingControlScore/DPS", "Profession_DPS_BoxPlot", "Player_DPS_BoxPlot", "Profession_SPS_BoxPlot", "Player_SPS_BoxPlot", "Profession_CPS_BoxPlot", "Player_CPS_BoxPlot", "Profession_HPS_BoxPlot", "Player_HPS_BoxPlot"]
+		
+		for chart in Dashboard_Charts:
+			print_to_file(output, '<$button setTitle="$:/state/curChart" setTo="'+chart+'" selectedClass="" class="btn btn-sm btn-dark" style="">'+chart+' </$button>')
+		
+		print_to_file(output, '\n---\n')
+		
 
-	for chart in Dashboard_Charts:
-			print_to_file(output, '<$reveal type="match" state="$:/state/curChart" text="'+chart+'">\n')
-			print_to_file(output, '\n---\n')
-			print_to_file(output, '\n<div class="flex-row">\n    <div class="flex-col border">\n')
+		for chart in Dashboard_Charts:
+				print_to_file(output, '<$reveal type="match" state="$:/state/curChart" text="'+chart+'">\n')
+				print_to_file(output, '\n---\n')
+				print_to_file(output, '\n<div class="flex-row">\n    <div class="flex-col border">\n')
 
-			if chart == "Stab vs. HardCC":
-				print_to_file(output, "\n!!Stability Uptime versus Hard CC\n")
-				print_to_file(output, ",,Bubble Size based on Cc Duration output,,\n")
-				print_to_file(output, '<$echarts $text={{'+fileDate.strftime("%Y%m%d%H%M")+'_stab_CC_BubbleChartData}} $height="500px" $theme="dark"/>')
+				if chart == "Stab vs. HardCC":
+					print_to_file(output, "\n!!Stability Uptime versus Hard CC\n")
+					print_to_file(output, ",,Bubble Size based on Cc Duration output,,\n")
+					print_to_file(output, '<$echarts $text={{'+fileDate.strftime("%Y%m%d%H%M")+'_stab_CC_BubbleChartData}} $height="500px" $theme="dark"/>')
 
-			if chart == "Kills/Downs/DPS":
-				print_to_file(output, "\n!!Kills / Downs / DPS\n")
-				print_to_file(output, ",,Bubble Size based on DPS output,,\n")
-				print_to_file(output, '<$echarts $text={{'+fileDate.strftime("%Y%m%d%H%M")+'_kills_BubbleChartData}} $height="500px" $theme="dark"/>')
+				if chart == "Kills/Downs/DPS":
+					print_to_file(output, "\n!!Kills / Downs / DPS\n")
+					print_to_file(output, ",,Bubble Size based on DPS output,,\n")
+					print_to_file(output, '<$echarts $text={{'+fileDate.strftime("%Y%m%d%H%M")+'_kills_BubbleChartData}} $height="500px" $theme="dark"/>')
 
-			if chart == "Fury/Might/DPS":
-				print_to_file(output, "\n!!Fury / Might / DPS\n")
-				print_to_file(output, ",,Bubble Size based on DPS output,,\n")
-				print_to_file(output, '<$echarts $text={{'+fileDate.strftime("%Y%m%d%H%M")+'_fury_might_BubbleChartData}} $height="500px" $theme="dark"/>')
+				if chart == "Fury/Might/DPS":
+					print_to_file(output, "\n!!Fury / Might / DPS\n")
+					print_to_file(output, ",,Bubble Size based on DPS output,,\n")
+					print_to_file(output, '<$echarts $text={{'+fileDate.strftime("%Y%m%d%H%M")+'_fury_might_BubbleChartData}} $height="500px" $theme="dark"/>')
 
-			if chart == "Deaths/DamageTaken/DistanceFromTag":
-				print_to_file(output, "\n!!Deaths / Damage Taken / Distance from Tag\n")
-				print_to_file(output, ",,Bubble Size based on Average Distance to Tag,,\n")
-				print_to_file(output, '<$echarts $text={{'+fileDate.strftime("%Y%m%d%H%M")+'_deaths_BubbleChartData}} $height="500px" $theme="dark"/>')
+				if chart == "Deaths/DamageTaken/DistanceFromTag":
+					print_to_file(output, "\n!!Deaths / Damage Taken / Distance from Tag\n")
+					print_to_file(output, ",,Bubble Size based on Average Distance to Tag,,\n")
+					print_to_file(output, '<$echarts $text={{'+fileDate.strftime("%Y%m%d%H%M")+'_deaths_BubbleChartData}} $height="500px" $theme="dark"/>')
 
-			if chart == "Total Boon Generation":
-				playerCount = len(players)
-				calcHeight = str(playerCount*25)
-				print_to_file(output, "\n!!Total Boon Generation\n")
-				print_to_file(output, '<$echarts $text={{'+fileDate.strftime("%Y%m%d%H%M")+'_Total_Boon_Generation_BarChartData}} $height="'+calcHeight+'px" $theme="dark"/>')
+				if chart == "Total Boon Generation":
+					playerCount = len(players)
+					calcHeight = str(playerCount*25)
+					print_to_file(output, "\n!!Total Boon Generation\n")
+					print_to_file(output, '<$echarts $text={{'+fileDate.strftime("%Y%m%d%H%M")+'_Total_Boon_Generation_BarChartData}} $height="'+calcHeight+'px" $theme="dark"/>')
 
-			if chart == "Cleanses/Heals/BoonScore":
-				print_to_file(output, "\n!!Cleanses / Heals / Boon Score\n")
-				print_to_file(output, ",,Bubble Size based on Boon Score = Sum of all average Boon and Aura output,,\n")
-				print_to_file(output, '<$echarts $text={{'+fileDate.strftime("%Y%m%d%H%M")+'_cleanse_BubbleChartData}} $height="500px" $theme="dark"/>')
+				if chart == "Cleanses/Heals/BoonScore":
+					print_to_file(output, "\n!!Cleanses / Heals / Boon Score\n")
+					print_to_file(output, ",,Bubble Size based on Boon Score = Sum of all average Boon and Aura output,,\n")
+					print_to_file(output, '<$echarts $text={{'+fileDate.strftime("%Y%m%d%H%M")+'_cleanse_BubbleChartData}} $height="500px" $theme="dark"/>')
 
-			if chart == "BoonStrips/OutgoingControlScore/DPS":
-				print_to_file(output, "\n!!Boon Strips / Outgoing Control Score / DPS\n")
-				print_to_file(output, ",,Bubble Size based on Control Score = Sum of all outgoing control effects,,\n")
-				print_to_file(output, ",,Bubble Size based on DPS output,,\n")
-				print_to_file(output, '<$echarts $text={{'+fileDate.strftime("%Y%m%d%H%M")+'_rips_BubbleChartData}} $height="500px" $theme="dark"/>')
+				if chart == "BoonStrips/OutgoingControlScore/DPS":
+					print_to_file(output, "\n!!Boon Strips / Outgoing Control Score / DPS\n")
+					print_to_file(output, ",,Bubble Size based on Control Score = Sum of all outgoing control effects,,\n")
+					print_to_file(output, ",,Bubble Size based on DPS output,,\n")
+					print_to_file(output, '<$echarts $text={{'+fileDate.strftime("%Y%m%d%H%M")+'_rips_BubbleChartData}} $height="500px" $theme="dark"/>')
 
-			#Profession_DPS_BoxPlot
-			if chart == "Profession_DPS_BoxPlot":
-				print_to_file(output, "\n!!Damage per Second Box Plot by Profession\n")
-				print_to_file(output, '<$echarts $text={{'+fileDate.strftime("%Y%m%d%H%M")+'_DPS_Profession_Box_PlotChartData}} $height="800px" $theme="dark"/>')
+				#Profession_DPS_BoxPlot
+				if chart == "Profession_DPS_BoxPlot":
+					print_to_file(output, "\n!!Damage per Second Box Plot by Profession\n")
+					print_to_file(output, '<$echarts $text={{'+fileDate.strftime("%Y%m%d%H%M")+'_DPS_Profession_Box_PlotChartData}} $height="800px" $theme="dark"/>')
 
-			#Player_DPS_BoxPlot
-			if chart == "Player_DPS_BoxPlot":
-				print_to_file(output, "\n!!Damage per Second Box Plot by Player\n")
-				print_to_file(output, '<$echarts $text={{'+fileDate.strftime("%Y%m%d%H%M")+'_DPS_Profession_and_Name_Box_PlotChartData}} $height="800px" $theme="dark"/>')
+				#Player_DPS_BoxPlot
+				if chart == "Player_DPS_BoxPlot":
+					print_to_file(output, "\n!!Damage per Second Box Plot by Player\n")
+					print_to_file(output, '<$echarts $text={{'+fileDate.strftime("%Y%m%d%H%M")+'_DPS_Profession_and_Name_Box_PlotChartData}} $height="800px" $theme="dark"/>')
 
-			#Profession_SPS_BoxPlot
-			if chart == "Profession_SPS_BoxPlot":
-				print_to_file(output, "\n!!Boon Strip per Second Box Plot by Profession\n")
-				print_to_file(output, '<$echarts $text={{'+fileDate.strftime("%Y%m%d%H%M")+'_SPS_Profession_Box_PlotChartData}} $height="800px" $theme="dark"/>')
+				#Profession_SPS_BoxPlot
+				if chart == "Profession_SPS_BoxPlot":
+					print_to_file(output, "\n!!Boon Strip per Second Box Plot by Profession\n")
+					print_to_file(output, '<$echarts $text={{'+fileDate.strftime("%Y%m%d%H%M")+'_SPS_Profession_Box_PlotChartData}} $height="800px" $theme="dark"/>')
 
-			#Player_SPS_BoxPlot
-			if chart == "Player_SPS_BoxPlot":
-				print_to_file(output, "\n!!Boon Strip per Second Box Plot by Player\n")
-				print_to_file(output, '<$echarts $text={{'+fileDate.strftime("%Y%m%d%H%M")+'_SPS_Profession_and_Name_Box_PlotChartData}} $height="800px" $theme="dark"/>')
+				#Player_SPS_BoxPlot
+				if chart == "Player_SPS_BoxPlot":
+					print_to_file(output, "\n!!Boon Strip per Second Box Plot by Player\n")
+					print_to_file(output, '<$echarts $text={{'+fileDate.strftime("%Y%m%d%H%M")+'_SPS_Profession_and_Name_Box_PlotChartData}} $height="800px" $theme="dark"/>')
 
-			#Profession_CPS_BoxPlot
-			if chart == "Profession_CPS_BoxPlot":
-				print_to_file(output, "\n!!Cleanses per Second Box Plot by Profession\n")
-				print_to_file(output, '<$echarts $text={{'+fileDate.strftime("%Y%m%d%H%M")+'_CPS_Profession_Box_PlotChartData}} $height="800px" $theme="dark"/>')
+				#Profession_CPS_BoxPlot
+				if chart == "Profession_CPS_BoxPlot":
+					print_to_file(output, "\n!!Cleanses per Second Box Plot by Profession\n")
+					print_to_file(output, '<$echarts $text={{'+fileDate.strftime("%Y%m%d%H%M")+'_CPS_Profession_Box_PlotChartData}} $height="800px" $theme="dark"/>')
 
-			#Player_CPS_BoxPlot
-			if chart == "Player_CPS_BoxPlot":
-				print_to_file(output, "\n!!Cleanses per Second Box Plot by Player\n")
-				print_to_file(output, '<$echarts $text={{'+fileDate.strftime("%Y%m%d%H%M")+'_CPS_Profession_and_Name_Box_PlotChartData}} $height="800px" $theme="dark"/>')
+				#Player_CPS_BoxPlot
+				if chart == "Player_CPS_BoxPlot":
+					print_to_file(output, "\n!!Cleanses per Second Box Plot by Player\n")
+					print_to_file(output, '<$echarts $text={{'+fileDate.strftime("%Y%m%d%H%M")+'_CPS_Profession_and_Name_Box_PlotChartData}} $height="800px" $theme="dark"/>')
 
-			#Profession_HPS_BoxPlot
-			if chart == "Profession_HPS_BoxPlot":
-				print_to_file(output, "\n!!Heals per Second Box Plot by Profession\n")
-				print_to_file(output, '<$echarts $text={{'+fileDate.strftime("%Y%m%d%H%M")+'_HPS_Profession_Box_PlotChartData}} $height="800px" $theme="dark"/>')
+				#Profession_HPS_BoxPlot
+				if chart == "Profession_HPS_BoxPlot":
+					print_to_file(output, "\n!!Heals per Second Box Plot by Profession\n")
+					print_to_file(output, '<$echarts $text={{'+fileDate.strftime("%Y%m%d%H%M")+'_HPS_Profession_Box_PlotChartData}} $height="800px" $theme="dark"/>')
 
-			#Player_HPS_BoxPlot
-			if chart == "Player_HPS_BoxPlot":
-				print_to_file(output, "\n!!Heals per Second Box Plot by Player\n")
-				print_to_file(output, '<$echarts $text={{'+fileDate.strftime("%Y%m%d%H%M")+'_HPS_Profession_and_Name_Box_PlotChartData}} $height="800px" $theme="dark"/>')
+				#Player_HPS_BoxPlot
+				if chart == "Player_HPS_BoxPlot":
+					print_to_file(output, "\n!!Heals per Second Box Plot by Player\n")
+					print_to_file(output, '<$echarts $text={{'+fileDate.strftime("%Y%m%d%H%M")+'_HPS_Profession_and_Name_Box_PlotChartData}} $height="800px" $theme="dark"/>')
 
-			print_to_file(output, '\n</div>\n</div>\n')
-			print_to_file(output, "</$reveal>\n")
+				print_to_file(output, '\n</div>\n</div>\n')
+				print_to_file(output, "</$reveal>\n")
 
-	print_to_file(output, "</$reveal>\n")
+		print_to_file(output, "</$reveal>\n")
 	#end Dashboard insert
 
 	#start DPS Stats insert		
@@ -2493,8 +2507,11 @@ if __name__ == '__main__':
 	write_DPSStats_xls(DPSStats, args.xls_output_filename)
 	print_to_file(output, '\n---\n')
 	print_to_file(output, "\n!!DPS Stats Bubble Chart\n")
-	print_to_file(output, "\n,,Bubble size based on CDPS,,\n")
-	print_to_file(output, '<$echarts $text={{'+fileDate.strftime("%Y%m%d%H%M")+'_DPSStats_BubbleChartData}} $height="500px" $theme="dark"/>')
+	print_to_file(output, "\n,,Bubble size based on CDPS,,\n") 
+	if config.charts:
+		print_to_file(output, '<$echarts $text={{'+fileDate.strftime("%Y%m%d%H%M")+'_DPSStats_BubbleChartData}} $height="500px" $theme="dark"/>')
+	else:
+		print_to_file(output, "\n Charts disabled in config\n")	
 	print_to_file(output, "</$reveal>\n")
 	#end DPS Stats insert
 
@@ -2684,13 +2701,14 @@ if __name__ == '__main__':
 			supportCount = write_support_xls(players, top_players_by_stat[stat], stat, args.xls_output_filename, supportCount)
 
 	#write out Bubble Charts and Box_Plots
-	write_bubble_charts(players, top_players_by_stat[stat], squad_Control, myDate, args.input_directory)
-	write_TotalBoon_bar_chart(players, myDate, args.input_directory)
-	if include_comp_and_review:
-		write_spike_damage_heatmap(squad_damage_output, myDate, args.input_directory)
-	write_box_plot_charts(DPS_List, myDate, args.input_directory, "DPS")
-	write_box_plot_charts(SPS_List, myDate, args.input_directory, "SPS")
-	write_box_plot_charts(CPS_List, myDate, args.input_directory, "CPS")
-	write_box_plot_charts(HPS_List, myDate, args.input_directory, "HPS")
-	write_DPSStats_bubble_charts(uptime_Table, DPSStats, myDate, args.input_directory)
-	write_Attendance_xls(Attendance, args.xls_output_filename)
+	if config.charts:
+		write_bubble_charts(players, top_players_by_stat[stat], squad_Control, myDate, args.input_directory)
+		write_TotalBoon_bar_chart(players, myDate, args.input_directory)
+		if include_comp_and_review:
+			write_spike_damage_heatmap(squad_damage_output, myDate, args.input_directory)
+		write_box_plot_charts(DPS_List, myDate, args.input_directory, "DPS")
+		write_box_plot_charts(SPS_List, myDate, args.input_directory, "SPS")
+		write_box_plot_charts(CPS_List, myDate, args.input_directory, "CPS")
+		write_box_plot_charts(HPS_List, myDate, args.input_directory, "HPS")
+		write_DPSStats_bubble_charts(uptime_Table, DPSStats, myDate, args.input_directory)
+		write_Attendance_xls(Attendance, args.xls_output_filename)
