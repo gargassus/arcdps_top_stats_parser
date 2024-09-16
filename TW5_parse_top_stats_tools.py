@@ -2479,27 +2479,25 @@ def collect_stat_data(args, config, log, anonymize=False):
 
                 if 'totalDamageDist' in player_data:
                     for item in player_data['totalDamageDist'][0]:
-                        itemID = item['id']
-                        if "s"+str(itemID) in skillMap:
-                            itemName = skillMap["s"+str(itemID)]['name']
+                        skill_id = item['id']
+                        if f"s{skill_id}" in skillMap:
+                            skill_name = skillMap[f"s{skill_id}"]['name']
                         else:
                             continue
-                        if itemName in usedRelicSkill:
+                        if skill_name in usedRelicSkill:
                             if player_name_prof not in RelicDataSkills:
-                                RelicDataSkills[player_name_prof]={}
-                                if itemName not in RelicDataSkills[player_name_prof]:
-                                    RelicDataSkills[player_name_prof][itemName]={}
-                                    for stat in item:
-                                        RelicDataSkills[player_name_prof][itemName][stat]=item[stat]
-                                else:
-                                    for stat in item:
-                                        RelicDataSkills[player_name_prof][itemName][stat]+=item[stat]
-                                for cast in player_data['rotation']:
-                                    if cast['id'] == itemID:
-                                        if 'casts' not in RelicDataSkills[player_name_prof][itemName]:
-                                            RelicDataSkills[player_name_prof][itemName]['casts'] = len(cast['skills'])
-                                        else:
-                                            RelicDataSkills[player_name_prof][itemName]['casts'] += len(cast['skills'])
+                                RelicDataSkills[player_name_prof] = {}
+                            if skill_name not in RelicDataSkills[player_name_prof]:
+                                RelicDataSkills[player_name_prof][skill_name] = {stat: item[stat] for stat in item}
+                            else:
+                                for stat in item:
+                                    RelicDataSkills[player_name_prof][skill_name][stat] += item[stat]
+                            for cast in player_data['rotation']:
+                                if cast['id'] == skill_id:
+                                    if 'casts' not in RelicDataSkills[player_name_prof][skill_name]:
+                                        RelicDataSkills[player_name_prof][skill_name]['casts'] = len(cast['skills'])
+                                    else:
+                                        RelicDataSkills[player_name_prof][skill_name]['casts'] += len(cast['skills'])
             #End Collect Relic Skill Data for each player
 
             #Collect Damage Modifier Data for each player
