@@ -112,6 +112,7 @@ class Fight:
     enemies_Red: int = 0
     enemies_Blue: int = 0
     enemies_Green: int = 0
+    enemies_Unk: dict = field(default_factory=dict) #enemy unknown teamID and count of enemy
     allies: int = 0
     squad: int = 0
     notSquad: int = 0
@@ -3536,7 +3537,7 @@ def get_stats_from_fight_json(fight_json, config, log):
     num_enemies_Red = 0
     num_enemies_Blue = 0
     num_enemies_Green = 0
-    num_enemies_Unk = 0
+    num_enemies_Unk = {}
     enemy_name = ''
     enemy_squad = {}
     num_kills = 0
@@ -3609,6 +3610,9 @@ def get_stats_from_fight_json(fight_json, config, log):
             if 'teamID' in enemy:
                 enemy_team = int(enemy['teamID'])
 
+                if enemy_team == 0:
+                    continue
+
                 if enemy_team in teamID:
                 #Check teamId against team colors
                     if teamID[enemy_team] == 'Red':
@@ -3619,8 +3623,12 @@ def get_stats_from_fight_json(fight_json, config, log):
 
                     elif teamID[enemy_team] == 'Green':
                         num_enemies_Green += 1
+
+                elif enemy_team in num_enemies_Unk:
+                    num_enemies_Unk[enemy_team] += 1
+
                 else:
-                    num_enemies_Unk +=1
+                    num_enemies_Unk[enemy_team] = 1
 
 
             #append enemy['name'] to enemy_list
@@ -4531,6 +4539,7 @@ def get_stats_from_fight_json(fight_json, config, log):
     fight.enemies_Red = num_enemies_Red
     fight.enemies_Blue = num_enemies_Blue
     fight.enemies_Green = num_enemies_Green
+    fight.enemies_Unk = num_enemies_Unk
     fight.enemy_squad = enemy_squad
     fight.enemy_Dps = enemy_Dps
     fight.squad_Dps = squad_Dps
