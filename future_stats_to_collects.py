@@ -1,10 +1,68 @@
 stats_to_collects = {
-	'defenses' = [
+    'boons': [
+        'might',
+        'fury',
+        'quickness',
+        'alacrity',
+        'protection',
+        'regeneration',
+        'vigor',
+        'aegis',
+        'stability',
+        'swiftness',
+        'resistance',
+        'resolution'
+	],
+    'support buffs': [
+        'superspeed',
+		'fire',
+		'frost',
+		'light',
+		'shocking',
+		'chaos',
+		'dark'
+	],
+    'offensive buffs': [
+		'unblockable',
+        'ashes of the just',
+        'one wolf pack',
+        'spider venom',
+        'rot wallow venom',
+        'static charge'
+	],
+    'defensive buffs': [
+        'rite of the great dwarf',
+        'infuse light',
+        'eternal oasis',
+        'unbroken lines',
+        'dolyak stance',
+        'bear stance',
+        'vampiric aura',
+        'last rites',
+        'soothing mist',
+        'rebound'
+	],
+	'conditions': [
+		'bleeding',
+		'burning',
+		'confusion',
+		'poisoned',
+		'torment',
+		'blind',
+		'chilled',
+		'crippled',
+        'fear',
+        'imobile',
+        'slow',
+        'weakness',
+        'vulnerability'
+	],
+	'defenses': [
 		'damageTaken',
 		'conditionDamageTaken',
 		'powerDamageTaken',
 		'strikeDamageTaken',
-		'lifeLeechDamageTaken,
+		'lifeLeechDamageTaken',
 		'downedDamageTaken',
 		'breakbarDamageTaken',
 		'blockedCount',
@@ -13,7 +71,7 @@ stats_to_collects = {
 		'dodgeCount',
 		'invulnedCount',
 		'damageBarrier',
-		'interruptedCount',	0
+		'interruptedCount',
 		'downCount',
 		'downDuration',
 		'deadCount',
@@ -23,10 +81,11 @@ stats_to_collects = {
 		'boonStrips',
 		'boonStripsTime',
 		'conditionCleanses',
-		'conditionCleansesTime'
-	]
-
-	'support' = [
+		'conditionCleansesTime',
+        'receivedCrowdControl',
+        'receivedCrowdControlDuration'
+	],
+	'support': [
 		'resurrects',
 		'resurrectTime',
 		'condiCleanse',
@@ -35,9 +94,16 @@ stats_to_collects = {
 		'condiCleanseTimeSelf',
 		'boonStrips',
 		'boonStripsTime',
-	]
-
-	'statsAll' = [
+        'stunBreak',
+        'removedStunDuration'
+	],
+	'healing': [
+		'outgoingHealingAllies',
+        'alliedHealingDist',
+        'outgoingBarrierAllies',
+        'alliedBarrierDist'
+	],
+	'statsAll': [
 		'wasted',
 		'timeWasted',
 		'saved',
@@ -79,9 +145,8 @@ stats_to_collects = {
 		'connectedConditionAbove90HPCount',
 		'againstDownedCount',
 		'againstDownedDamage',
-	]
-
-	'targetDamageDist' = [
+	],
+	'targetDamageDist': [
 		'totalDamage',
 		'totalBreakbarDamage',
 		'min',
@@ -101,9 +166,8 @@ stats_to_collects = {
 		'critDamage',
 		'id',
 		'indirectDamage',
-	]
-
-	'dpsTargets' = [
+	],
+	'dpsTargets': [
 		'dps',
 		'damage',
 		'condiDps',
@@ -118,9 +182,8 @@ stats_to_collects = {
 		'actorPowerDps',
 		'actorPowerDamage',
 		'actorBreakbarDamage',
-	]
-
-	'totalDamageTaken' = [
+	],
+	'totalDamageTaken': [
 		'totalDamage',
 		'totalBreakbarDamage',
 		'min',
@@ -140,15 +203,6 @@ stats_to_collects = {
 		'critDamage',
 		'id',
 		'indirectDamage',
-	]
-
-	'rotation' = [
-		'id',
-		'skills: [
-			'castTime',
-			'duration',
-			'timeGained',
-			'quickness'
-		]
-	]
-}
+	],
+	'rotation': {}
+	}
