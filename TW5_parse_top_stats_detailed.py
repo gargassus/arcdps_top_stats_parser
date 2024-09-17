@@ -2712,3 +2712,11 @@ if __name__ == '__main__':
 		write_box_plot_charts(HPS_List, myDate, args.input_directory, "HPS")
 		write_DPSStats_bubble_charts(uptime_Table, DPSStats, myDate, args.input_directory)
 		write_Attendance_xls(Attendance, args.xls_output_filename)
+
+	print('Checking for unknown teamIDs in all Fights')
+	for fight_num, fight in enumerate(fights):
+		#check for unknown teamIDs
+		if fight.enemies_Unk:
+			print(fight_num+1, 'TeamID: count: '+str(fight.enemies_Unk))
+		else:
+			print(fight_num+1, 'No unknown teamIDs')

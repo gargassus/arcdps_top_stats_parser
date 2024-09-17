@@ -2612,7 +2612,7 @@ def collect_stat_data(args, config, log, anonymize=False):
                     for target in json_data['targets']:
                         if target['defenses'][0]['boonStripsTime'] > 99999:
                             player.stats_per_fight[fight_number][stat] = max(player.stats_per_fight[fight_number][stat] - target['defenses'][0]['boonStripsTime'], 0)
-                print(stat, name)
+                #print(stat, name)
                 # add stats of this fight and player to total stats of this fight and player
                 if player.stats_per_fight[fight_number][stat] > 0:
                     # buff are generation squad values, using total over time
@@ -4354,7 +4354,7 @@ def get_stats_from_fight_json(fight_json, config, log):
         if commanderMissing:
             continue
         if id['combatReplayData']['dead'] and id['combatReplayData']['down']:
-            print(id['profession'], id['name'])
+            #print(id['profession'], id['name'])
             playerDeaths = dict(id['combatReplayData']['dead'])
             playerDowns = dict(id['combatReplayData']['down'])
             playerDistToTag = id['statsAll'][0]['distToCom']
