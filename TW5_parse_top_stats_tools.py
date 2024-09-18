@@ -152,7 +152,14 @@ class Config:
 	summary_title: str = ""
 	summary_creator: str = ""
 
-	charts: bool = False	# produce charts for stats_to_compute
+    charts: bool = False	# produce charts for stats_to_compute
+    include_comp_and_review: bool = True	# include completed and reviewed fights in charts
+    check_for_unknown_team_ids: bool = True    # print dict of unknown team ids
+
+    damage_overview_only: bool = False    # if damage_overview_only = True, do not build individual tables & charts for stats in overview table
+
+    use_PlenBot: bool = False
+    PlenBotPath: str = ""
 
 	stat_names: dict = field(default_factory=dict)
 	profession_abbreviations: dict = field(default_factory=dict)
@@ -697,14 +704,15 @@ def fill_config(config_input):
 	config.condition_ids = {720: 'Blinded', 721: 'Crippled', 722: 'Chilled', 727: 'Immobile', 742: 'Weakness', 791: 'Fear', 833: 'Daze', 872: 'Stun', 26766: 'Slow', 27705: 'Taunt', 30778: "Hunter's Mark", 738: 'Vulnerability'}
 	config.auras_ids = {5677: 'Fire', 5577: 'Shocking', 5579: 'Frost', 5684: 'Magnetic', 25518: 'Light', 39978: 'Dark', 10332: 'Chaos'}
 
-	config.charts = config_input.charts
-	config.include_comp_and_review = config_input.include_comp_and_review
-	config.damage_overview_only = config_input.damage_overview_only
-	config.use_PlenBot = config_input.use_PlenBot
-	config.PlenBotPath = config_input.PlenBotPath
-			
-	return config
-	
+    config.charts = config_input.charts
+    config.check_for_unknown_team_ids = config_input.check_for_unknown_team_ids
+    config.include_comp_and_review = config_input.include_comp_and_review
+    config.damage_overview_only = config_input.damage_overview_only
+    config.use_PlenBot = config_input.use_PlenBot
+    config.PlenBotPath = config_input.PlenBotPath
+            
+    return config
+    
 
 def reset_globals():
 	#Control Effects Tracking

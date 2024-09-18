@@ -71,6 +71,9 @@ charts = True
 # Include the Squad Comp and Fight Review tabs
 include_comp_and_review = True
 
+# Check for unknown team IDs in current fights
+check_for_unknown_team_ids = True
+
 # if damage_overview_only = True, do not build individual tables & charts for stats in overview table 
 damage_overview_only = False
 

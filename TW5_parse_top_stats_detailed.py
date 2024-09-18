@@ -2713,10 +2713,15 @@ if __name__ == '__main__':
 		write_DPSStats_bubble_charts(uptime_Table, DPSStats, myDate, args.input_directory)
 		write_Attendance_xls(Attendance, args.xls_output_filename)
 
-	print('Checking for unknown teamIDs in all Fights')
-	for fight_num, fight in enumerate(fights):
-		#check for unknown teamIDs
-		if fight.enemies_Unk:
-			print(fight_num+1, 'TeamID: count: '+str(fight.enemies_Unk))
-		else:
-			print(fight_num+1, 'No unknown teamIDs')
+	#check for unknown teamIDs
+	if config.check_for_unknown_team_ids:
+		print('Checking for unknown teamIDs in all Fights')
+		print('FightNum\tTeamID: count')
+		teamID_OK = True
+		for fight_num, fight in enumerate(fights):
+			#check for unknown teamIDs
+			if fight.enemies_Unk:
+				teamID_OK = False
+				print(f'{fight_num+1: >8}\t{str(fight.enemies_Unk)}')
+		if teamID_OK:
+			print(f'{fight_num+1: >8} fights, No unknown teamIDs')
