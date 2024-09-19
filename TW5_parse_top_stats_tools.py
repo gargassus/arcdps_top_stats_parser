@@ -4104,7 +4104,29 @@ def get_stats_from_fight_json(fight_json, config, log):
 								downed_Healing[squadDps_prof_name][reviveSkill]['Hits'] = int(target['hits'])
 							else:
 								downed_Healing[squadDps_prof_name][reviveSkill]['Heals'] = downed_Healing[squadDps_prof_name][reviveSkill]['Heals'] + int(target['totalDownedHealing'])
-								downed_Healing[squadDps_prof_name][reviveSkill]['Hits'] = downed_Healing[squadDps_prof_name][reviveSkill]['Hits'] + int(target['hits'])	
+								downed_Healing[squadDps_prof_name][reviveSkill]['Hits'] = downed_Healing[squadDps_prof_name][reviveSkill]['Hits'] + int(target['hits'])
+								
+			if 'minions' in player:
+				for minion in player['minions']:
+					if minion['name'] == "Function Gyro" and minion['extHealingStats']['totalHealing'][0]:
+						for cast in minion['extHealingStats']['totalHealingDist'][0]:
+							reviveSkill = "Function Gyro"
+							reviveSkill_heals = cast['totalDownedHealing']
+							reviveSkill_hits = cast['hits']
+						
+							if squadDps_prof_name not in downed_Healing:
+								downed_Healing[squadDps_prof_name]={}
+								downed_Healing[squadDps_prof_name]['name'] = squadDps_name
+								downed_Healing[squadDps_prof_name]['prof'] = squadDps_profession
+							if reviveSkill not in downed_Healing[squadDps_prof_name]:
+								downed_Healing[squadDps_prof_name][reviveSkill] = {}
+								downed_Healing[squadDps_prof_name][reviveSkill]['Heals'] = {}
+								downed_Healing[squadDps_prof_name][reviveSkill]['Hits'] = {}
+								downed_Healing[squadDps_prof_name][reviveSkill]['Heals'] = reviveSkill_heals
+								downed_Healing[squadDps_prof_name][reviveSkill]['Hits'] = reviveSkill_hits
+							else:
+								downed_Healing[squadDps_prof_name][reviveSkill]['Heals'] += reviveSkill_heals
+								downed_Healing[squadDps_prof_name][reviveSkill]['Hits'] += reviveSkill_hits
 		#End Instant Revive tracking
 									
 		#Track Aura Output		
