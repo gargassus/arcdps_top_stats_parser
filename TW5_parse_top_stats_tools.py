@@ -5877,7 +5877,7 @@ def write_to_json(overall_raid_stats, overall_squad_stats, fights, players, top_
 	#json_dict["Player_Damage_by_Skill"] =  {key: value for key, value in Player_Damage_by_Skill.items()}
 	#json_dict["total_Enemy_Skill_Dmg"] =  {key: value for key, value in total_Enemy_Skill_Dmg.items()}
 	#json_dict["squadDamageMods"] =  {key: value for key, value in squadDamageMods.items()}
-	#json_dict["Plen_Bot_Logs"] =  {key: value for key, value in Plen_Bot_Logs.items()}
+	json_dict["prof_role_skills"] =  {key: value for key, value in prof_role_skills.items()}
 	#json_dict["conditionData"] =  {key: value for key, value in conditionData.items()}
 	#json_dict["conditionDataGroups"] =  {key: value for key, value in conditionDataGroups.items()}
 	#json_dict["conditionDataSquad"] =  {key: value for key, value in conditionDataSquad.items()}

@@ -1999,7 +1999,7 @@ if __name__ == '__main__':
 	print_to_file(output, "|table-caption-top|k")
 	print_to_file(output, "|Sortable table - Click header item to sort table |c")
 	print_to_file(output, "|thead-dark table-hover sortable|k")
-	output_string = "|!Name | !Profession | !Attendance |"
+	output_string = "|!Name | !Prof | !Combat Time |"
 	for item in down_Heal_Order:
 		output_string += "!{{"+down_Heal_Order[item]+"}}|"
 	output_string += "h"
@@ -2023,7 +2023,7 @@ if __name__ == '__main__':
 	print_to_file(output, "|table-caption-top|k")
 	print_to_file(output, "|Sortable table - Click header item to sort table |c")
 	print_to_file(output, "|thead-dark table-hover sortable|k")
-	output_string = "|!Name | !Profession | !Attendance |"
+	output_string = "|!Name | !Prof | !Combat Time |"
 	for item in down_Heal_Order:
 		output_string += "!{{"+down_Heal_Order[item]+"}}|"
 	output_string += "h"
