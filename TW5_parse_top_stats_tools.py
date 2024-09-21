@@ -4373,10 +4373,10 @@ def get_stats_from_fight_json(fight_json, config, log):
 
 		#track minions created by player
 		if "minions" in player:
-			if player_prof not in minion_Data:
-				minion_Data[player_prof]={}
-				minion_Data[player_prof]["player"]={}
-				minion_Data[player_prof]["petsList"]=[]	
+			if profession not in minion_Data:
+				minion_Data[profession]={}
+				minion_Data[profession]["player"]={}
+				minion_Data[profession]["petsList"]=[]	
 			for idx in player['minions']:
 				minionName = idx['name']
 				if "UNKNOWN" in minionName:
@@ -4385,14 +4385,14 @@ def get_stats_from_fight_json(fight_json, config, log):
 					minionName = minionName.replace("Juvenile ", "")
 				minionCount = len(idx['combatReplayData'])
 
-				if minionName not in minion_Data[player_prof]["petsList"]:
-					minion_Data[player_prof]["petsList"].append(minionName)
-				if player_name not in minion_Data[player_prof]["player"]:
-					minion_Data[player_prof]["player"][player_name]={}
-				if minionName not in minion_Data[player_prof]["player"][player_name]:
-					minion_Data[player_prof]["player"][player_name][minionName] = minionCount
+				if minionName not in minion_Data[profession]["petsList"]:
+					minion_Data[profession]["petsList"].append(minionName)
+				if name not in minion_Data[profession]["player"]:
+					minion_Data[profession]["player"][name]={}
+				if minionName not in minion_Data[profession]["player"][name]:
+					minion_Data[profession]["player"][name][minionName] = minionCount
 				else:
-					minion_Data[player_prof]["player"][player_name][minionName] += minionCount
+					minion_Data[profession]["player"][name][minionName] += minionCount
 
 	#Death_OnTag Tracking
 	tagPositions = {}
@@ -5870,7 +5870,7 @@ def write_to_json(overall_raid_stats, overall_squad_stats, fights, players, top_
 	#json_dict["Buffs_Personal"] =  {key: value for key, value in buffs_personal.items()}
 	#json_dict["squad_damage_output"] =  {key: value for key, value in squad_damage_output.items()}
 	json_dict["skill_Dict"] =  {key: value for key, value in skill_Dict.items()}
-	#json_dict["minion_Data"] =  {key: value for key, value in minion_Data.items()}
+	json_dict["minion_Data"] =  {key: value for key, value in minion_Data.items()}
 	#json_dict["profModifiers"] =  {key: value for key, value in profModifiers.items()}
 	#json_dict["modifierMap"] =  {key: value for key, value in modifierMap.items()}
 	#json_dict["total_Squad_Skill_Dmg"] =  {key: value for key, value in total_Squad_Skill_Dmg.items()}
