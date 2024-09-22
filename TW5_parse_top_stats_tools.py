@@ -4113,7 +4113,6 @@ def get_stats_from_fight_json(fight_json, config, log):
 							reviveSkill = "Function Gyro"
 							reviveSkill_heals = cast['totalDownedHealing']
 							reviveSkill_hits = cast['hits']
-						
 							if squadDps_prof_name not in downed_Healing:
 								downed_Healing[squadDps_prof_name]={}
 								downed_Healing[squadDps_prof_name]['name'] = squadDps_name
@@ -4127,6 +4126,26 @@ def get_stats_from_fight_json(fight_json, config, log):
 							else:
 								downed_Healing[squadDps_prof_name][reviveSkill]['Heals'] += reviveSkill_heals
 								downed_Healing[squadDps_prof_name][reviveSkill]['Hits'] += reviveSkill_hits
+					elif minion['extHealingStats']['totalHealing'][0]:
+						for cast in minion['extHealingStats']['totalHealingDist'][0]:
+							skillID = str(cast['id'])
+							if skillID in ['1196']:
+								reviveSkill = "Search And Rescue"
+								reviveSkill_heals = cast['totalDownedHealing']
+								reviveSkill_hits = cast['hits']
+								if squadDps_prof_name not in downed_Healing:
+									downed_Healing[squadDps_prof_name]={}
+									downed_Healing[squadDps_prof_name]['name'] = squadDps_name
+									downed_Healing[squadDps_prof_name]['prof'] = squadDps_profession
+								if reviveSkill not in downed_Healing[squadDps_prof_name]:
+									downed_Healing[squadDps_prof_name][reviveSkill] = {}
+									downed_Healing[squadDps_prof_name][reviveSkill]['Heals'] = {}
+									downed_Healing[squadDps_prof_name][reviveSkill]['Hits'] = {}
+									downed_Healing[squadDps_prof_name][reviveSkill]['Heals'] = reviveSkill_heals
+									downed_Healing[squadDps_prof_name][reviveSkill]['Hits'] = reviveSkill_hits
+								else:
+									downed_Healing[squadDps_prof_name][reviveSkill]['Heals'] += reviveSkill_heals
+									downed_Healing[squadDps_prof_name][reviveSkill]['Hits'] += reviveSkill_hits
 		#End Instant Revive tracking
 									
 		#Track Aura Output		
@@ -5853,8 +5872,8 @@ def write_to_json(overall_raid_stats, overall_squad_stats, fights, players, top_
 	#json_dict["squad_Control"] =  {key: value for key, value in squad_Control.items()}
 	#json_dict["enemy_Control"] =  {key: value for key, value in enemy_Control.items()}
 	#json_dict["enemy_Control_Player"] =  {key: value for key, value in enemy_Control_Player.items()}
-	json_dict["uptime_Table"] =  {key: value for key, value in uptime_Table.items()}
-	json_dict["stacking_uptime_Table"] =  {key: value for key, value in stacking_uptime_Table.items()}
+	#json_dict["uptime_Table"] =  {key: value for key, value in uptime_Table.items()}
+	#json_dict["stacking_uptime_Table"] =  {key: value for key, value in stacking_uptime_Table.items()}
 	#json_dict["auras_TableOut"] =  {key: value for key, value in auras_TableOut.items()}
 	#json_dict["auras_TableIn"] =  {key: value for key, value in auras_TableIn.items()}
 	#json_dict["Death_OnTag"] =  {key: value for key, value in Death_OnTag.items()}
@@ -5870,7 +5889,7 @@ def write_to_json(overall_raid_stats, overall_squad_stats, fights, players, top_
 	#json_dict["Buffs_Personal"] =  {key: value for key, value in buffs_personal.items()}
 	#json_dict["squad_damage_output"] =  {key: value for key, value in squad_damage_output.items()}
 	json_dict["skill_Dict"] =  {key: value for key, value in skill_Dict.items()}
-	json_dict["minion_Data"] =  {key: value for key, value in minion_Data.items()}
+	#json_dict["minion_Data"] =  {key: value for key, value in minion_Data.items()}
 	#json_dict["profModifiers"] =  {key: value for key, value in profModifiers.items()}
 	#json_dict["modifierMap"] =  {key: value for key, value in modifierMap.items()}
 	#json_dict["total_Squad_Skill_Dmg"] =  {key: value for key, value in total_Squad_Skill_Dmg.items()}
