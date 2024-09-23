@@ -92,7 +92,11 @@ for filename in sorted_files:
     targets = json_data['targets']
     skillMap = json_data['skillMap']
     buffMap = json_data['buffMap']
-    mechanics = json_data['mechanics']
+    if 'mechanicss' in json_data:
+        mechanics = json_data['mechanicss']
+    else:
+        continue
+
     
     FightReview[filename]['EnemyCount'] = len(targets)
     FightReview[filename]['SquadCount'] = len(players)
