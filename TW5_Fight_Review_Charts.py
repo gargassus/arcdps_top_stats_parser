@@ -86,8 +86,7 @@ for filename in sorted_files:
     FightReview[filename]['TagHpPct'] = {}
     FightReview[filename]['TagBaPct'] = {}
     FightReview[filename]['SquadHpPct'] = {}
-    FightReview[filename]['SquadBaPct'] = {}
-    
+    FightReview[filename]['SquadBaPct'] = {}    
     players = json_data['players']
     targets = json_data['targets']
     skillMap = json_data['skillMap']
