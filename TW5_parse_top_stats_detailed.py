@@ -1987,7 +1987,7 @@ if __name__ == '__main__':
 	#end On Tag Death insert
 
 	#Downed Healing
-	down_Heal_Order = {55026: 'Glyph of Stars - CA', 69336:"Nature's Renewal", 14419: 'Battle Standard', 9163: 'Signet of Mercy', 5763: 'Glyph of Renewal', 10611: 'Signet of Undeath', 59510: "Life Transfer", 10527: "Well of Blood", 30504: "Soul Spiral", 6091: "Toss Elixer R", 9999: "Function Gyro"}
+	down_Heal_Order = {55026: 'Glyph of Stars - CA', 69336:"Nature's Renewal", 99999: "Search And Rescue", 14419: 'Battle Standard', 9163: 'Signet of Mercy', 5763: 'Glyph of Renewal', 10611: 'Signet of Undeath', 59510: "Life Transfer", 10527: "Well of Blood", 30504: "Soul Spiral", 6091: "Toss Elixer R", 9999: "Function Gyro"}
 	print_to_file(output, '<$reveal type="match" state="$:/state/curTab" text="Downed_Healing">')    
 	print_to_file(output, '\n<<alert dark "Healing to downed players" width:60%>>\n\n')
 	print_to_file(output, '\nRequires Heal Stat addon for ARCDPS to track\n')
@@ -1999,7 +1999,7 @@ if __name__ == '__main__':
 	print_to_file(output, "|table-caption-top|k")
 	print_to_file(output, "|Sortable table - Click header item to sort table |c")
 	print_to_file(output, "|thead-dark table-hover sortable|k")
-	output_string = "|!Name | !Profession | !Attendance |"
+	output_string = "|!Name | !Prof | !Combat Time |"
 	for item in down_Heal_Order:
 		output_string += "!{{"+down_Heal_Order[item]+"}}|"
 	output_string += "h"
@@ -2023,7 +2023,7 @@ if __name__ == '__main__':
 	print_to_file(output, "|table-caption-top|k")
 	print_to_file(output, "|Sortable table - Click header item to sort table |c")
 	print_to_file(output, "|thead-dark table-hover sortable|k")
-	output_string = "|!Name | !Profession | !Attendance |"
+	output_string = "|!Name | !Prof | !Combat Time |"
 	for item in down_Heal_Order:
 		output_string += "!{{"+down_Heal_Order[item]+"}}|"
 	output_string += "h"
