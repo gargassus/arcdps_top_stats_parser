@@ -2618,8 +2618,13 @@ def collect_stat_data(args, config, log, anonymize=False):
 				#ripsOutTime Hack to fix the random >2M boon strips time on some players
 				elif stat == 'ripsOutTime' and player.stats_per_fight[fight_number][stat] > 999999:
 					for target in json_data['targets']:
-						if target['defenses'][0]['boonStripsTime'] > 99999:
-							player.stats_per_fight[fight_number][stat] = max(player.stats_per_fight[fight_number][stat] - target['defenses'][0]['boonStripsTime'], 0)
+						if target['support'][0]['boonStripsTime'] > 99999:
+							player.stats_per_fight[fight_number][stat] = max(player.stats_per_fight[fight_number][stat] - target['support'][0]['boonStripsTime'], 0)
+				#cleanseOutTime Hack to fix the random >2M condi cleanse time on some players
+				elif stat == 'cleansesOutTime' and player.stats_per_fight[fight_number][stat] > 999999:
+					for target in json_data['targets']:
+						if target['support'][0]['condiCleanseTime'] > 99999:
+							player.stats_per_fight[fight_number][stat] = max(player.stats_per_fight[fight_number][stat] - target['support'][0]['condiCleanseTime'], 0)
 				#print(stat, name)
 				# add stats of this fight and player to total stats of this fight and player
 				if player.stats_per_fight[fight_number][stat] > 0:
