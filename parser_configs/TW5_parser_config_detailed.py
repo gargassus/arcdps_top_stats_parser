@@ -26,7 +26,7 @@ summary_title = "WVW Log Review"
 summary_creator = "Drevarr"
 
 # How many players will be listed who achieved top stats most often for each stat?
-num_players_listed = {'dmg': 100, 'Pdmg': 50, 'Cdmg': 50, 'shieldDmg': 100, 'dmgAll': 100, 'iol': 50,'rips': 50, 'cleanses': 50, 'dist': 50, 'stability': 50, 'protection': 50, 'aegis': 50, 'might': 50, 'fury': 50, 'dmg_taken': 50, 'deaths': 50, 'downed': 50,'res': 50, 'superspeed': 50, 'stealth': 50, 'HiS': 50, 'resistance': 50, 'resolution': 50, 'quickness': 50, 'swiftness': 50, 'alacrity': 50, 'vigor': 50, 'regeneration': 50, 'heal': 50, 'barrier': 50, 'barrierDamage': 50, 'swaps': 50, 'kills': 50, 'downs': 50, 'dodges': 50, 'evades': 50, 'hitsMissed': 50, 'interupted': 50, 'blocks': 50, 'invulns': 50, 'fireOut': 50, 'shockingOut': 50, 'frostOut': 50, 'magneticOut': 50, 'lightOut': 50, 'darkOut': 50, 'chaosOut': 50, 'ripsIn': 50, 'cleansesIn': 50, 'resOutTime': 50, 'cleansesOutTime': 50, 'ripsOutTime': 50, 'downContribution': 50, 'againstDownedDamage': 50, 'againstDownedCount': 50, 'receivedCrowdControl': 50, 'receivedCrowdControlDuration': 50, 'appliedCrowdControl': 50, 'appliedCrowdControlDuration': 50, 'stunBreak': 50, 'removedStunDuration': 50}
+num_players_listed = 50
 # What portion (%) of are considered to be "top" in each fight for each stat?
 num_players_considered_top_percentage = 5
 

@@ -130,7 +130,7 @@ class Fight:
 # This class stores the configuration for running the top stats.
 @dataclass
 class Config:
-	num_players_listed: dict = field(default_factory=dict)          # How many players will be listed who achieved top stats most often for each stat?
+	num_players_listed: int = 0  # How many players will be listed who achieved top stats most often for each stat?
 	num_players_considered_top_percentage: float = 0.  # % of players considered to be "top" in each fight for each stat?
 
 	min_attendance_portion_for_percentage: float = 0.  # For what portion of all fights does a player need to be there to be considered for "percentage" awards?
@@ -1008,7 +1008,7 @@ def get_top_players(players, config, stat, total_or_consistent_or_average):
 	while i < len(sorted_index):
 		new_value = sorted_index[i][1] # value by which was sorted, i.e. total or consistency
 		# index must be lower than number of output desired OR list entry has same value as previous entry, i.e. double place
-		if i >= config.num_players_listed[stat] and new_value != last_value:
+		if i >= config.num_players_listed and new_value != last_value:
 			break
 		last_value = new_value
 
@@ -1084,7 +1084,7 @@ def get_top_percentage_players(players, config, stat, late_or_swapping, num_used
 		if late_or_swapping == StatType.SWAPPED_PERCENTAGE and not players[ind].swapped_build:
 			continue
 		# index must be lower than number of output desired OR list entry has same value as previous entry, i.e. double place
-		if len(top_players) >= config.num_players_listed[stat] and percent != last_value:
+		if len(top_players) >= config.num_players_listed and percent != last_value:
 			break
 		last_value = percent
 
@@ -1187,7 +1187,7 @@ def write_sorted_top_consistent_or_avg(players, top_consistent_players, config, 
 		if stat == "distJEL":
 			print_string = "\n\n*Top "+str(config.num_players_considered_top*100)+"% "+config.stat_names[stat]+" consistency awards"
 		else:
-			print_string = "\n\n*Top "+config.stat_names[stat]+" consistency awards (Max. "+str(config.num_players_listed[stat])+" places, min. "+str(round(config.portion_of_top_for_consistent*100.))+"% of most consistent)"
+			print_string = "\n\n*Top "+config.stat_names[stat]+" consistency awards (Max. "+str(config.num_players_listed)+" places, min. "+str(round(config.portion_of_top_for_consistent*100.))+"% of most consistent)"
 			print_to_file(output_file, print_string)
 			print_string = "*Most times placed in the top "+str(config.num_players_considered_top*100)+"%."
 			print_to_file(output_file, print_string)
@@ -1197,7 +1197,7 @@ def write_sorted_top_consistent_or_avg(players, top_consistent_players, config, 
 		if stat == "distJEL":
 			print_string = "*Top average "+str(config.num_players_considered_top*100)+"% "+config.stat_names[stat]+" awards"
 		else:
-			print_string = "*Top average "+config.stat_names[stat]+" awards (Max. "+str(config.num_players_listed[stat])+" places)"
+			print_string = "*Top average "+config.stat_names[stat]+" awards (Max. "+str(config.num_players_listed)+" places)"
 			print_to_file(output_file, print_string)
 			print_string = "*Attendance = number of fights a player was present out of "+str(num_used_fights)+" total fights."
 			print_to_file(output_file, print_string)
@@ -1934,9 +1934,9 @@ def write_sorted_total(players, top_total_players, config, total_fight_duration,
 	profession_strings, profession_length = get_professions_and_length(players, top_total_players, config)
 	profession_length = max(profession_length, 5)
 	if stat == 'dmg':
-		print_string = "*Top overall "+config.stat_names[stat]+" awards (Max. "+str(config.num_players_listed[stat])+" places, min. "+str(round(config.portion_of_topDamage_for_total*100.))+"% of 1st place)"
+		print_string = "*Top overall "+config.stat_names[stat]+" awards (Max. "+str(config.num_players_listed)+" places, min. "+str(round(config.portion_of_topDamage_for_total*100.))+"% of 1st place)"
 	else:
-		print_string = "*Top overall "+config.stat_names[stat]+" awards (Max. "+str(config.num_players_listed[stat])+" places, min. "+str(round(config.portion_of_top_for_total*100.))+"% of 1st place)"
+		print_string = "*Top overall "+config.stat_names[stat]+" awards (Max. "+str(config.num_players_listed)+" places, min. "+str(round(config.portion_of_top_for_total*100.))+"% of 1st place)"
 	print_to_file(output_file, print_string)
 
 	print_string = "*Attendance = total duration of fights attended out of "
