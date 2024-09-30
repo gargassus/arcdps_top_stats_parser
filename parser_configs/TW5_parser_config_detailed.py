@@ -75,7 +75,7 @@ include_comp_and_review = True
 check_for_unknown_team_ids = True
 
 # if overview_only = True, do not build individual tables & charts for stats in overview table,currently for Offensive and Defensive tabs 
-overview_only = True
+damage_overview_only = False
 
 # Use PlenBot Logs? Set to True
 # Requires the "save logs to a CSV file" option to be checked in PlenBot

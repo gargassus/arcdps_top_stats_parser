@@ -156,7 +156,7 @@ class Config:
 	include_comp_and_review: bool = True	# include completed and reviewed fights in charts
 	check_for_unknown_team_ids: bool = True    # print dict of unknown team ids
 
-	overview_only: bool = False    # if overview_only = True, do not build individual tables & charts for stats in overview table for Offensive and Defensive
+	damage_overview_only: bool = False    # if overview_only = True, do not build individual tables & charts for stats in overview table for Offensive and Defensive
 
 	use_PlenBot: bool = False
 	PlenBotPath: str = ""
@@ -707,7 +707,7 @@ def fill_config(config_input):
 	config.charts = config_input.charts
 	config.check_for_unknown_team_ids = config_input.check_for_unknown_team_ids
 	config.include_comp_and_review = config_input.include_comp_and_review
-	config.overview_only = config_input.overview_only
+	config.damage_overview_only = config_input.damage_overview_only
 	config.use_PlenBot = config_input.use_PlenBot
 	config.PlenBotPath = config_input.PlenBotPath
 			

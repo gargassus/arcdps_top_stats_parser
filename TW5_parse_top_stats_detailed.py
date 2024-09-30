@@ -103,7 +103,7 @@ if __name__ == '__main__':
 	total_fight_duration = print_total_squad_stats(fights, overall_squad_stats, overall_raid_stats, found_healing, found_barrier, config, output)
 
 	include_comp_and_review = config.include_comp_and_review
-	overview_only = config.overview_only
+	damage_overview_only = config.damage_overview_only
 
 	DmgOverviewTable = {
         'dmg': "Damage",
@@ -157,7 +157,7 @@ if __name__ == '__main__':
 		for tab in SubMenuTabs[item]:
 			if not include_comp_and_review and tab in excludeForMonthly:
 				continue
-			if overview_only and tab in excludeForDmgOverview:
+			if damage_overview_only and tab in excludeForDmgOverview:
 				continue
 			print_to_file(output, '<$button setTitle="$:/state/curTab" setTo="'+tab+'" class="btn btn-sm btn-dark"> '+tab+' </$button>')
 		print_to_file(output, '\n')
@@ -1121,67 +1121,67 @@ if __name__ == '__main__':
 	#JEL-Tweaked to output TW5 formatting (https://drevarr.github.io/FluxCapacity.html)
 
 	for stat in config.stats_to_compute:
-		if overview_only and stat in DmgOverviewTable:
+		if damage_overview_only and stat in DmgOverviewTable:
 			continue		
 		if stat not in config.aurasOut_to_compute and stat not in config.aurasIn_to_compute and stat not in config.defenses_to_compute:
 			if (stat == 'heal' and not found_healing) or (stat == 'barrier' and not found_barrier):
 				continue
 
-			fileDate = myDate
+		fileDate = myDate
 
-			#JEL-Tweaked to output TW5 output to maintain formatted table and slider (https://drevarr.github.io/FluxCapacity.html)
-			print_to_file(output,'<$reveal type="match" state="$:/state/curTab" text="'+config.stat_names[stat]+'">')
-			if stat in ['dmg', 'Pdmg', 'Cdmg']:
-				print_to_file(output, "\n!!!<<alert dark src:'"+config.stat_names[stat].upper()+"  -  Targets Only' width:60%>>\n")
-			elif stat == 'dmgAll':
-				print_to_file(output, "\n!!!<<alert dark src:'"+config.stat_names[stat].upper()+"  -  includes NPC, Pets, Minions, siege, etc.' width:60%>>\n")
+		#JEL-Tweaked to output TW5 output to maintain formatted table and slider (https://drevarr.github.io/FluxCapacity.html)
+		print_to_file(output,'<$reveal type="match" state="$:/state/curTab" text="'+config.stat_names[stat]+'">')
+		if stat in ['dmg', 'Pdmg', 'Cdmg']:
+			print_to_file(output, "\n!!!<<alert dark src:'"+config.stat_names[stat].upper()+"  -  Targets Only' width:60%>>\n")
+		elif stat == 'dmgAll':
+			print_to_file(output, "\n!!!<<alert dark src:'"+config.stat_names[stat].upper()+"  -  includes NPC, Pets, Minions, siege, etc.' width:60%>>\n")
+		else:
+			print_to_file(output, "\n!!!<<alert dark src:'"+config.stat_names[stat].upper()+"' width:60%>>\n")
+		
+		if stat == 'dist':
+			print_to_file(output, '\n<div class="flex-row">\n    <div class="flex-col border">\n')
+			print_to_file(output, '<div style="overflow-x:auto;">\n\n')
+			top_consistent_stat_players[stat] = get_top_players(players, config, stat, StatType.CONSISTENT)
+			top_total_stat_players[stat] = get_top_players(players, config, stat, StatType.TOTAL)
+			top_average_stat_players[stat] = get_top_players(players, config, stat, StatType.AVERAGE)            
+			top_percentage_stat_players[stat],comparison_val = get_and_write_sorted_top_percentage(players, config, num_used_fights, stat, output, StatType.PERCENTAGE, top_consistent_stat_players[stat])
+			print_to_file(output, '\n\n\n\n')
+			top_percentage_stat_players[stat],comparison_val = get_top_percentage_players(players, config, stat, StatType.PERCENTAGE, num_used_fights, top_consistent_stat_players[stat], top_total_stat_players[stat], list(), list())
+			top_average_stat_players[stat] = get_and_write_sorted_average(players, config, num_used_fights, stat, output)			
+			print_to_file(output, '\n\n</div>\n\n')
+			print_to_file(output, '\n</div>\n    <div class="flex-col border">\n')
+			print_to_file(output, '<div style="overflow-x:auto;">\n\n')
+			if config.charts:
+				print_to_file(output, '<$echarts $text={{'+fileDate.strftime("%Y%m%d%H%M")+'_'+stat+'_ChartData}} $height="800px" $theme="dark"/>')
 			else:
-				print_to_file(output, "\n!!!<<alert dark src:'"+config.stat_names[stat].upper()+"' width:60%>>\n")
-			
-			if stat == 'dist':
-				print_to_file(output, '\n<div class="flex-row">\n    <div class="flex-col border">\n')
-				print_to_file(output, '<div style="overflow-x:auto;">\n\n')
-				top_consistent_stat_players[stat] = get_top_players(players, config, stat, StatType.CONSISTENT)
+				print_to_file(output, '\n Charts Disabled in config \n')
+			print_to_file(output, '\n\n</div>\n\n')
+			print_to_file(output, '\n</div>\n</div>\n')
+		else:
+			print_to_file(output, '\n<div class="flex-row">\n    <div class="flex-col border">\n')
+			print_to_file(output, '<div style="overflow-x:auto;">\n\n')
+			if config.player_sorting_stat_type == 'average':
+				top_average_stat_players[stat] = get_and_write_sorted_total_by_average(players, config, total_fight_duration, stat, output)
 				top_total_stat_players[stat] = get_top_players(players, config, stat, StatType.TOTAL)
-				top_average_stat_players[stat] = get_top_players(players, config, stat, StatType.AVERAGE)            
-				top_percentage_stat_players[stat],comparison_val = get_and_write_sorted_top_percentage(players, config, num_used_fights, stat, output, StatType.PERCENTAGE, top_consistent_stat_players[stat])
-				print_to_file(output, '\n\n\n\n')
-				top_percentage_stat_players[stat],comparison_val = get_top_percentage_players(players, config, stat, StatType.PERCENTAGE, num_used_fights, top_consistent_stat_players[stat], top_total_stat_players[stat], list(), list())
-				top_average_stat_players[stat] = get_and_write_sorted_average(players, config, num_used_fights, stat, output)			
-				print_to_file(output, '\n\n</div>\n\n')
-				print_to_file(output, '\n</div>\n    <div class="flex-col border">\n')
-				print_to_file(output, '<div style="overflow-x:auto;">\n\n')
-				if config.charts:
-					print_to_file(output, '<$echarts $text={{'+fileDate.strftime("%Y%m%d%H%M")+'_'+stat+'_ChartData}} $height="800px" $theme="dark"/>')
-				else:
-					print_to_file(output, '\n Charts Disabled in config \n')
-				print_to_file(output, '\n\n</div>\n\n')
-				print_to_file(output, '\n</div>\n</div>\n')
 			else:
-				print_to_file(output, '\n<div class="flex-row">\n    <div class="flex-col border">\n')
-				print_to_file(output, '<div style="overflow-x:auto;">\n\n')
-				if config.player_sorting_stat_type == 'average':
-					top_average_stat_players[stat] = get_and_write_sorted_total_by_average(players, config, total_fight_duration, stat, output)
-					top_total_stat_players[stat] = get_top_players(players, config, stat, StatType.TOTAL)
-				else:
-					top_total_stat_players[stat] = get_and_write_sorted_total(players, config, total_fight_duration, stat, output)
-					top_average_stat_players[stat] = get_top_players(players, config, stat, StatType.AVERAGE)	
-				print_to_file(output, '\n\n\n\n')
-				top_consistent_stat_players[stat] = get_and_write_sorted_top_consistent(players, config, num_used_fights, stat, output)			
-				print_to_file(output, '\n\n</div>\n\n')
-				print_to_file(output, '\n</div>\n    <div class="flex-col border">\n')
-				print_to_file(output, '<div style="overflow-x:auto;">\n\n')
-				#top_total_stat_players[stat] = get_and_write_sorted_total(players, config, total_fight_duration, stat, output)
-				if config.charts:
-					print_to_file(output, '<$echarts $text={{'+fileDate.strftime("%Y%m%d%H%M")+'_'+stat+'_ChartData}} $height="800px" $theme="dark"/>')
-				else:
-					print_to_file(output, '\n Charts Disabled in config \n')
-				print_to_file(output, '\n\n</div>\n\n')
-				print_to_file(output, '\n</div>\n</div>\n')
-				top_average_stat_players[stat] = get_top_players(players, config, stat, StatType.AVERAGE)
-				top_percentage_stat_players[stat],comparison_val = get_top_percentage_players(players, config, stat, StatType.PERCENTAGE, num_used_fights, top_consistent_stat_players[stat], top_total_stat_players[stat], list(), list())
-				
-			print_to_file(output, "</$reveal>\n")
+				top_total_stat_players[stat] = get_and_write_sorted_total(players, config, total_fight_duration, stat, output)
+				top_average_stat_players[stat] = get_top_players(players, config, stat, StatType.AVERAGE)	
+			print_to_file(output, '\n\n\n\n')
+			top_consistent_stat_players[stat] = get_and_write_sorted_top_consistent(players, config, num_used_fights, stat, output)			
+			print_to_file(output, '\n\n</div>\n\n')
+			print_to_file(output, '\n</div>\n    <div class="flex-col border">\n')
+			print_to_file(output, '<div style="overflow-x:auto;">\n\n')
+			#top_total_stat_players[stat] = get_and_write_sorted_total(players, config, total_fight_duration, stat, output)
+			if config.charts:
+				print_to_file(output, '<$echarts $text={{'+fileDate.strftime("%Y%m%d%H%M")+'_'+stat+'_ChartData}} $height="800px" $theme="dark"/>')
+			else:
+				print_to_file(output, '\n Charts Disabled in config \n')
+			print_to_file(output, '\n\n</div>\n\n')
+			print_to_file(output, '\n</div>\n</div>\n')
+			top_average_stat_players[stat] = get_top_players(players, config, stat, StatType.AVERAGE)
+			top_percentage_stat_players[stat],comparison_val = get_top_percentage_players(players, config, stat, StatType.PERCENTAGE, num_used_fights, top_consistent_stat_players[stat], top_total_stat_players[stat], list(), list())
+			
+		print_to_file(output, "</$reveal>\n")
 
 	#print Auras-Out details
 	print_to_file(output,'<$reveal type="match" state="$:/state/curTab" text="Auras - Out">')
@@ -1261,9 +1261,9 @@ if __name__ == '__main__':
 	print_to_file(output,'<$reveal type="match" state="$:/state/curTab" text="Defensive Stats">')
 	print_to_file(output, '\n!!!<<alert dark src:"Defensive Stats" width:60%>>\n')
 	print_to_file(output, '<$button setTitle="$:/state/curDefense" setTo="Overview" selectedClass="" class="btn btn-sm btn-dark" style=""> Defensive Overview </$button>')
-	if not overview_only:
-		for stat in config.defenses_to_compute:
-			print_to_file(output, '<$button setTitle="$:/state/curDefense" setTo="'+config.stat_names[stat]+'" selectedClass="" class="btn btn-sm btn-dark" style="">'+config.stat_names[stat]+' </$button>')
+
+	for stat in config.defenses_to_compute:
+		print_to_file(output, '<$button setTitle="$:/state/curDefense" setTo="'+config.stat_names[stat]+'" selectedClass="" class="btn btn-sm btn-dark" style="">'+config.stat_names[stat]+' </$button>')
 
 	#Print Overview Table
 	DefensiveOverview = ['dmg_taken', 'barrierDamage', 'hitsMissed', 'interupted', 'invulns', 'evades', 'blocks', 'dodges', 'cleansesIn', 'ripsIn', 'downed', 'deaths', 'receivedCrowdControl','receivedCrowdControlDuration']
@@ -1287,29 +1287,28 @@ if __name__ == '__main__':
 	print_to_file(output, '\n</div>')
 	print_to_file(output, '\n</$reveal>')
 	#overview_only
-	if not overview_only:
-		for stat in config.defenses_to_compute:
-			print_to_file(output,'<$reveal type="match" state="$:/state/curDefense" text="'+config.stat_names[stat]+'">')
-			print_to_file(output, '\n<div class="flex-row">\n    <div class="flex-col border">\n')
-			print_to_file(output, '<div style="overflow-x:auto;">\n\n')
-			if config.player_sorting_stat_type == 'average':
-				top_average_stat_players[stat] = get_and_write_sorted_total_by_average(players, config, total_fight_duration, stat, output)
-				top_total_stat_players[stat] = get_top_players(players, config, stat, StatType.TOTAL)
-			else:
-				top_total_stat_players[stat] = get_and_write_sorted_total(players, config, total_fight_duration, stat, output)
-				top_average_stat_players[stat] = get_top_players(players, config, stat, StatType.AVERAGE)
-			print_to_file(output, '\n\n')
-			top_consistent_stat_players[stat] = get_and_write_sorted_top_consistent(players, config, num_used_fights, stat, output)			
-			print_to_file(output, '\n</div>')
-			print_to_file(output, '\n</div>\n    <div class="flex-col border">\n')
-			print_to_file(output, '<div style="overflow-x:auto;">\n')
-			if config.charts:
-				print_to_file(output, '<$echarts $text={{'+fileDate.strftime("%Y%m%d%H%M")+'_'+stat+'_ChartData}} $height="800px" $theme="dark"/>')
-			else:
-				print_to_file(output, '\n Charts Disabled in config \n')	
-			print_to_file(output, '\n</div>')
-			print_to_file(output, '\n</div></div>\n')
-			top_percentage_stat_players[stat],comparison_val = get_top_percentage_players(players, config, stat, StatType.PERCENTAGE, num_used_fights, top_consistent_stat_players[stat], top_total_stat_players[stat], list(), list())
+	for stat in config.defenses_to_compute:
+		print_to_file(output,'<$reveal type="match" state="$:/state/curDefense" text="'+config.stat_names[stat]+'">')
+		print_to_file(output, '\n<div class="flex-row">\n    <div class="flex-col border">\n')
+		print_to_file(output, '<div style="overflow-x:auto;">\n\n')
+		if config.player_sorting_stat_type == 'average':
+			top_average_stat_players[stat] = get_and_write_sorted_total_by_average(players, config, total_fight_duration, stat, output)
+			top_total_stat_players[stat] = get_top_players(players, config, stat, StatType.TOTAL)
+		else:
+			top_total_stat_players[stat] = get_and_write_sorted_total(players, config, total_fight_duration, stat, output)
+			top_average_stat_players[stat] = get_top_players(players, config, stat, StatType.AVERAGE)
+		print_to_file(output, '\n\n')
+		top_consistent_stat_players[stat] = get_and_write_sorted_top_consistent(players, config, num_used_fights, stat, output)			
+		print_to_file(output, '\n</div>')
+		print_to_file(output, '\n</div>\n    <div class="flex-col border">\n')
+		print_to_file(output, '<div style="overflow-x:auto;">\n')
+		if config.charts:
+			print_to_file(output, '<$echarts $text={{'+fileDate.strftime("%Y%m%d%H%M")+'_'+stat+'_ChartData}} $height="800px" $theme="dark"/>')
+		else:
+			print_to_file(output, '\n Charts Disabled in config \n')	
+		print_to_file(output, '\n</div>')
+		print_to_file(output, '\n</div></div>\n')
+		top_percentage_stat_players[stat],comparison_val = get_top_percentage_players(players, config, stat, StatType.PERCENTAGE, num_used_fights, top_consistent_stat_players[stat], top_total_stat_players[stat], list(), list())
 		print_to_file(output, "</$reveal>\n")
 	print_to_file(output, "</$reveal>\n")	
 	write_to_json(overall_raid_stats, overall_squad_stats, fights, players, top_total_stat_players, top_average_stat_players, top_consistent_stat_players, top_percentage_stat_players, top_late_players, top_jack_of_all_trades_players, squad_offensive, squad_Control, enemy_Control, enemy_Control_Player, downed_Healing, uptime_Table, stacking_uptime_Table, auras_TableIn, auras_TableOut, Death_OnTag, Attendance, DPS_List, CPS_List, SPS_List, HPS_List, DPSStats, Player_Damage_by_Skill, args.json_output_filename)
@@ -2662,7 +2661,7 @@ if __name__ == '__main__':
 
 	top_players_by_stat = top_average_stat_players if config.player_sorting_stat_type == 'average' else top_total_stat_players
 	for stat in config.stats_to_compute:
-		if overview_only and stat in DmgOverviewTable or stat in config.defenses_to_compute:
+		if damage_overview_only and stat in DmgOverviewTable:
 			continue		
 		skip_boxplot_charts = ['deaths', 'iol', 'stealth', 'HiS']
 		#boxplot_Stats = ['stability',  'protection', 'aegis', 'might', 'fury', 'resistance', 'resolution', 'quickness', 'swiftness', 'alacrity', 'vigor', 'regeneration', 'res', 'kills', 'downs', 'swaps', 'dmg', 'Pdmg', 'Cdmg', 'rips', 'cleanses', 'superspeed', 'barrierDamage']
