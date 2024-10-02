@@ -76,6 +76,7 @@ check_for_unknown_team_ids = True
 
 # if overview_only = True, do not build individual tables & charts for stats in overview table,currently for Offensive and Defensive tabs 
 damage_overview_only = False
+defensive_overview_only = False
 
 # Use PlenBot Logs? Set to True
 # Requires the "save logs to a CSV file" option to be checked in PlenBot
@@ -201,3 +202,31 @@ stat_names['appliedCrowdControl'] = "Applied Hard CC"
 stat_names['appliedCrowdControlDuration'] = "Applied Hard CC Duration"
 stat_names['stunBreak'] = "Stun Breaks"
 stat_names['removedStunDuration'] = "Stun Duration Removed"
+
+buffs_defensive = {
+    17047: "Virtue of Resolve (Battle Presence - Absolute Resolve)", 19083: "Oil Mastery III (Increased Armor)", 21484: "Iron Hide (Ram)",
+    21780: "Skelk Venom", 24304: "Stone Heart", 26596: "Rite of the Great Dwarf", 27737: "Infuse Light", 29379: "Naturalistic Resonance",
+    29726: "Last Rites", 29906: "Shield of Courage (Active)", 30285: "Vampiric Aura", 31229: "Watchful Eye", 31337: "Rebound",
+    33330: "Rite of the Great Dwarf (Ancient Echo)", 33978: "Healing Mist", 34281: "Guard!", 40045: "Bear Stance", 41815: "Dolyak Stance",
+    42249: "Photon Barrier Buff", 42925: "Eternal Oasis", 43194: "Unbroken Lines", 43401: "Unflinching Fortitude", 43487: "Signet of Courage (Shared)",
+    44682: "Breakrazor's Bastion", 45910: "Defy Pain", 46554: "Signet of Resolve (Shared)", 50415: "Stone Spirit", 51677: "Facet of Nature-Dwarf",
+    51699: "Facet of Nature-Centaur", 55026: "Glyph of the Stars (CA)", 55048: "Glyph of the Stars",
+}
+
+buffs_offensive = {
+    36781: "Unblockable", 31487: "Static Charge", 38333: "Pinpoint Distribution", 41957: "Ashes of the Just", 9240: "Bane Signet (PI)",
+    9237: "Signet of Wrath (PI)", 31803: "Glyph of Empowerment", 50421: "Frost Spirit", 50413: "Sun Spirit", 14055: "Spotter",
+    44651: "Vulture Stance", 44139: "One Wolf Pack", 51692: "Facet of Nature-Assassin", 41016: "Razorclaw's Rage",
+    45026: "Soulcleave's Summit", 26854: "Assassin's Presence", 63168: "Rot Wallow Venom", 13054: "Skale Venom", 13036: "Spider Venom",
+    49083: "Soul Stone Venom", 14417: "Banner of Strength", 14449: "Banner of Discipline", 14222: "Empower Allies",
+}
+
+buffs_support = {
+    890: "Revealed", 5577: "Shocking Aura", 5579: "Frost Aura", 5677: "Fire Aura", 5684: "Magnetic Aura", 5974: "Superspeed",
+    9231: "Merciful Intervention (Target)", 9235: "Merciful Intervention (Self)", 10269: "Hide in Shadows", 10332: "Chaos Aura",
+    10346: "Illusion of Life", 13017: "Stealth", 13094: "Devourer Venom", 13095: "Ice Drake Venom", 13133: "Basilisk Venom",
+    14450: "Banner of Tactics", 15788: "Conjure Earth Shield", 15789: "Conjure Flame Axe", 15790: "Conjure Frost Bow",
+    15791: "Conjure Lightning Hammer", 15792: "Conjure Fiery Greatsword", 25518: "Light Aura", 30462: "Heat Sync",
+    34236: "Search and Rescue!", 39978: "Dark Aura", 45038: "Moa Stance", 46280: "Griffon Stance", 50381: "Storm Spirit",
+    51674: "Facet of Nature-Dragon", 51704: "Facet of Nature-Demon", 63093: "Shrouded"
+}

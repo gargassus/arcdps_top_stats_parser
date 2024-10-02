@@ -104,6 +104,7 @@ if __name__ == '__main__':
 
 	include_comp_and_review = config.include_comp_and_review
 	damage_overview_only = config.damage_overview_only
+	defensive_overview_only = config.defensive_overview_only
 
 	DmgOverviewTable = {
         'dmg': "Damage",
@@ -140,6 +141,7 @@ if __name__ == '__main__':
 
 	excludeForMonthly = ['Squad Composition', "Party Composition", 'Fight Review', 'Spike Damage', 'Outgoing Healing', 'Gear Buffs']
 	excludeForDmgOverview = ['Down Contribution', 'Enemies Downed', 'Enemies Killed', 'Damage', 'Shield Damage', 'Power Damage', 'Condi Damage', 'Against Downed Damage', 'Against Downed Count', 'Damage All']
+	excludeForDefOverview = []
 
 	for item in MenuTabs:
 		if not config.charts and item == 'Dashboard':
@@ -158,6 +160,8 @@ if __name__ == '__main__':
 			if not include_comp_and_review and tab in excludeForMonthly:
 				continue
 			if damage_overview_only and tab in excludeForDmgOverview:
+				continue
+			if defensive_overview_only and tab in excludeForDefOverview:
 				continue
 			print_to_file(output, '<$button setTitle="$:/state/curTab" setTo="'+tab+'" class="btn btn-sm btn-dark"> '+tab+' </$button>')
 		print_to_file(output, '\n')
@@ -1122,7 +1126,9 @@ if __name__ == '__main__':
 
 	for stat in config.stats_to_compute:
 		if damage_overview_only and stat in DmgOverviewTable:
-			continue		
+			continue
+		if defensive_overview_only and tab in config.defenses_to_compute:
+			continue
 		if stat not in config.aurasOut_to_compute and stat not in config.aurasIn_to_compute and stat not in config.defenses_to_compute:
 			if (stat == 'heal' and not found_healing) or (stat == 'barrier' and not found_barrier):
 				continue
@@ -1262,8 +1268,9 @@ if __name__ == '__main__':
 	print_to_file(output, '\n!!!<<alert dark src:"Defensive Stats" width:60%>>\n')
 	print_to_file(output, '<$button setTitle="$:/state/curDefense" setTo="Overview" selectedClass="" class="btn btn-sm btn-dark" style=""> Defensive Overview </$button>')
 
-	for stat in config.defenses_to_compute:
-		print_to_file(output, '<$button setTitle="$:/state/curDefense" setTo="'+config.stat_names[stat]+'" selectedClass="" class="btn btn-sm btn-dark" style="">'+config.stat_names[stat]+' </$button>')
+	if not defensive_overview_only:
+		for stat in config.defenses_to_compute:
+			print_to_file(output, '<$button setTitle="$:/state/curDefense" setTo="'+config.stat_names[stat]+'" selectedClass="" class="btn btn-sm btn-dark" style="">'+config.stat_names[stat]+' </$button>')
 
 	#Print Overview Table
 	DefensiveOverview = ['dmg_taken', 'barrierDamage', 'hitsMissed', 'interupted', 'invulns', 'evades', 'blocks', 'dodges', 'cleansesIn', 'ripsIn', 'downed', 'deaths', 'receivedCrowdControl','receivedCrowdControlDuration']
@@ -2662,7 +2669,9 @@ if __name__ == '__main__':
 	top_players_by_stat = top_average_stat_players if config.player_sorting_stat_type == 'average' else top_total_stat_players
 	for stat in config.stats_to_compute:
 		if damage_overview_only and stat in DmgOverviewTable:
-			continue		
+			continue
+		if defensive_overview_only and tab in excludeForDefOverview:
+			continue
 		skip_boxplot_charts = ['deaths', 'iol', 'stealth', 'HiS']
 		#boxplot_Stats = ['stability',  'protection', 'aegis', 'might', 'fury', 'resistance', 'resolution', 'quickness', 'swiftness', 'alacrity', 'vigor', 'regeneration', 'res', 'kills', 'downs', 'swaps', 'dmg', 'Pdmg', 'Cdmg', 'rips', 'cleanses', 'superspeed', 'barrierDamage']
 		if stat == 'dist':
