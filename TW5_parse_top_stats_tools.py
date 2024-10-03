@@ -22,7 +22,6 @@ from dataclasses import dataclass,field
 import os.path
 from os import listdir
 import sys
-#import xml.etree.ElementTree as ET
 from enum import Enum
 import importlib
 import xlrd
@@ -179,8 +178,14 @@ class Config:
 	auras_ids: dict = field(default_factory=dict)
 
 
-#Stats to exlucde from overview summary
-exclude_Stat = ["iol", "dist", "res", "dmgAll", "Cdmg", "Pdmg", "shieldDmg", "kills", "downs", 'downed', "HiS", "stealth", "superspeed", "swaps", "barrierDamage", "dodges", "evades", "blocks", "invulns", 'hitsMissed', 'interupted', 'fireOut', 'shockingOut', 'frostOut', 'magneticOut', 'lightOut', 'darkOut', 'chaosOut', 'ripsIn', 'ripsTime', 'cleansesIn', 'cleansesTime', 'resOutTime', 'cleansesOutTime', 'ripsOutTime', 'downContribution', 'againstDownedDamage', 'againstDownedCount', 'appliedCrowdControl', 'appliedCrowdControlDuration', 'stunBreak', 'removedStunDuration', 'receivedCrowdControl', 'receivedCrowdControlDuration']
+#Stats to include in the general overview summary
+general_overview_stats = [
+	'deaths', 'dmg', 'dmg_taken', 'rips', 'cleanses',
+	'stability', 'protection', 'aegis', 'might',
+	'fury', 'resistance', 'resolution', 'quickness',
+	'swiftness', 'alacrity', 'vigor', 'regeneration',
+	'heal', 'barrier'
+ ]
 
 #Control Effects Tracking
 squad_offensive = {}
@@ -4768,7 +4773,7 @@ def print_total_squad_stats(fights, overall_squad_stats, overall_raid_stats, fou
 	i = 0
 	printed_kills = False
 	for stat in config.stats_to_compute:
-		if stat in exclude_Stat:
+		if stat not in general_overview_stats:
 			continue
 		
 		if i == 0:
@@ -4909,9 +4914,9 @@ def print_fights_overview(fights, overall_squad_stats, overall_raid_stats, confi
 	print_to_file(output, print_string)
 	print_string = "|thead-dark table-hover w-auto scrollable|k"
 	print_to_file(output, print_string)
-	print_string = "| Fight # | Date | Ending | Secs | Skip | Squad | Allies | Enemies | R/B/G | Downs | Kills |"
+	print_string = "| Fight # | Ending | Secs | Skip | Squad | Allies | Enemies | R/B/G | Downs | Kills |"
 	for stat in overall_squad_stats:
-		if stat not in exclude_Stat:
+		if stat in general_overview_stats:
 			stat_len[stat] = max(len(config.stat_names[stat]), len(str(overall_squad_stats[stat])))
 			print_string += " {{"+config.stat_names[stat]+"}} |"
 	print_string += "h"
@@ -4923,16 +4928,16 @@ def print_fights_overview(fights, overall_squad_stats, overall_raid_stats, confi
 			skipped_str = "yes" if fight.skipped else "no"
 			date = fight.start_time.split()[0]
 			end_time = fight.end_time.split()[1]        
-			print_string = "| "+str((i+1))+" | "+str(date)+" | "+str(end_time)+" | "+str(fight.duration)+" | "+skipped_str+" | "+str(fight.squad)+" | <<tc src:'"+str(fight.notSquad)+"' color:'green'>> | "+str(fight.enemies)+" | "+str(fight.enemies_Red)+"/"+str(fight.enemies_Blue)+"/"+str(fight.enemies_Green)+" | "+str(fight.downs)+" | "+str(fight.kills)+" |"
+			print_string = "| "+str((i+1))+" | "+str(end_time)+" | "+str(fight.duration)+" | "+skipped_str+" | "+str(fight.squad)+" | <<tc src:'"+str(fight.notSquad)+"' color:'green'>> | "+str(fight.enemies)+" | "+str(fight.enemies_Red)+"/"+str(fight.enemies_Blue)+"/"+str(fight.enemies_Green)+" | "+str(fight.downs)+" | "+str(fight.kills)+" |"
 			for stat in overall_squad_stats:
-				if stat not in exclude_Stat:
+				if stat in general_overview_stats:
 					print_string += " "+my_value(round(fight.total_stats[stat]))+"|"
 			print_to_file(output, print_string)
 
 	#print_string = f"| {overall_raid_stats['num_used_fights']:>3}"+" | "+f"{overall_raid_stats['date']:>7}"+" | "+f"{overall_raid_stats['start_time']:>10}"+" | "+f"{overall_raid_stats['end_time']:>8}"+" | "+f"{overall_raid_stats['used_fights_duration']:>13}"+" | "+f"{overall_raid_stats['num_skipped_fights']:>7}" +" | "+f"{round(overall_raid_stats['mean_allies']):>11}"+" | "+f"{round(overall_raid_stats['mean_enemies']):>12}"+" | "+f"{round(overall_raid_stats['total_downs']):>5}"+" | "+f"{overall_raid_stats['total_kills']:>5} |"
-	print_string = f"| {overall_raid_stats['num_used_fights']:>3}"+" | "+f"{overall_raid_stats['date']:>7}"+" | "+f"{overall_raid_stats['end_time']:>8}"+" | "+f"{overall_raid_stats['used_fights_duration']:>13}"+" | "+f"{overall_raid_stats['num_skipped_fights']:>7}" +" | "+f"{round(overall_raid_stats['mean_squad']):>11}"+" | "+f"{round(overall_raid_stats['mean_notSquad']):>11}"+" | "+f"{round(overall_raid_stats['mean_enemies']):>12}"+" |  | "+f"{round(overall_raid_stats['total_downs']):>5}"+" | "+f"{overall_raid_stats['total_kills']:>5} |"
+	print_string = f"| {overall_raid_stats['num_used_fights']:>3}"+" | "+f"{overall_raid_stats['end_time']:>8}"+" | "+f"{overall_raid_stats['used_fights_duration']:>13}"+" | "+f"{overall_raid_stats['num_skipped_fights']:>7}" +" | "+f"{round(overall_raid_stats['mean_squad']):>11}"+" | "+f"{round(overall_raid_stats['mean_notSquad']):>11}"+" | "+f"{round(overall_raid_stats['mean_enemies']):>12}"+" |  | "+f"{round(overall_raid_stats['total_downs']):>5}"+" | "+f"{overall_raid_stats['total_kills']:>5} |"
 	for stat in overall_squad_stats:
-		if stat not in exclude_Stat:
+		if stat in general_overview_stats:
 			print_string += " "+my_value(round(overall_squad_stats[stat]))+"|"
 	print_string += "f\n\n"
 	print_to_file(output, print_string)

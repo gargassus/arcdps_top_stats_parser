@@ -163,6 +163,8 @@ if __name__ == '__main__':
 				continue
 			if defensive_overview_only and tab in excludeForDefOverview:
 				continue
+			if not config.charts and item == 'Dashboard':
+				continue
 			print_to_file(output, '<$button setTitle="$:/state/curTab" setTo="'+tab+'" class="btn btn-sm btn-dark"> '+tab+' </$button>')
 		print_to_file(output, '\n')
 		print_to_file(output, '</$reveal>')
