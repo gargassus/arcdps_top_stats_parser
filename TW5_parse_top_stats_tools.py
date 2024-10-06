@@ -158,7 +158,7 @@ class Config:
 	damage_overview_only: bool = False    # if overview_only = True, do not build individual tables & charts for stats in overview table for Offensive
 	defensive_overview_only: bool = False	# if overview_only = True, do not build individual tables & charts for stats in overview table for Defensive
 
-	ignore_role_in_skill_cast bool - False
+	ignore_role_in_skill_cast: bool = False
 
 	use_PlenBot: bool = False
 	PlenBotPath: str = ""
@@ -2415,7 +2415,7 @@ def collect_stat_data(args, config, log, anonymize=False):
 				player_prof_role = profession
 			else:
 				player_prof_role = profession + ' ' + playerRole
-				
+
 			skill_map = json_data['skillMap']
 
 			#Collect Role Data for Skill Casts
