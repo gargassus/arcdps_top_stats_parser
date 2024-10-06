@@ -158,6 +158,8 @@ class Config:
 	damage_overview_only: bool = False    # if overview_only = True, do not build individual tables & charts for stats in overview table for Offensive
 	defensive_overview_only: bool = False	# if overview_only = True, do not build individual tables & charts for stats in overview table for Defensive
 
+	ignore_role_in_skill_cast bool - False
+
 	use_PlenBot: bool = False
 	PlenBotPath: str = ""
 
@@ -717,6 +719,7 @@ def fill_config(config_input):
 	config.defensive_overview_only = config_input.defensive_overview_only
 	config.use_PlenBot = config_input.use_PlenBot
 	config.PlenBotPath = config_input.PlenBotPath
+	config.ignore_role_in_skill_cast = config_input.ignore_role_in_skill_cast
 			
 	return config
 	
@@ -2408,7 +2411,11 @@ def collect_stat_data(args, config, log, anonymize=False):
 			playerRole=find_sub_type(player_data)
 			playerRoleActiveTime = get_stat_from_player_json(player_data, players_running_healing_addon, 'time_active', config)
 			
-			player_prof_role = profession + ' ' + playerRole
+			if config.ignore_role_in_skill_cast:
+				player_prof_role = profession
+			else:
+				player_prof_role = profession + ' ' + playerRole
+				
 			skill_map = json_data['skillMap']
 
 			#Collect Role Data for Skill Casts

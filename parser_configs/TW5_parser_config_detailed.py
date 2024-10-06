@@ -78,6 +78,8 @@ check_for_unknown_team_ids = True
 damage_overview_only = False
 defensive_overview_only = False
 
+ignore_role_in_skill_cast = False
+
 # Use PlenBot Logs? Set to True
 # Requires the "save logs to a CSV file" option to be checked in PlenBot
 use_PlenBot = False
