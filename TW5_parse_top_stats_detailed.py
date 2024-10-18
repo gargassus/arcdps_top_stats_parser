@@ -2736,5 +2736,7 @@ if __name__ == '__main__':
 			if fight.enemies_Unk:
 				teamID_OK = False
 				print(f'{fight_num+1: >8}\t{str(fight.enemies_Unk)}')
+				print_to_file(log, f'{fight_num+1: >8}\t{str(fight.enemies_Unk)}')
 		if teamID_OK:
 			print(f'{fight_num+1: >8} fights, No unknown teamIDs')
+			print_to_file(log, f'{fight_num+1: >8} fights, No unknown teamIDs')

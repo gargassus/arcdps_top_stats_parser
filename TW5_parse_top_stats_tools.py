@@ -2636,9 +2636,11 @@ def collect_stat_data(args, config, log, anonymize=False):
 							player.stats_per_fight[fight_number][stat] = max(player.stats_per_fight[fight_number][stat] - target['defenses'][0]['boonStripsTime'], 0)
 				#cleanseOutTime Hack to fix the random >2M condi cleanse time on some players
 				elif stat == 'cleansesOutTime' and player.stats_per_fight[fight_number][stat] > 999999:
-					for target in json_data['players']:
-						if target['defenses'][0].get('condiCleanseTime', 0) > 99999:
-							player.stats_per_fight[fight_number][stat] = max(player.stats_per_fight[fight_number][stat] - target['defenses'][0]['condiCleanseTime'], 0)
+					for cleanse_target in json_data['players']:
+						if 'condiCleanseTime' in cleanse_target['defenses'][0]:
+							if int(cleanse_target['defenses'][0]['condiCleanseTime']) > 99999:
+								print_to_file(log, f"----==== {target['name']} : {cleanse_target['defenses'][0]['condiCleanseTime']} ====----")
+								player.stats_per_fight[fight_number][stat] = max(player.stats_per_fight[fight_number][stat] - cleanse_target['defenses'][0]['condiCleanseTime'], 0)
 				#print(stat, name)
 				# add stats of this fight and player to total stats of this fight and player
 				if player.stats_per_fight[fight_number][stat] > 0:
