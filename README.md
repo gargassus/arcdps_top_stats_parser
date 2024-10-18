@@ -23,6 +23,7 @@ Follow the ``` Preparation ``` steps further down in this document then utilize 
 # What is it all about? #
 
 Did you ever wonder how well you did compared to your squad mates, not only in a single fight, but over the whole raid? Do you want to know who to ask for help with a specific class? Or do you want to hand out an award to a guildie who did the most damage in all raids over a whole week? This project provides a tool for generating top stats from a set of arcdps logs, allowing you to easily identify top performing players in different stats.
+
 Currently supported stats are: 
 - all damage
 - boon rips

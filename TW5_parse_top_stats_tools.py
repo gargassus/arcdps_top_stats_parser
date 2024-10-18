@@ -158,6 +158,8 @@ class Config:
 	damage_overview_only: bool = False    # if overview_only = True, do not build individual tables & charts for stats in overview table for Offensive
 	defensive_overview_only: bool = False	# if overview_only = True, do not build individual tables & charts for stats in overview table for Defensive
 
+	ignore_role_in_skill_cast: bool = False
+
 	use_PlenBot: bool = False
 	PlenBotPath: str = ""
 
@@ -717,6 +719,7 @@ def fill_config(config_input):
 	config.defensive_overview_only = config_input.defensive_overview_only
 	config.use_PlenBot = config_input.use_PlenBot
 	config.PlenBotPath = config_input.PlenBotPath
+	config.ignore_role_in_skill_cast = config_input.ignore_role_in_skill_cast
 			
 	return config
 	
@@ -2408,7 +2411,11 @@ def collect_stat_data(args, config, log, anonymize=False):
 			playerRole=find_sub_type(player_data)
 			playerRoleActiveTime = get_stat_from_player_json(player_data, players_running_healing_addon, 'time_active', config)
 			
-			player_prof_role = profession + ' ' + playerRole
+			if config.ignore_role_in_skill_cast:
+				player_prof_role = profession
+			else:
+				player_prof_role = profession + ' ' + playerRole
+
 			skill_map = json_data['skillMap']
 
 			#Collect Role Data for Skill Casts
@@ -2625,12 +2632,12 @@ def collect_stat_data(args, config, log, anonymize=False):
 				#ripsOutTime Hack to fix the random >2M boon strips time on some players
 				elif stat == 'ripsOutTime' and player.stats_per_fight[fight_number][stat] > 999999:
 					for target in json_data['targets']:
-						if target['defenses'][0]['boonStripsTime'] > 99999:
+						if target['defenses'][0].get('boonStripsTime', 0) > 99999:
 							player.stats_per_fight[fight_number][stat] = max(player.stats_per_fight[fight_number][stat] - target['defenses'][0]['boonStripsTime'], 0)
 				#cleanseOutTime Hack to fix the random >2M condi cleanse time on some players
 				elif stat == 'cleansesOutTime' and player.stats_per_fight[fight_number][stat] > 999999:
 					for target in json_data['players']:
-						if target['defenses'][0]['condiCleanseTime'] > 99999:
+						if target['defenses'][0].get('condiCleanseTime', 0) > 99999:
 							player.stats_per_fight[fight_number][stat] = max(player.stats_per_fight[fight_number][stat] - target['defenses'][0]['condiCleanseTime'], 0)
 				#print(stat, name)
 				# add stats of this fight and player to total stats of this fight and player
@@ -3636,7 +3643,7 @@ def get_stats_from_fight_json(fight_json, config, log):
 	squad_damage_output[fight_name] = {}
 
 	current_Tag = ''
-	teamID = {705: 'Red', 706: 'Red', 882: 'Red', 2520: 'Red', 2739: 'Green', 2741: 'Green', 2752: 'Green', 2763: 'Green', 432: 'Blue', 1277: 'Blue'}
+	teamID = {698: 'Red', 705: 'Red', 706: 'Red', 882: 'Red', 2520: 'Red', 2739: 'Green', 2741: 'Green', 2752: 'Green', 2763: 'Green', 432: 'Blue', 1277: 'Blue'}
 
 	#creat dictionary of skill_ids and skill_names
 	skills = fight_json['skillMap']
