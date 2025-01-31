@@ -17,7 +17,6 @@
 #    along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 
-from cgi import test
 from dataclasses import dataclass,field
 import os.path
 from os import listdir
