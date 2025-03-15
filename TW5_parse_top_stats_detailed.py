@@ -2081,7 +2081,7 @@ if __name__ == '__main__':
 		output_string = "|"+name+" | {{"+prof+"}} | "
 
 		#Calculate Critical_Hits_Rate
-		if squad_offensive[squadDps_prof_name]['stats']['criticalRate']:
+		if squad_offensive[squadDps_prof_name]['stats']['criticalRate'] and squad_offensive[squadDps_prof_name]['stats']['critableDirectDamageCount']:
 			Critical_Rate = round((squad_offensive[squadDps_prof_name]['stats']['criticalRate']/squad_offensive[squadDps_prof_name]['stats']['critableDirectDamageCount'])*100, 4)
 		else:
 			Critical_Rate = 0.0000
@@ -2090,7 +2090,7 @@ if __name__ == '__main__':
 		output_string += str(Critical_Rate_TT)+" | "
 		
 		#Calculate Flanking_Rate
-		if squad_offensive[squadDps_prof_name]['stats']['flankingRate']:
+		if squad_offensive[squadDps_prof_name]['stats']['flankingRate'] and squad_offensive[squadDps_prof_name]['stats']['connectedDirectDamageCount']:
 			Flanking_Rate = round((squad_offensive[squadDps_prof_name]['stats']['flankingRate']/squad_offensive[squadDps_prof_name]['stats']['connectedDirectDamageCount'])*100, 4)
 		else:
 			Flanking_Rate = 0.0000
@@ -2099,7 +2099,7 @@ if __name__ == '__main__':
 		output_string += str(Flanking_Rate_TT)+" | "
 		
 		#Calculate Glancing Rate
-		if squad_offensive[squadDps_prof_name]['stats']['glanceRate']:
+		if squad_offensive[squadDps_prof_name]['stats']['glanceRate'] and squad_offensive[squadDps_prof_name]['stats']['connectedDirectDamageCount']:
 			Glancing_Rate = round((squad_offensive[squadDps_prof_name]['stats']['glanceRate']/squad_offensive[squadDps_prof_name]['stats']['connectedDirectDamageCount'])*100, 4)
 		else:
 			Glancing_Rate = 0.0000
@@ -2108,7 +2108,7 @@ if __name__ == '__main__':
 		output_string += str(Glancing_Rate_TT)+" | "
 		
 		#Calculate Moving_Rate
-		if squad_offensive[squadDps_prof_name]['stats']['againstMovingRate']:
+		if squad_offensive[squadDps_prof_name]['stats']['againstMovingRate'] and squad_offensive[squadDps_prof_name]['stats']['totalDamageCount']:
 			Moving_Rate = round((squad_offensive[squadDps_prof_name]['stats']['againstMovingRate']/squad_offensive[squadDps_prof_name]['stats']['totalDamageCount'])*100, 4)
 		else:
 			Moving_Rate = 0.0000

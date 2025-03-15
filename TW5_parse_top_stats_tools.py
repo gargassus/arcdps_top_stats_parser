@@ -1606,19 +1606,19 @@ def write_squad_offensive_xls(squad_offensive, xls_output_filename):
 		sheet1.write(i+1, 0, fileDate.strftime("%Y-%m-%d"))
 		sheet1.write(i+1, 1, squad_offensive[squadDps_prof_name]['name'])
 		sheet1.write(i+1, 2, squad_offensive[squadDps_prof_name]['prof'])
-		if squad_offensive[squadDps_prof_name]['stats']['criticalRate']:
+		if squad_offensive[squadDps_prof_name]['stats']['criticalRate'] and squad_offensive[squadDps_prof_name]['stats']['critableDirectDamageCount']:
 			sheet1.write(i+1, 3, round((squad_offensive[squadDps_prof_name]['stats']['criticalRate']/squad_offensive[squadDps_prof_name]['stats']['critableDirectDamageCount']), 4))
 		else:
 			sheet1.write(i+1, 3, 0.0000)
-		if squad_offensive[squadDps_prof_name]['stats']['flankingRate']:
+		if squad_offensive[squadDps_prof_name]['stats']['flankingRate'] and squad_offensive[squadDps_prof_name]['stats']['connectedDirectDamageCount']:
 			sheet1.write(i+1, 4, round((squad_offensive[squadDps_prof_name]['stats']['flankingRate']/squad_offensive[squadDps_prof_name]['stats']['connectedDirectDamageCount']), 4))
 		else:
 			sheet1.write(i+1, 4, 0.0000)
-		if squad_offensive[squadDps_prof_name]['stats']['glanceRate']:
+		if squad_offensive[squadDps_prof_name]['stats']['glanceRate'] and squad_offensive[squadDps_prof_name]['stats']['connectedDirectDamageCount']:
 			sheet1.write(i+1, 5, round((squad_offensive[squadDps_prof_name]['stats']['glanceRate']/squad_offensive[squadDps_prof_name]['stats']['connectedDirectDamageCount']), 4))
 		else:
 			sheet1.write(i+1, 5, 0.0000)
-		if squad_offensive[squadDps_prof_name]['stats']['againstMovingRate']:
+		if squad_offensive[squadDps_prof_name]['stats']['againstMovingRate'] and squad_offensive[squadDps_prof_name]['stats']['totalDamageCount']:
 			sheet1.write(i+1, 6, round((squad_offensive[squadDps_prof_name]['stats']['againstMovingRate']/squad_offensive[squadDps_prof_name]['stats']['totalDamageCount']), 4))
 		else:
 			sheet1.write(i+1, 6, 0.0000)
