@@ -1,3 +1,5 @@
+![Static Badge](https://img.shields.io/badge/Status-Inactive-yellow?style=flat)  ![GitHub](https://img.shields.io/github/license/Drevarr/arcdps_top_stats_parser)
+
 # Status
 
 This project is now in maintenance mode. Active development and feature additions have ceased. While the code will remain available, bug fixes and security patches will be considered, but new features and major changes are unlikely
@@ -5,10 +7,6 @@ This project is now in maintenance mode. Active development and feature addition
 # Alternative Project:  
 
 Active Log Summary development continues at https://github.com/Drevarr/GW2_EI_log_combiner 
-
-
-
-![GitHub](https://img.shields.io/github/license/Drevarr/arcdps_top_stats_parser)
 
 
 # TW5 Modifications #
