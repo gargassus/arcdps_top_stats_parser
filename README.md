@@ -4,7 +4,7 @@ This project is now in maintenance mode. Active development and feature addition
 
 # Alternative Project:  
 
-!Active Log Summary development continues at https://github.com/Drevarr/GW2_EI_log_combiner 
+Active Log Summary development continues at https://github.com/Drevarr/GW2_EI_log_combiner 
 
 
 
