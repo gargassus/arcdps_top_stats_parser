@@ -4485,6 +4485,7 @@ def get_stats_from_fight_json(fight_json, config, log):
 			playerDeaths = dict(id['combatReplayData']['dead'])
 			playerDowns = dict(id['combatReplayData']['down'])
 			playerDistToTag = id['statsAll'][0]['distToCom']
+			player_offset = math.floor(id['combatReplayData']['start']/pollingRate)
 			for deathKey, deathValue in playerDeaths.items():
 				if deathKey < 0: #Handle death on the field before main squad combat log starts
 					continue
@@ -4492,7 +4493,7 @@ def get_stats_from_fight_json(fight_json, config, log):
 				for downKey, downValue in playerDowns.items():
 					if deathKey == downValue:
 						#process data for downKey
-						positionMark = int(downKey/pollingRate)
+						positionMark = int(downKey/pollingRate)-player_offset
 						positionDown = id['combatReplayData']['positions'][positionMark]
 						x1 = positionDown[0]
 						y1 = positionDown[1]
