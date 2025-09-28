@@ -2364,6 +2364,8 @@ def collect_stat_data(args, config, log, anonymize=False):
 
 			if not_in_squad:
 				continue
+			if not player_data['activeTimes'][0]:
+				continue
 			create_new_player = False
 			build_swapped = False
 			
