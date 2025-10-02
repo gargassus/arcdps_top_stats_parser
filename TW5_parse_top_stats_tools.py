@@ -2420,7 +2420,8 @@ def collect_stat_data(args, config, log, anonymize=False):
 			skill_map = json_data['skillMap']
 
 			#Collect Role Data for Skill Casts
-			get_skill_casts_by_role(player_data, name, player_prof_role, playerRoleActiveTime, skill_map)
+			if playerRoleActiveTime > 0:
+				get_skill_casts_by_role(player_data, name, player_prof_role, playerRoleActiveTime, skill_map)
 
 
 			# Collect Gear Buff Data for each player
