@@ -181,7 +181,7 @@ class Config:
 
 #Stats to include in the general overview summary
 general_overview_stats = [
-	'deaths', 'dmg', 'dmg_taken', 'rips', 'cleanses',
+	'deaths', 'dmg', 'dmg_taken', 'rips', 'ripsIn', 'cleanses',
 	'stability', 'protection', 'aegis', 'might',
 	'fury', 'resistance', 'resolution', 'quickness',
 	'swiftness', 'alacrity', 'vigor', 'regeneration',
@@ -540,7 +540,6 @@ def find_sub_type(player: dict) -> str:
 # prints output_string to the console and the output_file, with a linebreak at the end
 def print_to_file(file, string):
 	"""Prints the given string to the given file and console."""
-	print(string)
 	file.write(string + "\n")
 
 
@@ -4930,7 +4929,12 @@ def print_fights_overview(fights, overall_squad_stats, overall_raid_stats, confi
 	for stat in overall_squad_stats:
 		if stat in general_overview_stats:
 			stat_len[stat] = max(len(config.stat_names[stat]), len(str(overall_squad_stats[stat])))
-			print_string += " {{"+config.stat_names[stat]+"}} |"
+			if(stat == "rips"):
+				print_string += " {{"+config.stat_names[stat]+"}}Out |"
+			elif(stat == "ripsIn"):
+				print_string += " {{"+config.stat_names["rips"]+"}}In |"
+			else: 
+				print_string += " {{"+config.stat_names[stat]+"}} |"
 	print_string += "h"
 	print_to_file(output, print_string)
 	#Only write overall raid stats summary for monthly output

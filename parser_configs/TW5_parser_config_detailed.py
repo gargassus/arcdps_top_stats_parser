@@ -14,7 +14,7 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-stats_to_compute = ['deaths', 'downed', 'iol', 'res', 'kills', 'downs','dmg', 'Pdmg', 'Cdmg', 'shieldDmg', 'dmgAll','dmg_taken', 'rips', 'cleanses', 'superspeed', 'stealth', 'HiS', 'dist', 'stability', 'protection', 'aegis', 'might', 'fury', 'resistance', 'resolution', 'quickness', 'swiftness', 'alacrity', 'vigor', 'regeneration', 'heal', 'barrier', 'barrierDamage', 'swaps', 'dodges', 'evades', 'invulns', 'hitsMissed', 'interupted', 'blocks', 'fireOut', 'shockingOut', 'frostOut', 'magneticOut', 'lightOut', 'darkOut', 'chaosOut', 'ripsIn', 'cleansesIn', 'resOutTime', 'cleansesOutTime', 'ripsOutTime', 'downContribution', 'againstDownedDamage', 'againstDownedCount', 'receivedCrowdControl', 'receivedCrowdControlDuration', 'appliedCrowdControl', 'appliedCrowdControlDuration', 'stunBreak', 'removedStunDuration']
+stats_to_compute = ['deaths', 'downed', 'iol', 'res', 'kills', 'downs','dmg', 'Pdmg', 'Cdmg', 'shieldDmg', 'dmgAll','dmg_taken', 'rips', 'ripsIn', 'cleanses', 'superspeed', 'stealth', 'HiS', 'dist', 'stability', 'protection', 'aegis', 'might', 'fury', 'resistance', 'resolution', 'quickness', 'swiftness', 'alacrity', 'vigor', 'regeneration', 'heal', 'barrier', 'barrierDamage', 'swaps', 'dodges', 'evades', 'invulns', 'hitsMissed', 'interupted', 'blocks', 'fireOut', 'shockingOut', 'frostOut', 'magneticOut', 'lightOut', 'darkOut', 'chaosOut', 'cleansesIn', 'resOutTime', 'cleansesOutTime', 'ripsOutTime', 'downContribution', 'againstDownedDamage', 'againstDownedCount', 'receivedCrowdControl', 'receivedCrowdControlDuration', 'appliedCrowdControl', 'appliedCrowdControlDuration', 'stunBreak', 'removedStunDuration']
 aurasIn_to_compute = ['fireIn', 'shockingIn', 'frostIn', 'magneticIn', 'lightIn', 'darkIn', 'chaosIn']
 aurasOut_to_compute = ['fireOut', 'shockingOut', 'frostOut', 'magneticOut', 'lightOut', 'darkOut', 'chaosOut']
 defenses_to_compute = ['dmg_taken', 'barrierDamage', 'hitsMissed', 'interupted', 'invulns', 'evades', 'blocks', 'dodges', 'cleansesIn', 'ripsIn', 'downed', 'deaths', 'receivedCrowdControl', 'receivedCrowdControlDuration']
@@ -152,6 +152,7 @@ stat_names["shieldDmg"] = "Shield Damage"
 stat_names["dmgAll"] = "Damage All"
 stat_names["dmg_taken"] = "Damage Taken"
 stat_names["rips"] = "Boon Strips"
+stat_names["ripsIn"] = "Boon Strips Incoming"
 stat_names["stability"] = "Stability"
 stat_names["protection"] = "Protection"
 stat_names["aegis"] = "Aegis"
@@ -196,7 +197,6 @@ stat_names["magneticOut"] = "Magnetic Aura"
 stat_names["lightOut"] = "Light Aura"
 stat_names["darkOut"] = "Dark Aura"
 stat_names["chaosOut"] = "Chaos Aura"
-stat_names["ripsIn"] = "Boon Strips Incoming"
 stat_names["ripsTime"] = "Boon Time Lost"
 stat_names["cleansesIn"] = "Condition Cleanses Incoming"
 stat_names["cleansesTime"] = "Condition Time Cleared"
